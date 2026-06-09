@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+
+<html lang="zh-CN"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport"/>
+<title>专注模式设置</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-primary-fixed": "#001c39",
+                        "on-secondary-container": "#5f6368",
+                        "on-primary": "#ffffff",
+                        "surface-bright": "#f8f9fa",
+                        "on-tertiary-fixed": "#291800",
+                        "on-surface-variant": "#414751",
+                        "secondary-container": "#dde0e5",
+                        "on-secondary-fixed-variant": "#43474c",
+                        "primary-fixed": "#d4e3ff",
+                        "primary-fixed-dim": "#a4c9ff",
+                        "on-error": "#ffffff",
+                        "secondary-fixed": "#e0e3e8",
+                        "inverse-primary": "#a4c9ff",
+                        "primary-container": "#2976c7",
+                        "on-primary-container": "#fdfcff",
+                        "inverse-on-surface": "#f0f1f2",
+                        "tertiary": "#7f5300",
+                        "surface-container": "#edeeef",
+                        "surface": "#f8f9fa",
+                        "on-error-container": "#93000a",
+                        "secondary": "#5b5f63",
+                        "on-tertiary-container": "#fffbff",
+                        "error": "#ba1a1a",
+                        "secondary-fixed-dim": "#c3c7cc",
+                        "on-primary-fixed-variant": "#004883",
+                        "surface-dim": "#d9dadb",
+                        "on-secondary": "#ffffff",
+                        "background": "#f8f9fa",
+                        "tertiary-fixed-dim": "#ffb953",
+                        "surface-container-high": "#e7e8e9",
+                        "surface-tint": "#0060ac",
+                        "on-tertiary-fixed-variant": "#633f00",
+                        "surface-variant": "#e1e3e4",
+                        "inverse-surface": "#2e3132",
+                        "tertiary-fixed": "#ffddb4",
+                        "tertiary-container": "#a06900",
+                        "on-surface": "#191c1d",
+                        "surface-container-low": "#f3f4f5",
+                        "outline-variant": "#c1c7d3",
+                        "surface-container-highest": "#e1e3e4",
+                        "surface-container-lowest": "#ffffff",
+                        "outline": "#717783",
+                        "error-container": "#ffdad6",
+                        "on-tertiary": "#ffffff",
+                        "on-background": "#191c1d",
+                        "on-secondary-fixed": "#181c20",
+                        "primary": "#005da7"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "margin-page": "24px",
+                        "inset-md": "16px",
+                        "stack-sm": "8px",
+                        "stack-xl": "40px",
+                        "stack-md": "16px",
+                        "gutter": "12px"
+                    },
+                    "fontFamily": {
+                        "headline-lg": ["Inter"],
+                        "display": ["Inter"],
+                        "headline-lg-mobile": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "body-md": ["Inter"],
+                        "label-sm": ["Inter"],
+                        "label-md": ["Inter"]
+                    },
+                    "fontSize": {
+                        "headline-lg": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                        "display": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "headline-lg-mobile": ["20px", {"lineHeight": "28px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                        "body-lg": ["18px", {"lineHeight": "28px", "letterSpacing": "0em", "fontWeight": "400"}],
+                        "body-md": ["16px", {"lineHeight": "24px", "letterSpacing": "0em", "fontWeight": "400"}],
+                        "label-sm": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                        "label-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0.02em", "fontWeight": "500"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        .glass-card { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(12px); }
+        .custom-shadow { box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04); }
+        .active-pill { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        .thumb-shadow { box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12); }
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            height: 24px; width: 24px;
+            border-radius: 50%;
+            background: #ffffff;
+            cursor: pointer;
+            border: 2px solid #005da7;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-surface min-h-screen pb-10">
+<!-- Top App Bar (Task-Focused: No Global Nav) -->
+<header class="sticky top-0 z-50 bg-surface/90 backdrop-blur-md px-margin-page h-16 flex items-center justify-between">
+<div class="flex items-center gap-4">
+<button class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-surface-container-low transition-colors duration-200" onclick="history.back()">
+<span class="material-symbols-outlined text-on-surface" data-icon="arrow_back">arrow_back</span>
+</button>
+<h1 class="text-headline-lg-mobile font-headline-lg-mobile text-on-surface">专注模式</h1>
+</div>
+<button class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-surface-container-low transition-colors duration-200">
+<span class="material-symbols-outlined text-on-surface" data-icon="help_outline">help_outline</span>
+</button>
+</header>
+<main class="px-margin-page pt-4 space-y-stack-xl">
+<!-- Pomodoro Settings Section -->
+<section class="space-y-stack-md">
+<h2 class="text-label-md font-label-md text-on-surface-variant px-1">番茄钟设置</h2>
+<div class="bg-surface-container-lowest rounded-xl p-inset-md custom-shadow space-y-stack-xl">
+<!-- Focus Duration -->
+<div class="space-y-stack-sm">
+<div class="flex justify-between items-center">
+<span class="text-body-md font-medium text-on-surface">专注时长</span>
+<span class="text-primary font-bold text-body-lg" id="focus-val">25 分钟</span>
+</div>
+<div class="relative pt-4">
+<input class="w-full h-1.5 bg-surface-container rounded-lg appearance-none cursor-pointer accent-primary" id="focus-slider" max="3" min="0" step="1" type="range" value="0"/>
+<div class="flex justify-between px-1 mt-2 text-[10px] text-on-surface-variant font-medium">
+<span>25</span>
+<span>30</span>
+<span>45</span>
+<span>60</span>
+</div>
+</div>
+</div>
+<!-- Breaks Grid -->
+<div class="grid grid-cols-2 gap-gutter">
+<div class="space-y-stack-sm">
+<label class="text-label-sm font-label-sm text-on-surface-variant">短暂休息</label>
+<div class="flex bg-surface-container-low rounded-lg p-1">
+<button class="flex-1 py-2 text-label-md rounded-md active-pill bg-white text-primary shadow-sm" onclick="toggleActive(this, 'short')">5m</button>
+<button class="flex-1 py-2 text-label-md rounded-md active-pill text-on-surface-variant" onclick="toggleActive(this, 'short')">10m</button>
+</div>
+</div>
+<div class="space-y-stack-sm">
+<label class="text-label-sm font-label-sm text-on-surface-variant">长时休息</label>
+<div class="flex bg-surface-container-low rounded-lg p-1 overflow-hidden">
+<button class="flex-1 py-2 text-label-md rounded-md active-pill bg-white text-primary shadow-sm" onclick="toggleActive(this, 'long')">15m</button>
+<button class="flex-1 py-2 text-label-md rounded-md active-pill text-on-surface-variant" onclick="toggleActive(this, 'long')">20m</button>
+<button class="flex-1 py-2 text-label-md rounded-md active-pill text-on-surface-variant" onclick="toggleActive(this, 'long')">30m</button>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Deep Focus Section -->
+<section class="space-y-stack-md">
+<h2 class="text-label-md font-label-md text-on-surface-variant px-1">专注增强</h2>
+<div class="bg-surface-container-lowest rounded-xl p-inset-md custom-shadow flex items-center justify-between">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-full bg-primary-fixed flex items-center justify-center">
+<span class="material-symbols-outlined text-primary" data-icon="do_not_disturb_on">do_not_disturb_on</span>
+</div>
+<div>
+<p class="text-body-md font-semibold text-on-surface">深度专注模式</p>
+<p class="text-label-sm text-on-surface-variant">开启后将屏蔽所有非紧急通知</p>
+</div>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox" value=""/>
+<div class="w-11 h-6 bg-surface-container rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+</label>
+</div>
+</section>
+<!-- Ambient Sound Section -->
+<section class="space-y-stack-md">
+<h2 class="text-label-md font-label-md text-on-surface-variant px-1">专注环境音</h2>
+<div class="grid grid-cols-1 gap-stack-sm">
+<!-- Sound Card 1 -->
+<div class="bg-surface-container-lowest rounded-xl p-4 custom-shadow flex items-center justify-between border-2 border-primary">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-lg overflow-hidden relative">
+<img class="w-full h-full object-cover" data-alt="A macro photograph of raindrops on a window pane during a soft spring shower. The colors are cool blues and greys, with a gentle, out-of-focus background of a lush garden. The lighting is diffused and calming, reflecting a minimalist and serene digital breathing room aesthetic with an organized, tranquil mood." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBqXNogI-1qi8vfPWe9i-VKmv9k9Q9yprfttjOyMmAWJ6qoTEbnSgwAG3utufOUQwhyM9rU9sNHEOa2fGqBHtNCYwma0o_xybT_PWtrBVyJdxrfv1O9uEw4u46_mnaTq2eWygL3Y9JZigjEczRXGcGt1lpvnXteyLXt5n_doMy6oN6m9x1rPoNDHWk2HjDLKvOJOUDrBT7b3a_UR0AgwYIoFfKi6OAUabvGg2ZHOs0osS9ECHnO2W9ntm1h3zYS9qABRGlffafotk4"/>
+<div class="absolute inset-0 bg-primary/20 flex items-center justify-center">
+<span class="material-symbols-outlined text-white" data-icon="water_drop">water_drop</span>
+</div>
+</div>
+<div>
+<p class="text-body-md font-semibold text-on-surface">雨声</p>
+<p class="text-label-sm text-on-surface-variant">窗外的绵绵细雨</p>
+</div>
+</div>
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary" data-icon="volume_up">volume_up</span>
+<div class="w-6 h-6 rounded-full bg-primary flex items-center justify-center">
+<span class="material-symbols-outlined text-white text-[16px]" data-icon="pause" data-weight="fill">pause</span>
+</div>
+</div>
+</div>
+<!-- Sound Card 2 -->
+<div class="bg-surface-container-lowest rounded-xl p-4 custom-shadow flex items-center justify-between border-2 border-transparent hover:border-surface-variant transition-all">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-lg overflow-hidden relative">
+<img class="w-full h-full object-cover grayscale opacity-60" data-alt="A low-angle view of sunlight filtering through tall pine trees in a dense, quiet forest. The environment is bathed in soft, golden morning light that creates long shadows on the forest floor. The color palette is composed of natural greens and earthy browns, evoking a sense of deep calm and organized tranquility consistent with a modern minimalist interface." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCCmaQy9VcE8uqn0RChBkrDIeVKfBs9EduF7Y6O7HINc6JGki8Q9xP0vHKMNDavp2Swmrsq-3VVyDUKCqJwiSbmBsZX8EJvNf3vewxw9r_3OUPA_ndK1HlJW_dndKoQVk892lO_cWn-WSVwrp_LtP7d4Y4QRY8cTCyrqDzuHrBk6amdF1pfI8Jea2Elv3d1tis8ua0o_PVotGL5aw_mNjN_K1g7gZcJrxBBmM-UVJq2VjwBqI83FPI7mPFINRcxlPBuokbqPmbg_1Q"/>
+</div>
+<div>
+<p class="text-body-md font-semibold text-on-surface">森林</p>
+<p class="text-label-sm text-on-surface-variant">清晨的鸟鸣与微风</p>
+</div>
+</div>
+<button class="w-8 h-8 rounded-full border border-outline-variant flex items-center justify-center text-on-surface-variant">
+<span class="material-symbols-outlined text-[20px]" data-icon="play_arrow">play_arrow</span>
+</button>
+</div>
+<!-- Sound Card 3 -->
+<div class="bg-surface-container-lowest rounded-xl p-4 custom-shadow flex items-center justify-between border-2 border-transparent hover:border-surface-variant transition-all">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-lg bg-surface-container-high flex items-center justify-center">
+<span class="material-symbols-outlined text-secondary" data-icon="blur_on">blur_on</span>
+</div>
+<div>
+<p class="text-body-md font-semibold text-on-surface">白噪音</p>
+<p class="text-label-sm text-on-surface-variant">平稳舒适的基础背景</p>
+</div>
+</div>
+<button class="w-8 h-8 rounded-full border border-outline-variant flex items-center justify-center text-on-surface-variant">
+<span class="material-symbols-outlined text-[20px]" data-icon="play_arrow">play_arrow</span>
+</button>
+</div>
+</div>
+</section>
+<!-- Footer Action -->
+<section class="pt-stack-md flex flex-col gap-4">
+<button class="w-full h-14 bg-primary text-on-primary font-semibold rounded-xl active:scale-95 transition-transform duration-150 flex items-center justify-center gap-2">
+<span class="material-symbols-outlined" data-icon="bolt" data-weight="fill">bolt</span>
+                立即开始专注
+            </button>
+<p class="text-center text-label-sm text-on-surface-variant px-6">
+                设置将在下次进入专注模式时生效
+            </p>
+</section>
+</main>
+<script>
+        // Simple Interaction Logic
+        const focusSlider = document.getElementById('focus-slider');
+        const focusVal = document.getElementById('focus-val');
+        const values = [25, 30, 45, 60];
+
+        focusSlider.addEventListener('input', (e) => {
+            focusVal.innerText = `${values[e.target.value]} 分钟`;
+        });
+
+        function toggleActive(element, group) {
+            const buttons = element.parentElement.querySelectorAll('button');
+            buttons.forEach(btn => {
+                btn.classList.remove('bg-white', 'text-primary', 'shadow-sm');
+                btn.classList.add('text-on-surface-variant');
+            });
+            element.classList.add('bg-white', 'text-primary', 'shadow-sm');
+            element.classList.remove('text-on-surface-variant');
+        }
+
+        // Ripple Effect for cards
+        document.querySelectorAll('.custom-shadow').forEach(card => {
+            card.addEventListener('click', function(e) {
+                // Logic for selecting cards could go here
+            });
+        });
+    </script>
+</body></html>

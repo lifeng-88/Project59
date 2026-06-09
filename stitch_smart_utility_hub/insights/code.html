@@ -1,0 +1,294 @@
+<!DOCTYPE html><html class="light" lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>统计分析</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+        .chart-gradient {
+            background: linear-gradient(180deg, rgba(0, 93, 167, 0.1) 0%, rgba(248, 249, fa, 0) 100%);
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "surface": "#f8f9fa",
+                      "tertiary-fixed": "#ffddb4",
+                      "tertiary": "#7f5300",
+                      "secondary-fixed-dim": "#c3c7cc",
+                      "surface-container-high": "#e7e8e9",
+                      "on-primary-fixed": "#001c39",
+                      "on-primary-fixed-variant": "#004883",
+                      "on-tertiary-fixed": "#291800",
+                      "secondary-container": "#dde0e5",
+                      "inverse-surface": "#2e3132",
+                      "error-container": "#ffdad6",
+                      "secondary-fixed": "#e0e3e8",
+                      "on-background": "#191c1d",
+                      "surface-dim": "#d9dadb",
+                      "surface-tint": "#0060ac",
+                      "surface-container-low": "#f3f4f5",
+                      "inverse-primary": "#a4c9ff",
+                      "on-secondary-container": "#5f6368",
+                      "surface-bright": "#f8f9fa",
+                      "error": "#ba1a1a",
+                      "secondary": "#5b5f63",
+                      "on-secondary-fixed-variant": "#43474c",
+                      "primary-fixed": "#d4e3ff",
+                      "on-surface": "#191c1d",
+                      "surface-container": "#edeeef",
+                      "surface-container-lowest": "#ffffff",
+                      "primary": "#005da7",
+                      "background": "#f8f9fa",
+                      "on-secondary-fixed": "#181c20",
+                      "on-tertiary-container": "#fffbff",
+                      "surface-variant": "#e1e3e4",
+                      "on-tertiary": "#ffffff",
+                      "on-primary": "#ffffff",
+                      "on-secondary": "#ffffff",
+                      "on-surface-variant": "#414751",
+                      "on-primary-container": "#fdfcff",
+                      "primary-container": "#2976c7",
+                      "surface-container-highest": "#e1e3e4",
+                      "tertiary-container": "#a06900",
+                      "on-error-container": "#93000a",
+                      "outline": "#717783",
+                      "tertiary-fixed-dim": "#ffb953",
+                      "on-error": "#ffffff",
+                      "inverse-on-surface": "#f0f1f2",
+                      "outline-variant": "#c1c7d3",
+                      "primary-fixed-dim": "#a4c9ff",
+                      "on-tertiary-fixed-variant": "#633f00"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "margin-page": "24px",
+                      "stack-xl": "40px",
+                      "gutter": "12px",
+                      "inset-md": "16px",
+                      "stack-md": "16px",
+                      "stack-sm": "8px"
+              },
+              "fontFamily": {
+                      "headline-lg-mobile": ["Inter"],
+                      "body-lg": ["Inter"],
+                      "headline-lg": ["Inter"],
+                      "display": ["Inter"],
+                      "label-md": ["Inter"],
+                      "label-sm": ["Inter"],
+                      "body-md": ["Inter"]
+              },
+              "fontSize": {
+                      "headline-lg-mobile": ["20px", {"lineHeight": "28px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                      "body-lg": ["18px", {"lineHeight": "28px", "letterSpacing": "0em", "fontWeight": "400"}],
+                      "headline-lg": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                      "display": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                      "label-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0.02em", "fontWeight": "500"}],
+                      "label-sm": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                      "body-md": ["16px", {"lineHeight": "24px", "letterSpacing": "0em", "fontWeight": "400"}]
+              }
+            },
+          },
+        }
+      </script>
+</head>
+<body class="bg-surface text-on-surface min-h-screen">
+<!-- Top App Bar -->
+<header class="bg-surface sticky top-0 z-40 flex justify-between items-center h-16 px-margin-page w-full">
+<div class="flex items-center gap-4">
+<button class="hover:bg-surface-container-low transition-colors p-2 rounded-full">
+<span class="material-symbols-outlined text-on-surface">menu</span>
+</button>
+<h1 class="text-headline-lg-mobile font-headline-lg-mobile text-on-surface">统计分析</h1>
+</div>
+<button class="hover:bg-surface-container-low transition-colors p-2 rounded-full">
+<span class="material-symbols-outlined text-on-surface">search</span>
+</button>
+</header>
+<main class="px-margin-page pb-32">
+<!-- Hero Summary Section -->
+<section class="mt-stack-md">
+<div class="bg-surface-container-lowest rounded-xl p-6 shadow-[0_4px_20px_rgba(0,0,0,0.04)]">
+<div class="flex justify-between items-end mb-6">
+<div>
+<p class="text-label-sm font-label-sm text-on-surface-variant uppercase tracking-wider">生产力评分</p>
+<h2 class="text-display font-display text-primary mt-1">84%</h2>
+</div>
+<div class="text-right">
+<span class="text-label-sm font-label-sm bg-primary/10 text-primary px-3 py-1 rounded-full">比上周提升 12%</span>
+</div>
+</div>
+<!-- Weekly Graph Visualization -->
+<div class="relative h-48 w-full mt-4">
+<!-- Simple SVG Path for Weekly Graph -->
+<svg class="w-full h-full preserve-3d" viewBox="0 0 400 100">
+<defs>
+<linearGradient id="lineGradient" x1="0" x2="0" y1="0" y2="1">
+<stop offset="0%" stop-color="#005da7" stop-opacity="0.2"></stop>
+<stop offset="100%" stop-color="#005da7" stop-opacity="0"></stop>
+</linearGradient>
+</defs>
+<!-- Area Fill -->
+<path d="M0,80 Q50,70 100,40 T200,60 T300,20 T400,30 L400,100 L0,100 Z" fill="url(#lineGradient)"></path>
+<!-- Line Graph -->
+<path d="M0,80 Q50,70 100,40 T200,60 T300,20 T400,30" fill="none" stroke="#005da7" stroke-linecap="round" stroke-width="2"></path>
+<!-- Data Points -->
+<circle cx="100" cy="40" fill="#005da7" r="4"></circle>
+<circle cx="300" cy="20" fill="#005da7" r="4"></circle>
+</svg>
+<div class="flex justify-between mt-4 text-label-sm font-label-sm text-outline px-1">
+<span class="">周一</span>
+<span class="">周二</span>
+<span class="">周三</span>
+<span class="">周四</span>
+<span class="">周五</span>
+<span class="">周六</span>
+<span class="">周日</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Stats Grid (Bento Style) -->
+<section class="mt-stack-xl grid grid-cols-2 gap-4">
+<!-- Tasks Completed -->
+<div class="bg-surface-container-lowest p-5 rounded-xl shadow-[0_4px_20px_rgba(0,0,0,0.04)] col-span-1">
+<span class="material-symbols-outlined text-primary mb-3">check_circle</span>
+<p class="text-label-sm font-label-sm text-on-surface-variant mb-1">已完成任务</p>
+<p class="text-headline-lg font-headline-lg text-on-surface">42</p>
+<div class="mt-2 flex items-center gap-1 text-label-sm text-primary">
+<span class="material-symbols-outlined text-[14px]">trending_up</span>
+<span class="">14%</span>
+</div>
+</div>
+<!-- Focus Time -->
+<div class="bg-surface-container-lowest p-5 rounded-xl shadow-[0_4px_20px_rgba(0,0,0,0.04)] col-span-1">
+<span class="material-symbols-outlined text-primary mb-3">timer</span>
+<p class="text-label-sm font-label-sm text-on-surface-variant mb-1">专注时长</p>
+<p class="text-headline-lg font-headline-lg text-on-surface">18h 20m</p>
+<div class="mt-2 flex items-center gap-1 text-label-sm text-outline">
+<span class="">目标：20小时</span>
+</div>
+</div>
+<!-- Streak Card (Wide) -->
+<div class="bg-surface-container-lowest p-5 rounded-xl shadow-[0_4px_20px_rgba(0,0,0,0.04)] col-span-2 flex items-center justify-between">
+<div>
+<span class="material-symbols-outlined text-primary mb-2" style="font-variation-settings: 'FILL' 1;">local_fire_department</span>
+<p class="text-label-sm font-label-sm text-on-surface-variant mb-1">当前连续天数</p>
+<p class="text-headline-lg font-headline-lg text-on-surface">12 天</p>
+</div>
+<div class="h-16 w-16 relative">
+<!-- Circular Progress Mockup -->
+<svg class="w-full h-full transform -rotate-90" viewBox="0 0 36 36">
+<path d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="#eee" stroke-width="2.5"></path>
+<path d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="#005da7" stroke-dasharray="80, 100" stroke-linecap="round" stroke-width="2.5"></path>
+</svg>
+<div class="absolute inset-0 flex items-center justify-center text-label-sm font-label-sm text-primary">
+                        80%
+                    </div>
+</div>
+</div>
+</section>
+<!-- Focus Distribution -->
+<section class="mt-stack-xl">
+<h3 class="text-label-md font-label-md text-on-surface-variant mb-stack-md uppercase tracking-widest">专注分布</h3>
+<div class="space-y-4">
+<div class="bg-surface-container-lowest p-4 rounded-xl shadow-[0_4px_20px_rgba(0,0,0,0.04)]">
+<div class="flex justify-between items-center mb-2">
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-primary"></span>
+<span class="text-label-md font-label-md">工作项目</span>
+</div>
+<span class="text-label-md font-label-md">65%</span>
+</div>
+<div class="w-full bg-surface-container h-2 rounded-full overflow-hidden">
+<div class="bg-primary h-full w-[65%] transition-all duration-1000"></div>
+</div>
+</div>
+<div class="bg-surface-container-lowest p-4 rounded-xl shadow-[0_4px_20px_rgba(0,0,0,0.04)]">
+<div class="flex justify-between items-center mb-2">
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-secondary"></span>
+<span class="text-label-md font-label-md">个人成长</span>
+</div>
+<span class="text-label-md font-label-md">25%</span>
+</div>
+<div class="w-full bg-surface-container h-2 rounded-full overflow-hidden">
+<div class="bg-secondary h-full w-[25%] transition-all duration-1000"></div>
+</div>
+</div>
+</div>
+</section>
+<!-- Motivational Insight -->
+<section class="mt-stack-xl">
+<div class="bg-primary-container text-on-primary-container p-6 rounded-2xl relative overflow-hidden">
+<div class="relative z-10">
+<h4 class="text-headline-lg-mobile font-headline-lg-mobile mb-2">继续保持！</h4>
+<p class="text-body-md font-body-md opacity-90">你在周三早晨的效率最高。建议在那时安排深度任务，以保持你的 12 天连胜。</p>
+</div>
+<span class="material-symbols-outlined absolute -right-4 -bottom-4 text-9xl opacity-10 rotate-12">auto_awesome</span>
+</div>
+</section>
+</main>
+<!-- Bottom Navigation Bar -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center h-20 px-4 pb-safe bg-surface rounded-t-xl shadow-[0_-4px_20px_rgba(0,0,0,0.04)]">
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:bg-surface-container-lowest transition-transform active:scale-95 duration-150" href="#">
+<span class="material-symbols-outlined">today</span>
+<span class="text-label-sm font-label-sm mt-1">今日</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:bg-surface-container-lowest transition-transform active:scale-95 duration-150" href="#">
+<span class="material-symbols-outlined">calendar_month</span>
+<span class="text-label-sm font-label-sm mt-1">日历</span>
+</a>
+<a class="flex flex-col items-center justify-center text-primary font-bold hover:bg-surface-container-lowest transition-transform active:scale-95 duration-150" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">analytics</span>
+<span class="text-label-sm font-label-sm mt-1">分析</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:bg-surface-container-lowest transition-transform active:scale-95 duration-150" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="text-label-sm font-label-sm mt-1">设置</span>
+</a>
+</nav>
+<!-- Floating Action Button (Suppressed on Insights per mandate, but included for complete app context if needed elsewhere) -->
+<!-- Suppressed: Contextual FAB Suppression logic applied for Insights screen -->
+<script>
+        // Micro-interaction for number counting animation
+        function animateValue(obj, start, end, duration) {
+            let startTimestamp = null;
+            const step = (timestamp) => {
+                if (!startTimestamp) startTimestamp = timestamp;
+                const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+                obj.innerHTML = Math.floor(progress * (end - start) + start);
+                if (progress < 1) {
+                    window.requestAnimationFrame(step);
+                }
+            };
+            window.requestAnimationFrame(step);
+        }
+
+        // Initialize animations on load
+        document.addEventListener('DOMContentLoaded', () => {
+            const score = document.querySelector('.text-display');
+            // animateValue(score, 0, 84, 1500); // Optional: add suffix back if used
+        });
+    </script>
+
+
+</body></html>

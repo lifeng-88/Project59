@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="color-scheme" content="light dark" />
+  <title>Hub · Lumina Focus — 隐私政策</title>
+  <style>
+    :root {
+      --surface: #f8f9fa;
+      --surface-container-lowest: #ffffff;
+      --on-surface: #191c1d;
+      --on-surface-variant: #414751;
+      --primary: #005da7;
+      --primary-container: #2976c7;
+      --outline: #717783;
+      --outline-variant: #c1c7d3;
+      --radius: 12px;
+      --page-margin: 24px;
+      --font: -apple-system, BlinkMacSystemFont, "SF Pro Text", "PingFang SC", "Helvetica Neue", sans-serif;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --surface: #121416;
+        --surface-container-lowest: #1c1f23;
+        --on-surface: #e2e3e8;
+        --on-surface-variant: #a1a6b0;
+        --primary: #a4c9ff;
+        --primary-container: #1a4975;
+        --outline: #8b919c;
+        --outline-variant: #434851;
+      }
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: var(--font);
+      font-size: 16px;
+      line-height: 1.65;
+      color: var(--on-surface);
+      background: var(--surface);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .wrap {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 32px var(--page-margin) 48px;
+    }
+
+    .badge {
+      display: inline-block;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--primary);
+      background: color-mix(in srgb, var(--primary) 12%, transparent);
+      padding: 6px 12px;
+      border-radius: 999px;
+      margin-bottom: 16px;
+    }
+
+    h1 {
+      font-size: 28px;
+      font-weight: 700;
+      line-height: 1.25;
+      letter-spacing: -0.02em;
+      margin: 0 0 12px;
+    }
+
+    .lead {
+      color: var(--on-surface-variant);
+      font-size: 15px;
+      margin: 0 0 32px;
+    }
+
+    .section {
+      background: var(--surface-container-lowest);
+      border-radius: var(--radius);
+      padding: 20px;
+      margin-bottom: 16px;
+    }
+
+    .section-num {
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      color: var(--outline);
+      margin-bottom: 6px;
+    }
+
+    h2 {
+      font-size: 18px;
+      font-weight: 600;
+      margin: 0 0 12px;
+      letter-spacing: -0.01em;
+    }
+
+    p { margin: 0 0 12px; }
+    p:last-child { margin-bottom: 0; }
+
+    ul {
+      margin: 8px 0 0;
+      padding-left: 1.25em;
+    }
+
+    li {
+      margin-bottom: 8px;
+      color: var(--on-surface-variant);
+    }
+
+    li strong { color: var(--on-surface); }
+
+    a {
+      color: var(--primary);
+      text-decoration: none;
+    }
+
+    a:hover { text-decoration: underline; }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+      margin-top: 12px;
+    }
+
+    th, td {
+      text-align: left;
+      padding: 10px 12px;
+      border-bottom: 1px solid var(--outline-variant);
+      vertical-align: top;
+    }
+
+    th {
+      font-weight: 600;
+      color: var(--on-surface);
+      width: 36%;
+    }
+
+    td { color: var(--on-surface-variant); }
+
+    .footer {
+      margin-top: 32px;
+      padding-top: 24px;
+      border-top: 1px solid var(--outline-variant);
+      font-size: 14px;
+      color: var(--on-surface-variant);
+    }
+
+    .app-mark {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #005da7, #2976c7);
+      margin-bottom: 20px;
+      position: relative;
+    }
+
+    .app-mark::before,
+    .app-mark::after {
+      content: "";
+      position: absolute;
+      border: 2px solid rgba(255, 255, 255, 0.85);
+      border-radius: 50%;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+    }
+
+    .app-mark::before {
+      width: 28px;
+      height: 28px;
+    }
+
+    .app-mark::after {
+      width: 16px;
+      height: 16px;
+      background: #fff;
+      border: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="app-mark" aria-hidden="true"></div>
+    <p class="badge">最后更新：2026 年 5 月 25 日</p>
+    <h1>Hub · Lumina Focus 隐私政策</h1>
+    <p class="lead">
+      欢迎使用 Hub（应用显示名称，以下简称「本应用」或「我们」）。本应用由 Lumina 团队提供，是一款帮助您管理任务、专注计时与效率洞察的效率工具。
+      我们重视您的隐私。本政策说明我们如何收集、使用、存储与保护您的信息，以及您享有的权利。
+      使用本应用即表示您已阅读并理解本政策；若您不同意，请停止使用本应用。
+    </p>
+
+    <article class="section">
+      <p class="section-num">01</p>
+      <h2>我们收集的信息</h2>
+      <p>我们遵循最小必要原则，仅收集实现功能所必需的信息：</p>
+      <table>
+        <thead>
+          <tr>
+            <th>信息类型</th>
+            <th>内容与来源</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>任务与专注数据</td>
+            <td>您创建的任务标题、分类、日期、完成状态、专注时长、连续专注天数、番茄钟与休息时长等偏好设置。</td>
+          </tr>
+          <tr>
+            <td>个人资料（可选）</td>
+            <td>您主动填写的昵称、邮箱，以及从相册选择的头像图片（仅用于本机展示）。</td>
+          </tr>
+          <tr>
+            <td>应用偏好</td>
+            <td>主题（浅色/深色）、语言、通知开关、云同步开关、环境音选择等。</td>
+          </tr>
+          <tr>
+            <td>设备与运行信息</td>
+            <td>为获取远程功能配置，我们可能向服务器发送设备标识（dev_id）、应用版本、渠道及归因相关参数；具体字段以接口请求为准。</td>
+          </tr>
+          <tr>
+            <td>iCloud 备份</td>
+            <td>若您开启云同步，任务与上述设置会以 JSON 文件形式备份至您 Apple ID 下的 iCloud Drive 容器（<code>iCloud.com.lumina.hub</code>）。</td>
+          </tr>
+        </tbody>
+      </table>
+      <p style="margin-top: 12px;">
+        <strong>我们不会</strong>在本应用中嵌入第三方广告 SDK，也不会将您的任务内容用于广告投放。
+      </p>
+    </article>
+
+    <article class="section">
+      <p class="section-num">02</p>
+      <h2>信息的使用方式</h2>
+      <p>我们收集的信息仅用于以下目的：</p>
+      <ul>
+        <li><strong>核心功能</strong>：展示与管理任务、日历与洞察、专注模式计时、任务提醒通知。</li>
+        <li><strong>个性化体验</strong>：根据您的主题、语言与专注偏好调整界面与行为。</li>
+        <li><strong>数据备份与恢复</strong>：在您授权且开启 iCloud 同步时，将数据备份至 iCloud 并在多设备间恢复。</li>
+        <li><strong>服务配置</strong>：请求远程应用配置以保障功能正常分发与版本兼容。</li>
+        <li><strong>安全与稳定</strong>：排查故障、防止滥用、改进产品体验（不针对个人进行画像营销）。</li>
+      </ul>
+    </article>
+
+    <article class="section">
+      <p class="section-num">03</p>
+      <h2>系统权限说明</h2>
+      <p>本应用可能在您使用时请求以下系统权限；拒绝授权仅会影响对应功能，不影响其他功能：</p>
+      <table>
+        <tbody>
+          <tr>
+            <td>通知</td>
+            <td>用于在任务提醒时间向您发送本地通知。通知内容由本机生成，我们不会借此推送营销信息。</td>
+          </tr>
+          <tr>
+            <td>相册（读取）</td>
+            <td>用于从相册选择个人头像。所选图片保存在本机应用沙盒，不会自动上传至我们的服务器。</td>
+          </tr>
+          <tr>
+            <td>iCloud</td>
+            <td>用于在您开启云同步时，将备份文件写入 iCloud Drive。数据归属您的 Apple 账户，受 Apple 隐私政策约束。</td>
+          </tr>
+        </tbody>
+      </table>
+    </article>
+
+    <article class="section">
+      <p class="section-num">04</p>
+      <h2>信息的存储与安全</h2>
+      <ul>
+        <li><strong>本地存储</strong>：任务、设置与头像默认保存在您的设备本地（UserDefaults 与应用沙盒目录）。</li>
+        <li><strong>iCloud 存储</strong>：开启云同步后，备份文件存储于 <code>Documents/Hub/backup.json</code>，由 Apple iCloud 基础设施托管。</li>
+        <li><strong>安全措施</strong>：我们采用行业通行的技术与管理措施保护数据；iCloud 与设备间传输由 Apple 提供的加密机制保护。</li>
+        <li><strong>保留期限</strong>：本地与 iCloud 中的数据在您卸载应用、关闭云同步或主动删除前将持续保留；您可随时通过应用内功能或删除 iCloud 备份文件清除数据。</li>
+      </ul>
+      <p>互联网传输与电子存储无法保证绝对安全；若发生可能危及您个人信息安全的事件，我们将依法及时告知并采取补救措施。</p>
+    </article>
+
+    <article class="section">
+      <p class="section-num">05</p>
+      <h2>第三方服务</h2>
+      <p>为实现部分功能，本应用可能接入或依赖以下第三方：</p>
+      <ul>
+        <li><strong>Apple 服务</strong>：iCloud Drive、本地/远程通知、App Store 评价请求等，适用 <a href="https://www.apple.com/legal/privacy/" rel="noopener">Apple 隐私政策</a>。</li>
+        <li><strong>远程配置服务</strong>：用于拉取应用配置（如 <code>GET /v1/app_config</code>），传输设备标识与版本等必要参数。</li>
+        <li><strong>归因服务</strong>：首次启动时可能通过第三方归因 SDK 获取推广来源信息，用于统计渠道效果；我们不会出售您的个人信息。</li>
+      </ul>
+      <p>除上述情形及法律法规要求外，我们不会向第三方出售、出租或交易您的个人信息。</p>
+    </article>
+
+    <article class="section">
+      <p class="section-num">06</p>
+      <h2>扩展功能与额外服务</h2>
+      <p>
+        根据远程配置，本应用可能向您展示额外的在线功能模块（例如内容创作、账户登录、充值或相册写入等）。
+        使用这些功能时，可能涉及账户信息、您上传的图片或视频、交易记录及反馈内容的上传与处理。
+        此类数据的收集范围、使用目的与存储方式以相应功能页面的说明及本政策为准；
+        涉及相册写入、远程推送、内购支付等权限时，系统将另行征得您的授权。
+      </p>
+    </article>
+
+    <article class="section">
+      <p class="section-num">07</p>
+      <h2>未成年人保护</h2>
+      <p>
+        本应用主要面向成年人。若您未满 18 周岁，请在监护人陪同下阅读本政策并在取得监护人同意后使用。
+        若我们发现未经监护人同意收集了未成年人的个人信息，将尽快删除相关数据。
+      </p>
+    </article>
+
+    <article class="section">
+      <p class="section-num">08</p>
+      <h2>您的权利</h2>
+      <p>在适用法律允许的范围内，您享有以下权利：</p>
+      <ul>
+        <li><strong>访问与更正</strong>：在应用「设置」中查看、修改昵称、邮箱及各项偏好。</li>
+        <li><strong>删除</strong>：删除任务、更换或移除头像；关闭云同步；卸载应用以清除本地数据。</li>
+        <li><strong>导出与恢复</strong>：通过云同步功能在 iCloud 中备份或恢复数据（需登录 Apple ID）。</li>
+        <li><strong>撤回授权</strong>：在 iOS「设置」中关闭通知、相册或 iCloud 访问权限。</li>
+        <li><strong>投诉与咨询</strong>：通过下方联系方式向我们提出隐私相关请求，我们将在合理期限内回复。</li>
+      </ul>
+    </article>
+
+    <article class="section">
+      <p class="section-num">09</p>
+      <h2>政策更新</h2>
+      <p>
+        我们可能适时修订本政策。重大变更时，我们将通过应用内提示、更新说明或本页面顶部的「最后更新」日期告知您。
+        修订后继续使用本应用，视为您接受更新后的政策；若您不同意，请停止使用并删除本地数据。
+      </p>
+    </article>
+
+    <article class="section">
+      <p class="section-num">10</p>
+      <h2>联系我们</h2>
+      <p>如您对本隐私政策或个人信息处理有任何疑问、意见或投诉，请通过以下方式联系我们：</p>
+      <ul>
+        <li>电子邮箱：<a href="mailto:privacy@lumina.io">privacy@lumina.io</a></li>
+        <li>应用名称：Hub（Lumina Focus）</li>
+        <li>Bundle ID：<code>com.lumina.hub</code></li>
+      </ul>
+    </article>
+
+    <footer class="footer">
+      <p>© 2026 Lumina. 保留所有权利。</p>
+      <p>本页面为 Hub · Lumina Focus 隐私政策的中文版本。</p>
+    </footer>
+  </div>
+</body>
+</html>

@@ -1,0 +1,234 @@
+<!DOCTYPE html><html class="light" lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport">
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "surface": "#f8f9fa",
+            "tertiary-fixed": "#ffddb4",
+            "tertiary": "#7f5300",
+            "secondary-fixed-dim": "#c3c7cc",
+            "surface-container-high": "#e7e8e9",
+            "on-primary-fixed": "#001c39",
+            "on-primary-fixed-variant": "#004883",
+            "on-tertiary-fixed": "#291800",
+            "secondary-container": "#dde0e5",
+            "inverse-surface": "#2e3132",
+            "error-container": "#ffdad6",
+            "secondary-fixed": "#e0e3e8",
+            "on-background": "#191c1d",
+            "surface-dim": "#d9dadb",
+            "surface-tint": "#0060ac",
+            "surface-container-low": "#f3f4f5",
+            "inverse-primary": "#a4c9ff",
+            "on-secondary-container": "#5f6368",
+            "surface-bright": "#f8f9fa",
+            "error": "#ba1a1a",
+            "secondary": "#5b5f63",
+            "on-secondary-fixed-variant": "#43474c",
+            "primary-fixed": "#d4e3ff",
+            "on-surface": "#191c1d",
+            "surface-container": "#edeeef",
+            "surface-container-lowest": "#ffffff",
+            "primary": "#005da7",
+            "background": "#f8f9fa",
+            "on-secondary-fixed": "#181c20",
+            "on-tertiary-container": "#fffbff",
+            "surface-variant": "#e1e3e4",
+            "on-tertiary": "#ffffff",
+            "on-primary": "#ffffff",
+            "on-secondary": "#ffffff",
+            "on-surface-variant": "#414751",
+            "on-primary-container": "#fdfcff",
+            "primary-container": "#2976c7",
+            "surface-container-highest": "#e1e3e4",
+            "tertiary-container": "#a06900",
+            "on-error-container": "#93000a",
+            "outline": "#717783",
+            "tertiary-fixed-dim": "#ffb953",
+            "on-error": "#ffffff",
+            "inverse-on-surface": "#f0f1f2",
+            "outline-variant": "#c1c7d3",
+            "primary-fixed-dim": "#a4c9ff",
+            "on-tertiary-fixed-variant": "#633f00"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+          "spacing": {
+            "margin-page": "24px",
+            "stack-xl": "40px",
+            "gutter": "12px",
+            "inset-md": "16px",
+            "stack-md": "16px",
+            "stack-sm": "8px"
+          },
+          "fontFamily": {
+            "headline-lg-mobile": ["Inter"],
+            "body-lg": ["Inter"],
+            "headline-lg": ["Inter"],
+            "display": ["Inter"],
+            "label-md": ["Inter"],
+            "label-sm": ["Inter"],
+            "body-md": ["Inter"]
+          },
+          "fontSize": {
+            "headline-lg-mobile": ["20px", {"lineHeight": "28px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+            "body-lg": ["18px", {"lineHeight": "28px", "letterSpacing": "0em", "fontWeight": "400"}],
+            "headline-lg": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+            "display": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+            "label-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0.02em", "fontWeight": "500"}],
+            "label-sm": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+            "body-md": ["16px", {"lineHeight": "24px", "letterSpacing": "0em", "fontWeight": "400"}]
+          }
+        },
+      },
+    }
+  </script>
+<style>
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
+    }
+    .safe-area-bottom {
+      padding-bottom: env(safe-area-inset-bottom);
+    }
+    .sheet-transition {
+      transition: transform 0.4s cubic-bezier(0.32, 0.72, 0, 1);
+    }
+  </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-surface text-on-surface font-body-md overflow-hidden">
+<!-- Background Canvas (Underneath the Quick Add) -->
+<main class="relative h-screen w-full flex flex-col p-margin-page opacity-40 select-none pointer-events-none">
+<div class="flex justify-between items-center mb-stack-xl">
+<h1 class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface">今日</h1>
+<span class="material-symbols-outlined text-primary">search</span>
+</div>
+<div class="space-y-stack-md">
+<div class="h-20 w-full bg-surface-container-lowest rounded-xl shadow-[0_4px_20px_rgba(0,0,0,0.04)]"></div>
+<div class="h-20 w-full bg-surface-container-lowest rounded-xl shadow-[0_4px_20px_rgba(0,0,0,0.04)]"></div>
+<div class="h-20 w-full bg-surface-container-lowest rounded-xl shadow-[0_4px_20px_rgba(0,0,0,0.04)]"></div>
+</div>
+</main>
+<!-- Dimmed Overlay -->
+<div class="fixed inset-0 bg-on-background/30 backdrop-blur-[2px] z-40 transition-opacity duration-300 opacity-100" id="overlay"></div>
+<!-- Quick Add Sheet -->
+<div class="fixed bottom-0 left-0 right-0 z-50 bg-surface-container-lowest rounded-t-[32px] shadow-[0_-8px_40px_rgba(0,0,0,0.12)] sheet-transition translate-y-0 max-w-2xl mx-auto" id="quick-add-sheet">
+<!-- Drag Handle -->
+<div class="w-full flex justify-center py-4">
+<div class="w-10 h-1 bg-outline-variant rounded-full"></div>
+</div>
+<div class="px-margin-page pb-12 pt-2">
+<!-- Input Section -->
+<div class="mb-stack-xl">
+<textarea autofocus="" class="w-full border-none focus:ring-0 p-0 text-headline-lg font-headline-lg text-on-surface placeholder:text-on-surface-variant/30 resize-none bg-transparent" id="task-input" placeholder="准备做什么？" rows="2"></textarea>
+</div>
+<!-- Action Cluster -->
+<div class="flex items-center justify-between mb-stack-xl">
+<div class="flex gap-gutter">
+<button class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-surface-container transition-colors" title="Set Date">
+<span class="material-symbols-outlined text-on-surface-variant" data-icon="today">today</span>
+</button>
+<button class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-surface-container transition-colors" title="Set Priority">
+<span class="material-symbols-outlined text-on-surface-variant" data-icon="priority_high">priority_high</span>
+</button>
+<button class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-surface-container transition-colors" title="Set Reminder">
+<span class="material-symbols-outlined text-on-surface-variant" data-icon="notifications">notifications</span>
+</button>
+<button class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-surface-container transition-colors" title="Add Tag">
+<span class="material-symbols-outlined text-on-surface-variant" data-icon="sell">sell</span>
+</button>
+</div>
+<!-- Meta Data Display (Optional context) -->
+<div class="hidden sm:block">
+<span class="text-label-sm font-label-sm text-outline px-3 py-1 bg-surface-container-low rounded-full">Personal</span>
+</div>
+</div>
+<!-- Footer Action -->
+<div class="flex items-center justify-between gap-4 pt-4 border-t border-surface-variant/30">
+<button class="px-6 py-3 font-label-md text-label-md text-secondary hover:bg-surface-container rounded-xl transition-all active:scale-95" id="cancel-btn">取消</button>
+<button class="flex-1 sm:flex-none sm:min-w-[140px] px-8 py-3 bg-primary text-on-primary font-label-md text-label-md rounded-xl shadow-lg shadow-primary/20 hover:bg-primary-container transition-all active:scale-95 flex items-center justify-center gap-2" id="save-btn">
+<span class="">保存</span>
+<span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'wght' 500;">check</span>
+</button>
+</div>
+</div>
+<div class="safe-area-bottom"></div>
+</div>
+<script>
+    const sheet = document.getElementById('quick-add-sheet');
+    const overlay = document.getElementById('overlay');
+    const cancelBtn = document.getElementById('cancel-btn');
+    const saveBtn = document.getElementById('save-btn');
+    const taskInput = document.getElementById('task-input');
+
+    function closeSheet() {
+      sheet.classList.add('translate-y-full');
+      overlay.classList.remove('opacity-100');
+      overlay.classList.add('opacity-0');
+      setTimeout(() => {
+        // Logically we would navigate back, here we just reset for demo
+        sheet.classList.remove('translate-y-full');
+        overlay.classList.add('opacity-100');
+        overlay.classList.remove('opacity-0');
+        taskInput.value = '';
+        taskInput.focus();
+      }, 1000);
+    }
+
+    cancelBtn.addEventListener('click', closeSheet);
+    overlay.addEventListener('click', closeSheet);
+    
+    saveBtn.addEventListener('click', () => {
+      if (taskInput.value.trim() !== '') {
+        // Success micro-interaction
+        saveBtn.innerHTML = '<span class="material-symbols-outlined animate-bounce">done_all</span>';
+        setTimeout(closeSheet, 600);
+      } else {
+        taskInput.placeholder = "Please enter a task name...";
+        taskInput.classList.add('animate-pulse');
+        setTimeout(() => taskInput.classList.remove('animate-pulse'), 1000);
+      }
+    });
+
+    // Simple drag down hint (visual only for this demo)
+    let startY = 0;
+    sheet.addEventListener('touchstart', (e) => {
+      startY = e.touches[0].clientY;
+    });
+
+    sheet.addEventListener('touchmove', (e) => {
+      const currentY = e.touches[0].clientY;
+      const diff = currentY - startY;
+      if (diff > 0) {
+        sheet.style.transform = `translateY(${diff}px)`;
+      }
+    });
+
+    sheet.addEventListener('touchend', (e) => {
+      const currentY = e.changedTouches[0].clientY;
+      if (currentY - startY > 150) {
+        closeSheet();
+      } else {
+        sheet.style.transform = `translateY(0)`;
+      }
+    });
+  </script>
+
+
+</body></html>

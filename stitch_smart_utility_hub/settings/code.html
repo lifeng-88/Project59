@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+
+<html lang="zh-CN"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-tertiary-fixed": "#291800",
+                    "inverse-primary": "#a4c9ff",
+                    "on-background": "#191c1d",
+                    "background": "#f8f9fa",
+                    "primary-fixed-dim": "#a4c9ff",
+                    "primary": "#005da7",
+                    "outline-variant": "#c1c7d3",
+                    "on-primary": "#ffffff",
+                    "surface-dim": "#d9dadb",
+                    "on-secondary-fixed-variant": "#43474c",
+                    "surface-container-low": "#f3f4f5",
+                    "inverse-on-surface": "#f0f1f2",
+                    "surface-container-highest": "#e1e3e4",
+                    "on-secondary": "#ffffff",
+                    "surface": "#f8f9fa",
+                    "on-tertiary-container": "#fffbff",
+                    "inverse-surface": "#2e3132",
+                    "surface-container-lowest": "#ffffff",
+                    "on-tertiary-fixed-variant": "#633f00",
+                    "on-tertiary": "#ffffff",
+                    "on-primary-container": "#fdfcff",
+                    "error-container": "#ffdad6",
+                    "surface-bright": "#f8f9fa",
+                    "secondary-fixed-dim": "#c3c7cc",
+                    "surface-container": "#edeeef",
+                    "secondary-container": "#dde0e5",
+                    "primary-container": "#2976c7",
+                    "tertiary": "#7f5300",
+                    "tertiary-fixed-dim": "#ffb953",
+                    "secondary-fixed": "#e0e3e8",
+                    "on-error-container": "#93000a",
+                    "on-primary-fixed": "#001c39",
+                    "secondary": "#5b5f63",
+                    "outline": "#717783",
+                    "on-error": "#ffffff",
+                    "surface-variant": "#e1e3e4",
+                    "surface-container-high": "#e7e8e9",
+                    "on-surface": "#191c1d",
+                    "error": "#ba1a1a",
+                    "on-primary-fixed-variant": "#004883",
+                    "tertiary-fixed": "#ffddb4",
+                    "surface-tint": "#0060ac",
+                    "tertiary-container": "#a06900",
+                    "primary-fixed": "#d4e3ff",
+                    "on-secondary-fixed": "#181c20",
+                    "on-surface-variant": "#414751",
+                    "on-secondary-container": "#5f6368"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "stack-xl": "40px",
+                    "stack-md": "16px",
+                    "gutter": "12px",
+                    "margin-page": "24px",
+                    "stack-sm": "8px",
+                    "inset-md": "16px"
+            },
+            "fontFamily": {
+                    "body-lg": ["Inter"],
+                    "label-md": ["Inter"],
+                    "display": ["Inter"],
+                    "label-sm": ["Inter"],
+                    "body-md": ["Inter"],
+                    "headline-lg": ["Inter"],
+                    "headline-lg-mobile": ["Inter"]
+            },
+            "fontSize": {
+                    "body-lg": ["18px", {"lineHeight": "28px", "letterSpacing": "0em", "fontWeight": "400"}],
+                    "label-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0.02em", "fontWeight": "500"}],
+                    "display": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "label-sm": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                    "body-md": ["16px", {"lineHeight": "24px", "letterSpacing": "0em", "fontWeight": "400"}],
+                    "headline-lg": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                    "headline-lg-mobile": ["20px", {"lineHeight": "28px", "letterSpacing": "-0.01em", "fontWeight": "600"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; -webkit-font-smoothing: antialiased; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .soft-shadow {
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+        }
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-surface text-on-surface min-h-screen pb-32">
+<!-- TopAppBar -->
+<header class="fixed top-0 left-0 w-full z-50 bg-surface flex justify-between items-center h-16 px-margin-page transition-colors duration-200 ease-in-out">
+<div class="flex items-center gap-4">
+<button class="material-symbols-outlined text-on-surface-variant hover:bg-surface-container-low p-2 rounded-full transition-colors" data-icon="menu">menu</button>
+<h1 class="text-headline-lg-mobile font-headline-lg-mobile text-on-surface">设置</h1>
+</div>
+<button class="material-symbols-outlined text-on-surface-variant hover:bg-surface-container-low p-2 rounded-full transition-colors" data-icon="search">search</button>
+</header>
+<main class="mt-16 px-margin-page max-w-2xl mx-auto pt-stack-md">
+<!-- Profile Section -->
+<section class="mb-stack-xl">
+<h2 class="text-label-sm font-label-sm text-on-surface-variant mb-stack-sm tracking-widest uppercase">个人资料</h2>
+<div class="bg-surface-container-lowest rounded-xl p-inset-md soft-shadow flex items-center justify-between hover:bg-surface-container-low transition-colors cursor-pointer group">
+<div class="flex items-center gap-4">
+<div class="w-14 h-14 rounded-full overflow-hidden bg-secondary-container">
+<img alt="User Profile" class="w-full h-full object-cover" data-alt="A professional close-up portrait of a serene-looking young man with a slight smile, set against a blurred, minimalist background. The lighting is soft and natural, emphasizing a calm and focused atmosphere. The image adheres to a high-key, modern light-mode aesthetic with gentle contrast and clear detail, reflecting a clean and professional Lumina Focus brand identity." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCLHyDZH1AhbOJbgE1lFw14DIjwZP_7Q_Xt_aq7UzudtUiUh1zrO3IbJmWNdnJX8n8jjdfoMLYiY7mbookuSk_Mznwu9JO5UPgk-Iwjzxq58xjD3T5Q2Q8FnA6Bagso9AO5ar1tbRQ5isOWUPPDmIZ2oSziLDa0Qt7ldXgswB9zxvR4cdnLqThDd1BurqKskN_VOTHUtxds4y31IVgmjy8vCJWqmbWMRH8W-aB7MRr0KewAvibn-x5WBMd8BKk-6bpr3uA3uJnbHaY"/>
+</div>
+<div>
+<p class="text-body-lg font-body-lg text-on-surface">张伟</p>
+<p class="text-label-md font-label-md text-on-surface-variant">zhangwei@lumina.io</p>
+</div>
+</div>
+<span class="material-symbols-outlined text-outline-variant group-hover:translate-x-1 transition-transform" data-icon="chevron_right">chevron_right</span>
+</div>
+</section>
+<!-- Preferences Section -->
+<section class="mb-stack-xl">
+<h2 class="text-label-sm font-label-sm text-on-surface-variant mb-stack-sm tracking-widest uppercase">偏好设置</h2>
+<div class="bg-surface-container-lowest rounded-xl soft-shadow overflow-hidden">
+<div class="flex items-center justify-between p-inset-md hover:bg-surface-container-low transition-colors cursor-pointer border-b border-surface-variant/30">
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-primary" data-icon="language">language</span>
+<span class="text-body-md font-body-md">语言</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="text-label-md font-label-md text-on-surface-variant">简体中文</span>
+<span class="material-symbols-outlined text-outline-variant" data-icon="chevron_right">chevron_right</span>
+</div>
+</div>
+<div class="flex items-center justify-between p-inset-md hover:bg-surface-container-low transition-colors cursor-pointer border-b border-surface-variant/30">
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-primary" data-icon="dark_mode">dark_mode</span>
+<span class="text-body-md font-body-md">主题模式</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="text-label-md font-label-md text-on-surface-variant">浅色模式</span>
+<span class="material-symbols-outlined text-outline-variant" data-icon="chevron_right">chevron_right</span>
+</div>
+</div>
+<div class="flex items-center justify-between p-inset-md hover:bg-surface-container-low transition-colors cursor-pointer">
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-primary" data-icon="notifications">notifications</span>
+<span class="text-body-md font-body-md">提醒通知</span>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox"/>
+<div class="w-11 h-6 bg-secondary-container peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+</label>
+</div>
+</div>
+</section>
+<!-- Focus Mode Section -->
+<section class="mb-stack-xl">
+<h2 class="text-label-sm font-label-sm text-on-surface-variant mb-stack-sm tracking-widest uppercase">专注模式</h2>
+<div class="bg-surface-container-lowest rounded-xl soft-shadow overflow-hidden">
+<div class="flex items-center justify-between p-inset-md hover:bg-surface-container-low transition-colors cursor-pointer border-b border-surface-variant/30">
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-tertiary" data-icon="timer">timer</span>
+<span class="text-body-md font-body-md">番茄钟时长</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="text-label-md font-label-md text-on-surface-variant">25 分钟</span>
+<span class="material-symbols-outlined text-outline-variant" data-icon="expand_more">expand_more</span>
+</div>
+</div>
+<div class="flex items-center justify-between p-inset-md hover:bg-surface-container-low transition-colors cursor-pointer">
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-tertiary" data-icon="coffee">coffee</span>
+<span class="text-body-md font-body-md">休息时长</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="text-label-md font-label-md text-on-surface-variant">5 分钟</span>
+<span class="material-symbols-outlined text-outline-variant" data-icon="expand_more">expand_more</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Data & Backup Section -->
+<section class="mb-stack-xl">
+<h2 class="text-label-sm font-label-sm text-on-surface-variant mb-stack-sm tracking-widest uppercase">数据与备份</h2>
+<div class="bg-surface-container-lowest rounded-xl soft-shadow overflow-hidden">
+<div class="flex items-center justify-between p-inset-md hover:bg-surface-container-low transition-colors cursor-pointer border-b border-surface-variant/30">
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-secondary" data-icon="cloud_sync">cloud_sync</span>
+<span class="text-body-md font-body-md">云端同步</span>
+</div>
+<span class="text-label-sm font-label-sm bg-primary-fixed text-on-primary-fixed px-2 py-0.5 rounded-full">已开启</span>
+</div>
+<div class="flex items-center justify-between p-inset-md hover:bg-surface-container-low transition-colors cursor-pointer">
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-secondary" data-icon="download">download</span>
+<span class="text-body-md font-body-md">导出数据 (JSON/CSV)</span>
+</div>
+<span class="material-symbols-outlined text-outline-variant" data-icon="chevron_right">chevron_right</span>
+</div>
+</div>
+</section>
+<!-- About Section -->
+<section class="mb-stack-xl">
+<h2 class="text-label-sm font-label-sm text-on-surface-variant mb-stack-sm tracking-widest uppercase">关于应用</h2>
+<div class="bg-surface-container-lowest rounded-xl soft-shadow overflow-hidden">
+<div class="flex items-center justify-between p-inset-md hover:bg-surface-container-low transition-colors cursor-pointer border-b border-surface-variant/30">
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-on-surface-variant" data-icon="info">info</span>
+<span class="text-body-md font-body-md">版本号</span>
+</div>
+<span class="text-label-md font-label-md text-outline">v2.4.0</span>
+</div>
+<div class="flex items-center justify-between p-inset-md hover:bg-surface-container-low transition-colors cursor-pointer border-b border-surface-variant/30">
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-on-surface-variant" data-icon="policy">policy</span>
+<span class="text-body-md font-body-md">隐私政策</span>
+</div>
+<span class="material-symbols-outlined text-outline-variant" data-icon="open_in_new">open_in_new</span>
+</div>
+<div class="flex items-center justify-between p-inset-md hover:bg-surface-container-low transition-colors cursor-pointer">
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-on-surface-variant" data-icon="star">star</span>
+<span class="text-body-md font-body-md">评价应用</span>
+</div>
+<span class="material-symbols-outlined text-outline-variant" data-icon="chevron_right">chevron_right</span>
+</div>
+</div>
+</section>
+<!-- Sign Out -->
+<div class="mt-stack-xl flex justify-center pb-stack-xl">
+<button class="text-error font-body-md hover:bg-error-container/10 px-8 py-3 rounded-full transition-colors flex items-center gap-2">
+<span class="material-symbols-outlined" data-icon="logout">logout</span>
+                退出登录
+            </button>
+</div>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center h-20 px-4 pb-safe bg-surface rounded-t-xl shadow-[0_-4px_20px_rgba(0,0,0,0.04)]">
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:bg-surface-container-lowest transition-transform active:scale-95 duration-150" href="#">
+<span class="material-symbols-outlined" data-icon="today">today</span>
+<span class="text-label-sm font-label-sm mt-1">Today</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:bg-surface-container-lowest transition-transform active:scale-95 duration-150" href="#">
+<span class="material-symbols-outlined" data-icon="calendar_month">calendar_month</span>
+<span class="text-label-sm font-label-sm mt-1">Calendar</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:bg-surface-container-lowest transition-transform active:scale-95 duration-150" href="#">
+<span class="material-symbols-outlined" data-icon="analytics">analytics</span>
+<span class="text-label-sm font-label-sm mt-1">Insights</span>
+</a>
+<a class="flex flex-col items-center justify-center text-primary font-bold transition-transform active:scale-95 duration-150" href="#">
+<span class="material-symbols-outlined" data-icon="settings" style="font-variation-settings: 'FILL' 1;">settings</span>
+<span class="text-label-sm font-label-sm mt-1">Settings</span>
+</a>
+</nav>
+<script>
+        // Simple micro-interactions for checkboxes and ripples
+        document.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+            checkbox.addEventListener('change', function() {
+                this.parentElement.closest('div').classList.add('scale-105');
+                setTimeout(() => {
+                    this.parentElement.closest('div').classList.remove('scale-105');
+                }, 150);
+            });
+        });
+
+        // Toggle hover effect state demonstration
+        const interactiveItems = document.querySelectorAll('.bg-surface-container-lowest');
+        interactiveItems.forEach(item => {
+            item.addEventListener('mousedown', () => {
+                item.style.transform = 'scale(0.985)';
+            });
+            item.addEventListener('mouseup', () => {
+                item.style.transform = 'scale(1)';
+            });
+            item.addEventListener('mouseleave', () => {
+                item.style.transform = 'scale(1)';
+            });
+        });
+    </script>
+</body></html>

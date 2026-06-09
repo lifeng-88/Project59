@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+
+<html lang="zh-CN"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-tertiary-container": "#fffbff",
+                    "on-primary-fixed-variant": "#004883",
+                    "surface-container-lowest": "#ffffff",
+                    "tertiary": "#7f5300",
+                    "secondary-fixed": "#e0e3e8",
+                    "on-secondary-container": "#5f6368",
+                    "surface-container-low": "#f3f4f5",
+                    "secondary": "#5b5f63",
+                    "surface-variant": "#e1e3e4",
+                    "surface-dim": "#d9dadb",
+                    "secondary-fixed-dim": "#c3c7cc",
+                    "on-primary-container": "#fdfcff",
+                    "error": "#ba1a1a",
+                    "inverse-on-surface": "#f0f1f2",
+                    "secondary-container": "#dde0e5",
+                    "surface-container-highest": "#e1e3e4",
+                    "on-error": "#ffffff",
+                    "surface": "#f8f9fa",
+                    "inverse-primary": "#a4c9ff",
+                    "on-secondary-fixed-variant": "#43474c",
+                    "on-primary-fixed": "#001c39",
+                    "surface-container": "#edeeef",
+                    "primary-container": "#2976c7",
+                    "on-tertiary": "#ffffff",
+                    "primary-fixed": "#d4e3ff",
+                    "outline-variant": "#c1c7d3",
+                    "surface-container-high": "#e7e8e9",
+                    "primary-fixed-dim": "#a4c9ff",
+                    "surface-bright": "#f8f9fa",
+                    "outline": "#717783",
+                    "on-primary": "#ffffff",
+                    "tertiary-container": "#a06900",
+                    "on-secondary-fixed": "#181c20",
+                    "on-tertiary-fixed-variant": "#633f00",
+                    "on-secondary": "#ffffff",
+                    "background": "#f8f9fa",
+                    "primary": "#005da7",
+                    "on-background": "#191c1d",
+                    "error-container": "#ffdad6",
+                    "surface-tint": "#0060ac",
+                    "on-error-container": "#93000a",
+                    "tertiary-fixed-dim": "#ffb953",
+                    "on-surface-variant": "#414751",
+                    "on-surface": "#191c1d",
+                    "inverse-surface": "#2e3132",
+                    "tertiary-fixed": "#ffddb4",
+                    "on-tertiary-fixed": "#291800"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "stack-md": "16px",
+                    "margin-page": "24px",
+                    "stack-xl": "40px",
+                    "inset-md": "16px",
+                    "gutter": "12px",
+                    "stack-sm": "8px"
+            },
+            "fontFamily": {
+                    "label-md": ["Inter"],
+                    "body-md": ["Inter"],
+                    "display": ["Inter"],
+                    "headline-lg-mobile": ["Inter"],
+                    "label-sm": ["Inter"],
+                    "body-lg": ["Inter"],
+                    "headline-lg": ["Inter"]
+            },
+            "fontSize": {
+                    "label-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0.02em", "fontWeight": "500"}],
+                    "body-md": ["16px", {"lineHeight": "24px", "letterSpacing": "0em", "fontWeight": "400"}],
+                    "display": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "headline-lg-mobile": ["20px", {"lineHeight": "28px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                    "label-sm": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                    "body-lg": ["18px", {"lineHeight": "28px", "letterSpacing": "0em", "fontWeight": "400"}],
+                    "headline-lg": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body {
+            background-color: #f8f9fa;
+            color: #191c1d;
+            -webkit-font-smoothing: antialiased;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .soft-shadow {
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="min-h-screen pb-24">
+<!-- Header Section -->
+<header class="sticky top-0 z-50 bg-surface/80 backdrop-blur-md flex justify-between items-center h-16 px-margin-page w-full">
+<div class="flex items-center gap-4">
+<button class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-surface-container-low transition-colors">
+<span class="material-symbols-outlined text-on-surface">arrow_back</span>
+</button>
+<h1 class="text-headline-lg-mobile font-headline-lg-mobile text-on-surface">关于专注模式</h1>
+</div>
+<button class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-surface-container-low transition-colors">
+<span class="material-symbols-outlined text-on-surface-variant">search</span>
+</button>
+</header>
+<main class="px-margin-page pt-stack-md space-y-stack-xl">
+<!-- Introduction: Pomodoro Technique -->
+<section class="animate-in fade-in slide-in-from-bottom-4 duration-700">
+<div class="relative overflow-hidden rounded-xl bg-primary-container p-6 text-on-primary-container">
+<div class="relative z-10">
+<h2 class="text-headline-lg-mobile font-headline-lg-mobile mb-2">什么是番茄工作法？</h2>
+<p class="text-body-md font-body-md opacity-90 leading-relaxed">
+                        番茄工作法（Pomodoro Technique）是一种简单易行的延时管理方法。通过将工作时间切分为25分钟的“番茄钟”和5分钟的休息，帮助您保持高强度的专注，同时避免过度疲劳。
+                    </p>
+</div>
+<div class="absolute -right-4 -bottom-4 opacity-10">
+<span class="material-symbols-outlined text-[120px]" style="font-variation-settings: 'FILL' 1;">timer</span>
+</div>
+</div>
+</section>
+<!-- Detailed Explanation Cards (Asymmetric Bento Grid) -->
+<section class="grid grid-cols-1 md:grid-cols-2 gap-gutter">
+<!-- Timing Card -->
+<div class="bg-white rounded-xl p-inset-md soft-shadow border border-surface-container-high transition-all hover:translate-y-[-2px] hover:shadow-lg group">
+<div class="w-12 h-12 rounded-full bg-primary/5 flex items-center justify-center mb-4 group-hover:bg-primary/10 transition-colors">
+<span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">schedule</span>
+</div>
+<h3 class="text-body-lg font-bold mb-2">番茄钟设置</h3>
+<p class="text-label-md font-label-md text-on-surface-variant leading-relaxed mb-4">
+                    默认设定为25分钟专注与5分钟休息。您可以根据自己的专注节奏，在设置中自定义时长。建议每完成4个番茄钟进行一次15-30分钟的长休息。
+                </p>
+<div class="flex gap-2">
+<span class="px-2 py-1 rounded-full bg-primary-fixed text-primary text-[10px] font-bold uppercase tracking-wider">灵活</span>
+<span class="px-2 py-1 rounded-full bg-primary-fixed text-primary text-[10px] font-bold uppercase tracking-wider">高效</span>
+</div>
+</div>
+<!-- Deep Focus Card -->
+<div class="bg-white rounded-xl p-inset-md soft-shadow border border-surface-container-high transition-all hover:translate-y-[-2px] hover:shadow-lg group">
+<div class="w-12 h-12 rounded-full bg-error/5 flex items-center justify-center mb-4 group-hover:bg-error/10 transition-colors">
+<span class="material-symbols-outlined text-error" style="font-variation-settings: 'FILL' 1;">do_not_disturb_on</span>
+</div>
+<h3 class="text-body-lg font-bold mb-2">深度专注</h3>
+<p class="text-label-md font-label-md text-on-surface-variant leading-relaxed">
+                    进入深度专注模式后，系统将屏蔽所有非紧急通知。这种“零干扰”环境能帮助大脑更快进入“心流”状态，处理逻辑复杂或需要创造力的任务。
+                </p>
+</div>
+<!-- Soundscape Card -->
+<div class="md:col-span-2 bg-white rounded-xl p-inset-md soft-shadow border border-surface-container-high transition-all hover:translate-y-[-2px] hover:shadow-lg group flex flex-col md:flex-row gap-6">
+<div class="md:w-1/3">
+<div class="w-12 h-12 rounded-full bg-tertiary/5 flex items-center justify-center mb-4 group-hover:bg-tertiary/10 transition-colors">
+<span class="material-symbols-outlined text-tertiary" style="font-variation-settings: 'FILL' 1;">graphic_eq</span>
+</div>
+<h3 class="text-body-lg font-bold mb-2">专注环境音</h3>
+<p class="text-label-md font-label-md text-on-surface-variant leading-relaxed">
+                        声音对认知负荷有显著影响。Lumini 为不同类型的任务精选了多款环境音效。
+                    </p>
+</div>
+<div class="md:w-2/3 grid grid-cols-2 gap-stack-sm">
+<div class="bg-surface-container-low rounded-lg p-3 flex items-center gap-3">
+<span class="material-symbols-outlined text-primary">rainy</span>
+<div>
+<p class="text-label-sm font-bold">雨声</p>
+<p class="text-[10px] text-on-surface-variant">适合创意写作</p>
+</div>
+</div>
+<div class="bg-surface-container-low rounded-lg p-3 flex items-center gap-3">
+<span class="material-symbols-outlined text-primary">air</span>
+<div>
+<p class="text-label-sm font-bold">白噪音</p>
+<p class="text-[10px] text-on-surface-variant">适合逻辑分析</p>
+</div>
+</div>
+<div class="bg-surface-container-low rounded-lg p-3 flex items-center gap-3">
+<span class="material-symbols-outlined text-primary">forest</span>
+<div>
+<p class="text-label-sm font-bold">森林</p>
+<p class="text-[10px] text-on-surface-variant">缓解焦虑</p>
+</div>
+</div>
+<div class="bg-surface-container-low rounded-lg p-3 flex items-center gap-3">
+<span class="material-symbols-outlined text-primary">coffee</span>
+<div>
+<p class="text-label-sm font-bold">咖啡馆</p>
+<p class="text-[10px] text-on-surface-variant">温和的背景感</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Visual Tip Section -->
+<section class="space-y-stack-md">
+<h2 class="text-label-md font-bold text-on-surface-variant uppercase tracking-widest px-2">视觉提示</h2>
+<div class="relative group cursor-pointer overflow-hidden rounded-2xl h-48">
+<img alt="Minimalist desk" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" data-alt="A meticulously organized minimalist wooden desk featuring a single laptop, a steaming cup of coffee in a white ceramic mug, and a small green succulent plant. The background is a clean white wall illuminated by soft, natural morning light streaming through a nearby window. The atmosphere is peaceful, serene, and designed for deep focus and productivity, reflecting a high-end digital breathing room aesthetic with calm blue accents." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDguBzBJMn32GOw9BFbriD1XKOxa-lXVuWgvdm-N10-woNX4Wg9P2FFP3vj9oDLQpgLDI65XZEDm6K2nuYMmRBqvEYPlHIy08AsOMt2Wd63uq2r2Gh8_tSqdHQ6CvGg5cUoleCBe3kgHOYRP-btBg7bPrTiVkPEkdAe5qJ27fuLDqIoKQNo4zq4sAda9MVCBrc2PGPaPyDgwQIsLKec9I8hy4OMjlmCszYLHTGVEdCYlw0Ka_ajq1zJE7KAr_5IhiF3Nj0on-Yg0s4"/>
+<div class="absolute inset-0 bg-gradient-to-t from-on-background/60 to-transparent flex items-end p-6">
+<p class="text-white text-body-md font-medium">保持桌面整洁是进入专注状态的第一步。</p>
+</div>
+</div>
+</section>
+<!-- Action Section -->
+<section class="flex flex-col items-center gap-stack-md text-center py-stack-md">
+<p class="text-label-md text-on-surface-variant">准备好开始您的第一个番茄钟了吗？</p>
+<button class="px-8 py-3 bg-primary text-on-primary rounded-full font-label-md transition-all active:scale-95 hover:shadow-lg hover:shadow-primary/20">
+                立即开始专注
+            </button>
+</section>
+</main>
+<!-- Navigation Shell (BottomNavBar) -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center h-20 px-4 pb-safe bg-surface dark:bg-on-background rounded-t-xl shadow-[0_-4px_20px_rgba(0,0,0,0.04)] md:hidden">
+<a class="flex flex-col items-center justify-center text-on-surface-variant active:scale-95 transition-transform duration-150" href="#">
+<span class="material-symbols-outlined">today</span>
+<span class="text-label-sm font-label-sm">Today</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant active:scale-95 transition-transform duration-150" href="#">
+<span class="material-symbols-outlined">calendar_month</span>
+<span class="text-label-sm font-label-sm">Calendar</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant active:scale-95 transition-transform duration-150" href="#">
+<span class="material-symbols-outlined">analytics</span>
+<span class="text-label-sm font-label-sm">Insights</span>
+</a>
+<a class="flex flex-col items-center justify-center text-primary font-bold active:scale-95 transition-transform duration-150" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">settings</span>
+<span class="text-label-sm font-label-sm">Settings</span>
+</a>
+</nav>
+<script>
+        // Simple micro-interaction for cards
+        document.querySelectorAll('.bg-white').forEach(card => {
+            card.addEventListener('touchstart', () => {
+                card.style.transform = 'scale(0.98)';
+            });
+            card.addEventListener('touchend', () => {
+                card.style.transform = 'scale(1)';
+            });
+        });
+    </script>
+</body></html>

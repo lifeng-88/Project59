@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+
+<html class="light" lang="zh-CN"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+                  "surface": "#f8f9fa",
+                  "tertiary-fixed": "#ffddb4",
+                  "tertiary": "#7f5300",
+                  "secondary-fixed-dim": "#c3c7cc",
+                  "surface-container-high": "#e7e8e9",
+                  "on-primary-fixed": "#001c39",
+                  "on-primary-fixed-variant": "#004883",
+                  "on-tertiary-fixed": "#291800",
+                  "secondary-container": "#dde0e5",
+                  "inverse-surface": "#2e3132",
+                  "error-container": "#ffdad6",
+                  "secondary-fixed": "#e0e3e8",
+                  "on-background": "#191c1d",
+                  "surface-dim": "#d9dadb",
+                  "surface-tint": "#0060ac",
+                  "surface-container-low": "#f3f4f5",
+                  "inverse-primary": "#a4c9ff",
+                  "on-secondary-container": "#5f6368",
+                  "surface-bright": "#f8f9fa",
+                  "error": "#ba1a1a",
+                  "secondary": "#5b5f63",
+                  "on-secondary-fixed-variant": "#43474c",
+                  "primary-fixed": "#d4e3ff",
+                  "on-surface": "#191c1d",
+                  "surface-container": "#edeeef",
+                  "surface-container-lowest": "#ffffff",
+                  "primary": "#005da7",
+                  "background": "#f8f9fa",
+                  "on-secondary-fixed": "#181c20",
+                  "on-tertiary-container": "#fffbff",
+                  "surface-variant": "#e1e3e4",
+                  "on-tertiary": "#ffffff",
+                  "on-primary": "#ffffff",
+                  "on-secondary": "#ffffff",
+                  "on-surface-variant": "#414751",
+                  "on-primary-container": "#fdfcff",
+                  "primary-container": "#2976c7",
+                  "surface-container-highest": "#e1e3e4",
+                  "tertiary-container": "#a06900",
+                  "on-error-container": "#93000a",
+                  "outline": "#717783",
+                  "tertiary-fixed-dim": "#ffb953",
+                  "on-error": "#ffffff",
+                  "inverse-on-surface": "#f0f1f2",
+                  "outline-variant": "#c1c7d3",
+                  "primary-fixed-dim": "#a4c9ff",
+                  "on-tertiary-fixed-variant": "#633f00"
+          },
+          "borderRadius": {
+                  "DEFAULT": "0.25rem",
+                  "lg": "0.5rem",
+                  "xl": "0.75rem",
+                  "full": "9999px"
+          },
+          "spacing": {
+                  "margin-page": "24px",
+                  "stack-xl": "40px",
+                  "gutter": "12px",
+                  "inset-md": "16px",
+                  "stack-md": "16px",
+                  "stack-sm": "8px"
+          },
+          "fontFamily": {
+                  "headline-lg-mobile": ["Inter"],
+                  "body-lg": ["Inter"],
+                  "headline-lg": ["Inter"],
+                  "display": ["Inter"],
+                  "label-md": ["Inter"],
+                  "label-sm": ["Inter"],
+                  "body-md": ["Inter"]
+          },
+          "fontSize": {
+                  "headline-lg-mobile": ["20px", {"lineHeight": "28px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                  "body-lg": ["18px", {"lineHeight": "28px", "letterSpacing": "0em", "fontWeight": "400"}],
+                  "headline-lg": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                  "display": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                  "label-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0.02em", "fontWeight": "500"}],
+                  "label-sm": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                  "body-md": ["16px", {"lineHeight": "24px", "letterSpacing": "0em", "fontWeight": "400"}]
+          }
+        },
+      },
+    }
+  </script>
+<style>
+    body {
+      background-color: #f8f9fa;
+      font-family: 'Inter', sans-serif;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    }
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 0px;
+      background: transparent;
+    }
+    .soft-shadow {
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+    }
+    .fab-shadow {
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+    }
+    .task-strikethrough {
+      text-decoration: line-through;
+      opacity: 0.4;
+    }
+  </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+</head>
+<body class="bg-surface text-on-surface min-h-screen flex flex-col">
+<!-- Top App Bar -->
+<header class="flex justify-between items-center h-16 px-margin-page w-full docked full-width top-0 bg-surface z-40 transition-colors duration-200 ease-in-out">
+<div class="flex items-center gap-4">
+<button class="text-primary hover:bg-surface-container-low p-2 rounded-full transition-colors duration-200">
+<span class="material-symbols-outlined" data-icon="menu">menu</span>
+</button>
+<h1 class="text-headline-lg-mobile font-headline-lg-mobile text-on-surface">今日</h1>
+</div>
+<div class="flex items-center gap-2">
+<button class="text-primary hover:bg-surface-container-low p-2 rounded-full transition-colors duration-200">
+<span class="material-symbols-outlined" data-icon="search">search</span>
+</button>
+</div>
+</header>
+<main class="flex-1 px-margin-page pb-32 max-w-2xl mx-auto w-full">
+<!-- Date Header -->
+<section class="mt-stack-sm mb-stack-xl">
+<h2 class="text-display font-display tracking-tight text-on-background">5月24日 星期四</h2>
+<p class="text-label-md font-label-md text-on-surface-variant mt-1">今天还有 4 个任务待办</p>
+</section>
+<!-- Task List -->
+<div class="flex flex-col gap-stack-md">
+<!-- Active Task 1 -->
+<div class="bg-surface-container-lowest p-inset-md rounded-xl flex items-center gap-4 min-h-[64px] soft-shadow active:scale-[0.98] transition-all cursor-pointer">
+<button class="w-6 h-6 rounded-full border-2 border-outline-variant flex items-center justify-center transition-all duration-200 hover:border-primary" onclick="toggleTask(this)">
+<span class="material-symbols-outlined text-[18px] opacity-0 text-white" style="font-variation-settings: 'FILL' 1;">check</span>
+</button>
+<div class="flex-1">
+<p class="text-body-md font-body-md text-on-surface">完成设计提案</p>
+<div class="flex gap-2 mt-1">
+<span class="bg-primary/5 text-primary text-label-sm font-label-sm px-2 py-0.5 rounded-full">工作</span>
+</div>
+</div>
+</div>
+<!-- Active Task 2 -->
+<div class="bg-surface-container-lowest p-inset-md rounded-xl flex items-center gap-4 min-h-[64px] soft-shadow active:scale-[0.98] transition-all cursor-pointer">
+<button class="w-6 h-6 rounded-full border-2 border-outline-variant flex items-center justify-center transition-all duration-200 hover:border-primary" onclick="toggleTask(this)">
+<span class="material-symbols-outlined text-[18px] opacity-0 text-white" style="font-variation-settings: 'FILL' 1;">check</span>
+</button>
+<div class="flex-1">
+<p class="text-body-md font-body-md text-on-surface">深度工作：聚焦逻辑层</p>
+<div class="flex gap-2 mt-1">
+<span class="bg-primary/5 text-primary text-label-sm font-label-sm px-2 py-0.5 rounded-full">深度专注</span>
+</div>
+</div>
+</div>
+<!-- Image Card (Aesthetic Break) -->
+<div class="relative w-full aspect-[21/9] rounded-xl overflow-hidden soft-shadow mb-stack-sm">
+<img class="w-full h-full object-cover grayscale-[20%] brightness-95" data-alt="A serene workspace with a clean wooden desk, a minimalist white mug, and a single green leaf in a small vase. Soft afternoon light filters through a nearby window, casting long, gentle shadows across the workspace. The mood is calm and intentional, perfectly reflecting a focused digital breathing room aesthetic with plenty of natural white space." src="https://lh3.googleusercontent.com/aida-public/AB6AXuC_5dcVKZtSnAiacbx5dY7MvPoCKgbfbmjPAxlCfWobDZU8w2da6fhU06oIvXAwG2W_GJitJtzK6UOSGTNhmvYu76vE744Cpf2M926VZ4L7lgSBt5Ww1ShBvuFi6StGkVIZIlR5xc0LwWtzADibpB-aslePDPl11Gw9RkuuLXsYvhBw-R8RJoBJEyE0HWK3ryl2Q5NwNf2ISDvwyxB0h-NvNQ55fs1wgdXerPk8sN1tG8Aw8ghpId1CwyVLRn9pXv1L9VAu_P0bG88"/>
+<div class="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent flex items-end p-4">
+<p class="text-white text-label-md font-label-md italic">保持专注，深呼吸。</p>
+</div>
+</div>
+<!-- Active Task 3 -->
+<div class="bg-surface-container-lowest p-inset-md rounded-xl flex items-center gap-4 min-h-[64px] soft-shadow active:scale-[0.98] transition-all cursor-pointer">
+<button class="w-6 h-6 rounded-full border-2 border-outline-variant flex items-center justify-center transition-all duration-200 hover:border-primary" onclick="toggleTask(this)">
+<span class="material-symbols-outlined text-[18px] opacity-0 text-white" style="font-variation-settings: 'FILL' 1;">check</span>
+</button>
+<div class="flex-1">
+<p class="text-body-md font-body-md text-on-surface">周末采购准备</p>
+</div>
+</div>
+<!-- Completed Task Label -->
+<div class="mt-stack-md mb-2 px-1">
+<h3 class="text-label-sm font-label-sm text-outline uppercase tracking-widest">已完成</h3>
+</div>
+<!-- Completed Task 1 -->
+<div class="bg-surface-container-low/50 p-inset-md rounded-xl flex items-center gap-4 min-h-[64px] active:scale-[0.98] transition-all cursor-pointer">
+<div class="w-6 h-6 rounded-full bg-primary flex items-center justify-center border-2 border-primary">
+<span class="material-symbols-outlined text-[18px] text-white" style="font-variation-settings: 'FILL' 1;">check</span>
+</div>
+<div class="flex-1">
+<p class="text-body-md font-body-md text-outline task-strikethrough">晨间冥想</p>
+</div>
+</div>
+<!-- Completed Task 2 -->
+<div class="bg-surface-container-low/50 p-inset-md rounded-xl flex items-center gap-4 min-h-[64px] active:scale-[0.98] transition-all cursor-pointer">
+<div class="w-6 h-6 rounded-full bg-primary flex items-center justify-center border-2 border-primary">
+<span class="material-symbols-outlined text-[18px] text-white" style="font-variation-settings: 'FILL' 1;">check</span>
+</div>
+<div class="flex-1">
+<p class="text-body-md font-body-md text-outline task-strikethrough">批量处理邮件</p>
+<div class="flex gap-2 mt-1">
+<span class="bg-outline/10 text-outline text-label-sm font-label-sm px-2 py-0.5 rounded-full opacity-50">工作</span>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- FAB -->
+<button class="fixed bottom-24 right-margin-page w-14 h-14 bg-primary text-white rounded-2xl flex items-center justify-center fab-shadow active:scale-90 transition-all duration-150 z-50">
+<span class="material-symbols-outlined text-[28px]">add</span>
+</button>
+<!-- Bottom Nav Bar -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center h-20 px-4 pb-safe bg-surface rounded-t-xl shadow-[0_-4px_20_rgba(0,0,0,0.04)]">
+<a class="flex flex-col items-center justify-center text-primary font-bold active:scale-95 transition-transform duration-150" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="today" style="font-variation-settings: 'FILL' 1;">today</span>
+<span class="text-label-sm font-label-sm">今日</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:bg-surface-container-lowest transition-all active:scale-95 duration-150 p-2 rounded-xl" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="calendar_month">calendar_month</span>
+<span class="text-label-sm font-label-sm">日历</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:bg-surface-container-lowest transition-all active:scale-95 duration-150 p-2 rounded-xl" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="analytics">analytics</span>
+<span class="text-label-sm font-label-sm">分析</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:bg-surface-container-lowest transition-all active:scale-95 duration-150 p-2 rounded-xl" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="settings">settings</span>
+<span class="text-label-sm font-label-sm">设置</span>
+</a>
+</nav>
+<script>
+    function toggleTask(button) {
+      const icon = button.querySelector('.material-symbols-outlined');
+      const card = button.closest('div');
+      const text = card.querySelector('p');
+      
+      const isChecked = button.classList.contains('bg-primary');
+      
+      if (!isChecked) {
+        // Mark as checked
+        button.classList.add('bg-primary', 'border-primary');
+        button.classList.remove('border-outline-variant');
+        icon.classList.remove('opacity-0');
+        text.classList.add('task-strikethrough', 'text-outline');
+        card.classList.add('opacity-70');
+      } else {
+        // Mark as unchecked
+        button.classList.remove('bg-primary', 'border-primary');
+        button.classList.add('border-outline-variant');
+        icon.classList.add('opacity-0');
+        text.classList.remove('task-strikethrough', 'text-outline');
+        card.classList.remove('opacity-70');
+      }
+    }
+
+    // Micro-interaction for top bar on scroll
+    window.addEventListener('scroll', () => {
+      const header = document.querySelector('header');
+      if (window.scrollY > 20) {
+        header.classList.add('bg-surface-container-lowest', 'shadow-sm');
+        header.classList.remove('bg-surface');
+      } else {
+        header.classList.remove('bg-surface-container-lowest', 'shadow-sm');
+        header.classList.add('bg-surface');
+      }
+    });
+  </script>
+</body></html>
