@@ -163,6 +163,9 @@ jobs:
           cp ci/ExportOptions.plist "$EXPORT_OPTIONS"
           /usr/libexec/PlistBuddy -c "Add :teamID string $DEVELOPMENT_TEAM" "$EXPORT_OPTIONS" 2>/dev/null \
             || /usr/libexec/PlistBuddy -c "Set :teamID $DEVELOPMENT_TEAM" "$EXPORT_OPTIONS"
+          /usr/libexec/PlistBuddy -c "Set :provisioningProfiles:$BUNDLE_ID $PROVISIONING_PROFILE_SPECIFIER" "$EXPORT_OPTIONS"
+          echo "Available signing identities:"
+          security find-identity -v -p codesigning
           xcodebuild -exportArchive \
             -archivePath "$ARCHIVE_PATH" \
             -exportPath "$EXPORT_PATH" \
