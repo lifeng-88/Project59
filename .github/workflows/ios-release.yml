@@ -8,15 +8,13 @@
 #
 # 在 GitHub 仓库 Settings → Secrets and variables → Actions 中配置：
 #
-#   Secrets（敏感）:
+#   Secrets:
 #     APPSTORE_API_PRIVATE_KEY   — API Key 的 .p8 文件完整内容
-#     BUILD_CERTIFICATE_BASE64   — 分发证书 .p12 经 base64 编码（openssl base64 -i cert.p12 | pbcopy）
+#     APPSTORE_ISSUER_ID         — Issuer ID
+#     APPSTORE_API_KEY_ID        — Key ID
+#     DEVELOPMENT_TEAM           — Apple Team ID（10 位）
+#     BUILD_CERTIFICATE_BASE64   — 分发证书 .p12 的 base64
 #     P12_PASSWORD               — .p12 导出密码
-#
-#   Variables（非敏感，也可用 Secrets）:
-#     APPSTORE_ISSUER_ID         — App Store Connect → 用户与访问 → 集成 → Issuer ID
-#     APPSTORE_API_KEY_ID        — API Key 的 Key ID
-#     DEVELOPMENT_TEAM           — Apple Team ID（10 位，如 ABCDE12345）
 #
 # 触发方式：
 #   - 推送版本标签 v*（如 v1.0.0）自动发布
@@ -46,20 +44,15 @@ concurrency:
 permissions:
   contents: read
 
-env:
-  SCHEME: Hub
-  PROJECT: Hub.xcodeproj
-  BUNDLE_ID: com.Hub.Lumina
-  ARCHIVE_PATH: ${{ runner.temp }}/Hub.xcarchive
-  EXPORT_PATH: ${{ runner.temp }}/export
-  IPA_PATH: ${{ runner.temp }}/export/Hub.ipa
-  API_KEY_DIR: ${{ runner.temp }}/private_keys
-
 jobs:
   release:
     name: Archive & Upload to App Store Connect
     runs-on: macos-15
     timeout-minutes: 60
+    env:
+      SCHEME: Hub
+      PROJECT: Hub.xcodeproj
+      BUNDLE_ID: com.Hub.Lumina
 
     steps:
       - name: Checkout
@@ -74,37 +67,40 @@ jobs:
         run: |
           set -euo pipefail
           missing=()
-          for key in APPSTORE_API_PRIVATE_KEY BUILD_CERTIFICATE_BASE64 P12_PASSWORD; do
+          for key in \
+            APPSTORE_API_PRIVATE_KEY \
+            APPSTORE_ISSUER_ID \
+            APPSTORE_API_KEY_ID \
+            DEVELOPMENT_TEAM \
+            BUILD_CERTIFICATE_BASE64 \
+            P12_PASSWORD
+          do
             if [ -z "${!key:-}" ]; then
-              missing+=("$key (secret)")
-            fi
-          done
-          for key in APPSTORE_ISSUER_ID APPSTORE_API_KEY_ID DEVELOPMENT_TEAM; do
-            if [ -z "${!key:-}" ]; then
-              missing+=("$key (variable/secret)")
+              missing+=("$key")
             fi
           done
           if [ "${#missing[@]}" -gt 0 ]; then
-            echo "::error::缺少以下配置："
+            echo "::error::缺少以下 Secrets："
             printf '  - %s\n' "${missing[@]}"
             exit 1
           fi
         env:
           APPSTORE_API_PRIVATE_KEY: ${{ secrets.APPSTORE_API_PRIVATE_KEY }}
+          APPSTORE_ISSUER_ID: ${{ secrets.APPSTORE_ISSUER_ID }}
+          APPSTORE_API_KEY_ID: ${{ secrets.APPSTORE_API_KEY_ID }}
+          DEVELOPMENT_TEAM: ${{ secrets.DEVELOPMENT_TEAM }}
           BUILD_CERTIFICATE_BASE64: ${{ secrets.BUILD_CERTIFICATE_BASE64 }}
           P12_PASSWORD: ${{ secrets.P12_PASSWORD }}
-          APPSTORE_ISSUER_ID: ${{ vars.APPSTORE_ISSUER_ID || secrets.APPSTORE_ISSUER_ID }}
-          APPSTORE_API_KEY_ID: ${{ vars.APPSTORE_API_KEY_ID || secrets.APPSTORE_API_KEY_ID }}
-          DEVELOPMENT_TEAM: ${{ vars.DEVELOPMENT_TEAM || secrets.DEVELOPMENT_TEAM }}
 
       - name: Resolve version numbers
         id: version
         run: |
           set -euo pipefail
+          INPUT_VERSION="${{ github.event.inputs.marketing_version }}"
           if [ "${{ github.event_name }}" = "push" ] && [[ "${{ github.ref }}" == refs/tags/v* ]]; then
             MARKETING_VERSION="${GITHUB_REF_NAME#v}"
-          elif [ -n "${{ inputs.marketing_version }}" ]; then
-            MARKETING_VERSION="${{ inputs.marketing_version }}"
+          elif [ -n "$INPUT_VERSION" ]; then
+            MARKETING_VERSION="$INPUT_VERSION"
           else
             MARKETING_VERSION=$(xcodebuild -showBuildSettings -project "$PROJECT" -scheme "$SCHEME" -configuration Release 2>/dev/null \
               | awk -F' = ' '/MARKETING_VERSION/{print $2; exit}')
@@ -126,22 +122,25 @@ jobs:
         with:
           bundle-id: ${{ env.BUNDLE_ID }}
           profile-type: IOS_APP_STORE
-          issuer-id: ${{ vars.APPSTORE_ISSUER_ID || secrets.APPSTORE_ISSUER_ID }}
-          api-key-id: ${{ vars.APPSTORE_API_KEY_ID || secrets.APPSTORE_API_KEY_ID }}
+          issuer-id: ${{ secrets.APPSTORE_ISSUER_ID }}
+          api-key-id: ${{ secrets.APPSTORE_API_KEY_ID }}
           api-private-key: ${{ secrets.APPSTORE_API_PRIVATE_KEY }}
 
       - name: Write App Store Connect API key
         run: |
           set -euo pipefail
+          API_KEY_DIR="$RUNNER_TEMP/private_keys"
           mkdir -p "$API_KEY_DIR"
           printf '%s' "$APPSTORE_API_PRIVATE_KEY" > "$API_KEY_DIR/AuthKey_${APPSTORE_API_KEY_ID}.p8"
+          echo "API_KEY_DIR=$API_KEY_DIR" >> "$GITHUB_ENV"
         env:
           APPSTORE_API_PRIVATE_KEY: ${{ secrets.APPSTORE_API_PRIVATE_KEY }}
-          APPSTORE_API_KEY_ID: ${{ vars.APPSTORE_API_KEY_ID || secrets.APPSTORE_API_KEY_ID }}
+          APPSTORE_API_KEY_ID: ${{ secrets.APPSTORE_API_KEY_ID }}
 
       - name: Archive
         run: |
           set -euo pipefail
+          ARCHIVE_PATH="$RUNNER_TEMP/Hub.xcarchive"
           xcodebuild archive \
             -project "$PROJECT" \
             -scheme "$SCHEME" \
@@ -150,19 +149,22 @@ jobs:
             -destination 'generic/platform=iOS' \
             MARKETING_VERSION="${{ steps.version.outputs.marketing_version }}" \
             CURRENT_PROJECT_VERSION="${{ steps.version.outputs.build_number }}" \
-            DEVELOPMENT_TEAM="${{ vars.DEVELOPMENT_TEAM || secrets.DEVELOPMENT_TEAM }}" \
+            DEVELOPMENT_TEAM="$DEVELOPMENT_TEAM" \
             -allowProvisioningUpdates \
             -authenticationKeyPath "$API_KEY_DIR/AuthKey_${APPSTORE_API_KEY_ID}.p8" \
             -authenticationKeyID "$APPSTORE_API_KEY_ID" \
             -authenticationKeyIssuerID "$APPSTORE_ISSUER_ID"
+          echo "ARCHIVE_PATH=$ARCHIVE_PATH" >> "$GITHUB_ENV"
         env:
-          APPSTORE_API_KEY_ID: ${{ vars.APPSTORE_API_KEY_ID || secrets.APPSTORE_API_KEY_ID }}
-          APPSTORE_ISSUER_ID: ${{ vars.APPSTORE_ISSUER_ID || secrets.APPSTORE_ISSUER_ID }}
+          APPSTORE_API_KEY_ID: ${{ secrets.APPSTORE_API_KEY_ID }}
+          APPSTORE_ISSUER_ID: ${{ secrets.APPSTORE_ISSUER_ID }}
+          DEVELOPMENT_TEAM: ${{ secrets.DEVELOPMENT_TEAM }}
           NSUnbufferedIO: "YES"
 
       - name: Export IPA
         run: |
           set -euo pipefail
+          EXPORT_PATH="$RUNNER_TEMP/export"
           xcodebuild -exportArchive \
             -archivePath "$ARCHIVE_PATH" \
             -exportPath "$EXPORT_PATH" \
@@ -171,17 +173,18 @@ jobs:
             -authenticationKeyPath "$API_KEY_DIR/AuthKey_${APPSTORE_API_KEY_ID}.p8" \
             -authenticationKeyID "$APPSTORE_API_KEY_ID" \
             -authenticationKeyIssuerID "$APPSTORE_ISSUER_ID"
+          echo "IPA_PATH=$EXPORT_PATH/Hub.ipa" >> "$GITHUB_ENV"
         env:
-          APPSTORE_API_KEY_ID: ${{ vars.APPSTORE_API_KEY_ID || secrets.APPSTORE_API_KEY_ID }}
-          APPSTORE_ISSUER_ID: ${{ vars.APPSTORE_ISSUER_ID || secrets.APPSTORE_ISSUER_ID }}
+          APPSTORE_API_KEY_ID: ${{ secrets.APPSTORE_API_KEY_ID }}
+          APPSTORE_ISSUER_ID: ${{ secrets.APPSTORE_ISSUER_ID }}
 
       - name: Upload to App Store Connect
         uses: apple-actions/upload-testflight-build@v4
         with:
           app-path: ${{ env.IPA_PATH }}
-          issuer-id: ${{ vars.APPSTORE_ISSUER_ID || secrets.APPSTORE_ISSUER_ID }}
-          api-key-id: ${{ vars.APPSTORE_API_KEY_ID || secrets.APPSTORE_API_KEY_ID }}
+          issuer-id: ${{ secrets.APPSTORE_ISSUER_ID }}
+          api-key-id: ${{ secrets.APPSTORE_API_KEY_ID }}
           api-private-key: ${{ secrets.APPSTORE_API_PRIVATE_KEY }}
-          release-notes: ${{ inputs.release_notes }}
+          release-notes: ${{ github.event.inputs.release_notes }}
           uses-non-exempt-encryption: "false"
           wait-for-processing: "true"
