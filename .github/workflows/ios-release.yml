@@ -9,12 +9,13 @@
 # 在 GitHub 仓库 Settings → Secrets and variables → Actions 中配置：
 #
 #   Secrets:
-#     APPSTORE_API_PRIVATE_KEY   — API Key 的 .p8 文件完整内容
-#     APPSTORE_ISSUER_ID         — Issuer ID
-#     APPSTORE_API_KEY_ID        — Key ID
-#     DEVELOPMENT_TEAM           — Apple Team ID（10 位）
-#     BUILD_CERTIFICATE_BASE64   — 分发证书 .p12 的 base64
-#     P12_PASSWORD               — .p12 导出密码
+#     APPSTORE_API_PRIVATE_KEY        — API Key 的 .p8 文件完整内容（上传用）
+#     APPSTORE_ISSUER_ID              — Issuer ID
+#     APPSTORE_API_KEY_ID             — Key ID
+#     DEVELOPMENT_TEAM                — Apple Team ID（10 位，如 F3Y944AQ9F）
+#     BUILD_CERTIFICATE_BASE64        — 分发证书 .p12 的 base64
+#     P12_PASSWORD                    — .p12 导出密码
+#     BUILD_PROVISION_PROFILE_BASE64  — HubLumina.mobileprovision 的 base64
 #
 # 触发方式：
 #   - 推送版本标签 v*（如 v1.0.0）自动发布
@@ -73,7 +74,8 @@ jobs:
             APPSTORE_API_KEY_ID \
             DEVELOPMENT_TEAM \
             BUILD_CERTIFICATE_BASE64 \
-            P12_PASSWORD
+            P12_PASSWORD \
+            BUILD_PROVISION_PROFILE_BASE64
           do
             if [ -z "${!key:-}" ]; then
               missing+=("$key")
@@ -91,6 +93,7 @@ jobs:
           DEVELOPMENT_TEAM: ${{ secrets.DEVELOPMENT_TEAM }}
           BUILD_CERTIFICATE_BASE64: ${{ secrets.BUILD_CERTIFICATE_BASE64 }}
           P12_PASSWORD: ${{ secrets.P12_PASSWORD }}
+          BUILD_PROVISION_PROFILE_BASE64: ${{ secrets.BUILD_PROVISION_PROFILE_BASE64 }}
 
       - name: Resolve version numbers
         id: version
@@ -117,25 +120,19 @@ jobs:
           p12-file-base64: ${{ secrets.BUILD_CERTIFICATE_BASE64 }}
           p12-password: ${{ secrets.P12_PASSWORD }}
 
-      - name: Download App Store provisioning profile
-        uses: apple-actions/download-provisioning-profiles@v4
-        with:
-          bundle-id: ${{ env.BUNDLE_ID }}
-          profile-type: IOS_APP_STORE
-          issuer-id: ${{ secrets.APPSTORE_ISSUER_ID }}
-          api-key-id: ${{ secrets.APPSTORE_API_KEY_ID }}
-          api-private-key: ${{ secrets.APPSTORE_API_PRIVATE_KEY }}
-
-      - name: Write App Store Connect API key
+      - name: Install provisioning profile
         run: |
           set -euo pipefail
-          API_KEY_DIR="$RUNNER_TEMP/private_keys"
-          mkdir -p "$API_KEY_DIR"
-          printf '%s' "$APPSTORE_API_PRIVATE_KEY" > "$API_KEY_DIR/AuthKey_${APPSTORE_API_KEY_ID}.p8"
-          echo "API_KEY_DIR=$API_KEY_DIR" >> "$GITHUB_ENV"
+          PROFILE_PATH="$RUNNER_TEMP/HubLumina.mobileprovision"
+          echo -n "$BUILD_PROVISION_PROFILE_BASE64" | base64 --decode > "$PROFILE_PATH"
+          PROFILE_UUID=$(security cms -D -i "$PROFILE_PATH" | plutil -extract UUID raw -)
+          PROFILE_NAME=$(security cms -D -i "$PROFILE_PATH" | plutil -extract Name raw -)
+          mkdir -p "$HOME/Library/MobileDevice/Provisioning Profiles"
+          cp "$PROFILE_PATH" "$HOME/Library/MobileDevice/Provisioning Profiles/${PROFILE_UUID}.mobileprovision"
+          echo "PROVISIONING_PROFILE_SPECIFIER=$PROFILE_NAME" >> "$GITHUB_ENV"
+          echo "Installed profile: $PROFILE_NAME ($PROFILE_UUID)"
         env:
-          APPSTORE_API_PRIVATE_KEY: ${{ secrets.APPSTORE_API_PRIVATE_KEY }}
-          APPSTORE_API_KEY_ID: ${{ secrets.APPSTORE_API_KEY_ID }}
+          BUILD_PROVISION_PROFILE_BASE64: ${{ secrets.BUILD_PROVISION_PROFILE_BASE64 }}
 
       - name: Archive
         run: |
@@ -150,14 +147,11 @@ jobs:
             MARKETING_VERSION="${{ steps.version.outputs.marketing_version }}" \
             CURRENT_PROJECT_VERSION="${{ steps.version.outputs.build_number }}" \
             DEVELOPMENT_TEAM="$DEVELOPMENT_TEAM" \
-            -allowProvisioningUpdates \
-            -authenticationKeyPath "$API_KEY_DIR/AuthKey_${APPSTORE_API_KEY_ID}.p8" \
-            -authenticationKeyID "$APPSTORE_API_KEY_ID" \
-            -authenticationKeyIssuerID "$APPSTORE_ISSUER_ID"
+            CODE_SIGN_STYLE=Manual \
+            CODE_SIGN_IDENTITY="Apple Distribution" \
+            PROVISIONING_PROFILE_SPECIFIER="$PROVISIONING_PROFILE_SPECIFIER"
           echo "ARCHIVE_PATH=$ARCHIVE_PATH" >> "$GITHUB_ENV"
         env:
-          APPSTORE_API_KEY_ID: ${{ secrets.APPSTORE_API_KEY_ID }}
-          APPSTORE_ISSUER_ID: ${{ secrets.APPSTORE_ISSUER_ID }}
           DEVELOPMENT_TEAM: ${{ secrets.DEVELOPMENT_TEAM }}
           NSUnbufferedIO: "YES"
 
@@ -165,18 +159,17 @@ jobs:
         run: |
           set -euo pipefail
           EXPORT_PATH="$RUNNER_TEMP/export"
+          EXPORT_OPTIONS="$RUNNER_TEMP/ExportOptions.plist"
+          cp ci/ExportOptions.plist "$EXPORT_OPTIONS"
+          /usr/libexec/PlistBuddy -c "Add :teamID string $DEVELOPMENT_TEAM" "$EXPORT_OPTIONS" 2>/dev/null \
+            || /usr/libexec/PlistBuddy -c "Set :teamID $DEVELOPMENT_TEAM" "$EXPORT_OPTIONS"
           xcodebuild -exportArchive \
             -archivePath "$ARCHIVE_PATH" \
             -exportPath "$EXPORT_PATH" \
-            -exportOptionsPlist ci/ExportOptions.plist \
-            -allowProvisioningUpdates \
-            -authenticationKeyPath "$API_KEY_DIR/AuthKey_${APPSTORE_API_KEY_ID}.p8" \
-            -authenticationKeyID "$APPSTORE_API_KEY_ID" \
-            -authenticationKeyIssuerID "$APPSTORE_ISSUER_ID"
+            -exportOptionsPlist "$EXPORT_OPTIONS"
           echo "IPA_PATH=$EXPORT_PATH/Hub.ipa" >> "$GITHUB_ENV"
         env:
-          APPSTORE_API_KEY_ID: ${{ secrets.APPSTORE_API_KEY_ID }}
-          APPSTORE_ISSUER_ID: ${{ secrets.APPSTORE_ISSUER_ID }}
+          DEVELOPMENT_TEAM: ${{ secrets.DEVELOPMENT_TEAM }}
 
       - name: Upload to App Store Connect
         uses: apple-actions/upload-testflight-build@v4
