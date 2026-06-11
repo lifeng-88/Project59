@@ -20,11 +20,14 @@ struct ContentView: View {
                     SettingsView()
                 }
             }
-            .padding(.bottom, 88)
+            .padding(.bottom, store.hubTabBarHidden ? 0 : 88)
 
-            HubBottomBar(selection: $store.selectedTab)
+            if !store.hubTabBarHidden {
+                HubBottomBar(selection: $store.selectedTab)
+                    .transition(.move(edge: .bottom).combined(with: .opacity))
+            }
 
-            if store.selectedTab.showsFAB {
+            if store.selectedTab.showsFAB, !store.hubTabBarHidden {
                 HubFAB {
                     if store.selectedTab == .calendar {
                         store.prepareQuickAdd(for: store.calendarSelectedDate)
@@ -36,13 +39,21 @@ struct ContentView: View {
                 .padding(.trailing, LuminaSpacing.marginPage)
                 .padding(.bottom, 100)
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomTrailing)
+                .transition(.move(edge: .bottom).combined(with: .opacity))
             }
 
-            if store.selectedTab == .today, showsHubFaceSwitchFAB {
+            if store.selectedTab == .today, showsHubFaceSwitchFAB, !store.hubTabBarHidden {
                 HubFaceSwitchFAB(style: .lumina)
                     .padding(.leading, LuminaSpacing.marginPage)
                     .padding(.bottom, 100)
                     .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomLeading)
+                    .transition(.move(edge: .bottom).combined(with: .opacity))
+            }
+        }
+        .animation(.easeInOut(duration: 0.22), value: store.hubTabBarHidden)
+        .onChange(of: store.selectedTab) { _, tab in
+            if tab != .settings {
+                store.hubTabBarHidden = false
             }
         }
         .preferredColorScheme(store.colorScheme)

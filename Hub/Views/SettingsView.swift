@@ -78,7 +78,15 @@ struct SettingsView: View {
             .task {
                 await checkNotificationStatus()
             }
+            .onAppear { syncHubTabBarVisibility() }
+            .onChange(of: showFocusGuide) { _, _ in syncHubTabBarVisibility() }
+            .onChange(of: showFocusSettings) { _, _ in syncHubTabBarVisibility() }
+            .onChange(of: showProfileEdit) { _, _ in syncHubTabBarVisibility() }
         }
+    }
+
+    private func syncHubTabBarVisibility() {
+        store.hubTabBarHidden = showFocusGuide || showFocusSettings || showProfileEdit
     }
 
     // MARK: - 概览卡片

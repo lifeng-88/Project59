@@ -7,6 +7,8 @@ import UIKit
 final class TaskStore: ObservableObject {
     @Published var tasks: [HubTask] = []
     @Published var selectedTab: HubTab = .today
+    /// 当前 Tab 内进入二级导航时隐藏底部 HubBottomBar（与 Rahmi `shouldHideTabBar` 行为一致）
+    @Published var hubTabBarHidden = false
     @Published var showQuickAdd = false
     @Published var showFocusTimer = false
     @Published var showSideMenu = false
