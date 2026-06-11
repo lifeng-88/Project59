@@ -57,10 +57,10 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Select Xcode
-        uses: maxim-lobanov/setup-xcode@v1
+        uses: maxim-lobanov/setup-xcode@v1.7.0
         with:
           xcode-version: latest-stable
 
@@ -115,7 +115,7 @@ jobs:
           echo "Build Number: $BUILD_NUMBER"
 
       - name: Import code signing certificate
-        uses: apple-actions/import-codesign-certs@v3
+        uses: apple-actions/import-codesign-certs@v7
         with:
           p12-file-base64: ${{ secrets.BUILD_CERTIFICATE_BASE64 }}
           p12-password: ${{ secrets.P12_PASSWORD }}
@@ -270,13 +270,21 @@ jobs:
       - name: Upload to App Store Connect
         run: |
           set -euo pipefail
-          xcrun altool --upload-app \
+          LOG_FILE="$RUNNER_TEMP/altool-upload.log"
+          if ! xcrun altool --upload-app \
             --file "$IPA_PATH" \
             --type ios \
             --apiKey "$APPSTORE_API_KEY_ID" \
             --apiIssuer "$APPSTORE_ISSUER_ID" \
-            --verbose
-          echo "上传完成。请在 App Store Connect → TestFlight 查看构建状态。"
+            --verbose 2>&1 | tee "$LOG_FILE"; then
+            echo "::error::IPA 上传失败，请查看上方 Validation 错误信息"
+            exit 1
+          fi
+          if grep -q "UPLOAD FAILED\|Validation failed\|Failed to upload package" "$LOG_FILE"; then
+            echo "::error::IPA 校验未通过，构建已被 Apple 拒绝"
+            exit 1
+          fi
+          echo "上传成功。请在 App Store Connect → TestFlight 等待处理（通常 5–30 分钟）。"
         env:
           APPSTORE_API_KEY_ID: ${{ secrets.APPSTORE_API_KEY_ID }}
           APPSTORE_ISSUER_ID: ${{ secrets.APPSTORE_ISSUER_ID }}
