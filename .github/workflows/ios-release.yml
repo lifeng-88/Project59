@@ -9,7 +9,7 @@
 # 在 GitHub 仓库 Settings → Secrets and variables → Actions 中配置：
 #
 #   Secrets:
-#     APPSTORE_API_PRIVATE_KEY        — API Key 的 .p8 文件完整内容（上传用）
+#     APPSTORE_API_PRIVATE_KEY        — API Key 的 .p8 完整内容，或 .p8 的 base64（上传用）
 #     APPSTORE_ISSUER_ID              — Issuer ID
 #     APPSTORE_API_KEY_ID             — Key ID
 #     DEVELOPMENT_TEAM                — Apple Team ID（10 位，如 F3Y944AQ9F）
@@ -174,13 +174,135 @@ jobs:
         env:
           DEVELOPMENT_TEAM: ${{ secrets.DEVELOPMENT_TEAM }}
 
+      - name: Prepare and validate API key
+        run: |
+          set -euo pipefail
+          KEY_FILE="$RUNNER_TEMP/AuthKey_${APPSTORE_API_KEY_ID}.p8"
+          export KEY_FILE
+          python3 - <<'PY'
+          import base64, os, re, subprocess, sys, textwrap
+
+          raw = os.environ["APPSTORE_API_PRIVATE_KEY"].strip()
+          key_id = os.environ["APPSTORE_API_KEY_ID"]
+          key_file = os.environ["KEY_FILE"]
+
+          def write_pem(body: str) -> None:
+              body = re.sub(r"\s+", "", body)
+              lines = ["-----BEGIN PRIVATE KEY-----", *textwrap.wrap(body, 64), "-----END PRIVATE KEY-----"]
+              with open(key_file, "w", encoding="utf-8") as fh:
+                  fh.write("\n".join(lines) + "\n")
+
+          def sanitize_pem_text(text: str) -> str:
+              text = text.strip().replace("\\n", "\n")
+              text = re.sub(r"-----END PRIVATE KEY-----+", "-----END PRIVATE KEY-----", text)
+              match = re.search(
+                  r"-----BEGIN PRIVATE KEY-----(.*?)-----END PRIVATE KEY-----",
+                  text,
+                  re.S,
+              )
+              if not match:
+                  return text
+              write_pem(match.group(1))
+              return open(key_file, encoding="utf-8").read()
+
+          def try_openssl(path: str) -> bool:
+              result = subprocess.run(
+                  ["openssl", "pkey", "-in", path, "-noout"],
+                  capture_output=True,
+                  text=True,
+              )
+              if result.returncode != 0:
+                  print(result.stderr.strip())
+              return result.returncode == 0
+
+          candidates: list[bytes] = []
+
+          if "\\n" in raw:
+              raw = bytes(raw, "utf-8").decode("unicode_escape")
+
+          if "BEGIN PRIVATE KEY" in raw:
+              sanitize_pem_text(raw)
+              if try_openssl(key_file):
+                  sys.exit(0)
+              candidates.append(raw.encode("utf-8"))
+          else:
+              compact = re.sub(r"\s+", "", raw)
+              for payload in (compact, compact + "=="):
+                  try:
+                      candidates.append(base64.b64decode(payload, validate=False))
+                  except Exception:
+                      pass
+
+          for data in candidates:
+              with open(key_file, "wb") as fh:
+                  fh.write(data)
+              if try_openssl(key_file):
+                  sys.exit(0)
+              text = data.decode("utf-8", errors="ignore")
+              match = re.search(
+                  r"-----BEGIN PRIVATE KEY-----(.*?)-----END PRIVATE KEY-----",
+                  text,
+                  re.S,
+              )
+              if match:
+                  write_pem(match.group(1))
+                  if try_openssl(key_file):
+                      sys.exit(0)
+
+          print(f"::error::无法解析 APPSTORE_API_PRIVATE_KEY（Key ID: {key_id}）")
+          print("请删除该 Secret 后重新创建，推荐使用 base64 单行格式：")
+          print(f"  base64 -i AuthKey_{key_id}.p8 | tr -d '\\n' | pbcopy")
+          sys.exit(1)
+          PY
+          chmod 600 "$KEY_FILE"
+          pip3 install --quiet pyjwt cryptography 2>/dev/null || pip3 install --user --quiet pyjwt cryptography
+          export KEY_FILE
+          python3 - <<'PY'
+          import os, sys, time
+          import jwt
+          import urllib.request
+          key = open(os.environ["KEY_FILE"]).read()
+          issuer = os.environ["APPSTORE_ISSUER_ID"]
+          kid = os.environ["APPSTORE_API_KEY_ID"]
+          now = int(time.time())
+          token = jwt.encode(
+              {"iss": issuer, "iat": now, "exp": now + 1200, "aud": "appstoreconnect-v1"},
+              key,
+              algorithm="ES256",
+              headers={"kid": kid, "typ": "JWT"},
+          )
+          req = urllib.request.Request(
+              "https://api.appstoreconnect.apple.com/v1/apps?limit=1",
+              headers={"Authorization": f"Bearer {token}"},
+          )
+          try:
+              with urllib.request.urlopen(req) as resp:
+                  print(f"API 认证成功 (HTTP {resp.status})")
+          except urllib.error.HTTPError as e:
+              print(f"::error::App Store Connect API 认证失败 (HTTP {e.code})")
+              print(e.read().decode())
+              sys.exit(1)
+          PY
+          mkdir -p "$HOME/private_keys"
+          cp "$KEY_FILE" "$HOME/private_keys/AuthKey_${APPSTORE_API_KEY_ID}.p8"
+          chmod 600 "$HOME/private_keys/AuthKey_${APPSTORE_API_KEY_ID}.p8"
+          echo "API key installed to ~/private_keys/AuthKey_${APPSTORE_API_KEY_ID}.p8"
+        env:
+          APPSTORE_API_PRIVATE_KEY: ${{ secrets.APPSTORE_API_PRIVATE_KEY }}
+          APPSTORE_API_KEY_ID: ${{ secrets.APPSTORE_API_KEY_ID }}
+          APPSTORE_ISSUER_ID: ${{ secrets.APPSTORE_ISSUER_ID }}
+          KEY_FILE: ${{ runner.temp }}/AuthKey_${{ secrets.APPSTORE_API_KEY_ID }}.p8
+
       - name: Upload to App Store Connect
-        uses: apple-actions/upload-testflight-build@v4
-        with:
-          app-path: ${{ env.IPA_PATH }}
-          issuer-id: ${{ secrets.APPSTORE_ISSUER_ID }}
-          api-key-id: ${{ secrets.APPSTORE_API_KEY_ID }}
-          api-private-key: ${{ secrets.APPSTORE_API_PRIVATE_KEY }}
-          release-notes: ${{ github.event.inputs.release_notes }}
-          uses-non-exempt-encryption: "false"
-          wait-for-processing: "true"
+        run: |
+          set -euo pipefail
+          xcrun altool --upload-app \
+            --file "$IPA_PATH" \
+            --type ios \
+            --apiKey "$APPSTORE_API_KEY_ID" \
+            --apiIssuer "$APPSTORE_ISSUER_ID" \
+            --verbose
+          echo "上传完成。请在 App Store Connect → TestFlight 查看构建状态。"
+        env:
+          APPSTORE_API_KEY_ID: ${{ secrets.APPSTORE_API_KEY_ID }}
+          APPSTORE_ISSUER_ID: ${{ secrets.APPSTORE_ISSUER_ID }}
