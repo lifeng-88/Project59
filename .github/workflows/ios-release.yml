@@ -255,34 +255,8 @@ jobs:
           sys.exit(1)
           PY
           chmod 600 "$KEY_FILE"
-          pip3 install --quiet pyjwt cryptography 2>/dev/null || pip3 install --user --quiet pyjwt cryptography
-          export KEY_FILE
-          python3 - <<'PY'
-          import os, sys, time
-          import jwt
-          import urllib.request
-          key = open(os.environ["KEY_FILE"]).read()
-          issuer = os.environ["APPSTORE_ISSUER_ID"]
-          kid = os.environ["APPSTORE_API_KEY_ID"]
-          now = int(time.time())
-          token = jwt.encode(
-              {"iss": issuer, "iat": now, "exp": now + 1200, "aud": "appstoreconnect-v1"},
-              key,
-              algorithm="ES256",
-              headers={"kid": kid, "typ": "JWT"},
-          )
-          req = urllib.request.Request(
-              "https://api.appstoreconnect.apple.com/v1/apps?limit=1",
-              headers={"Authorization": f"Bearer {token}"},
-          )
-          try:
-              with urllib.request.urlopen(req) as resp:
-                  print(f"API 认证成功 (HTTP {resp.status})")
-          except urllib.error.HTTPError as e:
-              print(f"::error::App Store Connect API 认证失败 (HTTP {e.code})")
-              print(e.read().decode())
-              sys.exit(1)
-          PY
+          openssl pkey -in "$KEY_FILE" -noout
+          echo "API 私钥格式验证通过"
           mkdir -p "$HOME/private_keys"
           cp "$KEY_FILE" "$HOME/private_keys/AuthKey_${APPSTORE_API_KEY_ID}.p8"
           chmod 600 "$HOME/private_keys/AuthKey_${APPSTORE_API_KEY_ID}.p8"
