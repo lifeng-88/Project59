@@ -117,8 +117,10 @@ jobs:
       - name: Generate Lumina brand assets
         run: |
           set -euo pipefail
-          python3 -m pip install --quiet Pillow
-          python3 scripts/generate_lumina_brand_assets.py
+          VENV="$RUNNER_TEMP/lumina-assets-venv"
+          python3 -m venv "$VENV"
+          "$VENV/bin/pip" install --quiet Pillow
+          "$VENV/bin/python" scripts/generate_lumina_brand_assets.py
 
       - name: Import code signing certificate
         uses: apple-actions/import-codesign-certs@v7
