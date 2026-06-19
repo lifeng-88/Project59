@@ -1,6 +1,8 @@
 import SwiftUI
 
 struct TaskRowView: View {
+    @Environment(\.hubLanguage) private var language
+
     let task: HubTask
     let onToggle: () -> Void
 
@@ -27,7 +29,7 @@ struct TaskRowView: View {
                 ? LuminaColor.surfaceContainerLow.opacity(0.5)
                 : LuminaColor.surfaceContainerLowest
         )
-        .clipShape(RoundedRectangle(cornerRadius: LuminaRadius.md))
+        .clipShape(RoundedRectangle(cornerRadius: LuminaRadius.lg))
         .luminaSoftShadow()
     }
 
@@ -37,10 +39,13 @@ struct TaskRowView: View {
         if hasMeta {
             HStack(spacing: 6) {
                 if let category = task.category {
-                    CategoryChip(title: category.displayName, isCompleted: task.isCompleted)
+                    CategoryChip(title: category.displayName(language: language), isCompleted: task.isCompleted)
                 }
                 if let priority = task.priority, !task.isCompleted {
-                    metaBadge(text: "\(priority.displayName)优先", color: priorityColor(priority))
+                    metaBadge(
+                        text: String(format: L10n.tr(.priorityBadge, language: language), priority.displayName(language: language)),
+                        color: priorityColor(priority)
+                    )
                 }
                 if let reminder = task.reminderDate, !task.isCompleted {
                     metaBadge(text: reminder.formatted(date: .omitted, time: .shortened), color: LuminaColor.outline)

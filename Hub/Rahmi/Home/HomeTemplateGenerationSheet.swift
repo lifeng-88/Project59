@@ -103,7 +103,7 @@ struct HomeTemplateGenerationSheet: View {
                         .font(.system(size: 12, weight: .heavy))
                         .foregroundStyle(isQueuingVariantA ? Color.white : HomeGenerationQueuingView.accentLavender)
                 } else {
-                    Text(item.actionTitle)
+                    Text(item.localizedActionTitle)
                         .font(.headline)
                         .foregroundStyle(AppTheme.onSurface)
                 }
@@ -215,6 +215,7 @@ struct HomeTemplateGenerationSheet: View {
 
                 if showRechargeUpsell {
                     HomeGenerationRechargeUpsellView(
+                        requiredCoins: item.consumedCoins > 0 ? item.consumedCoins : nil,
                         onClose: { showRechargeUpsell = false },
                         onExploreFullRecharge: {
                             showRechargeUpsell = false
@@ -393,7 +394,7 @@ struct HomeTemplateGenerationSheet: View {
                     if prefilledImage != nil {
                         showQueuingExperience = false
                     }
-                    errorMessage = err.userMessage
+                    errorMessage = AppLanguageStore.localizedUserFacingAPIError(err.userMessage)
                     showErrorAlert = true
                 }
                 return
@@ -407,7 +408,7 @@ struct HomeTemplateGenerationSheet: View {
                         if prefilledImage != nil {
                             showQueuingExperience = false
                         }
-                        errorMessage = error.localizedDescription
+                        errorMessage = AppLanguageStore.localizedUserFacingSystemError(error)
                         showErrorAlert = true
                     }
                     return
@@ -444,7 +445,7 @@ struct HomeTemplateGenerationSheet: View {
                         if Self.isInsufficientGoldServerError(err) {
                             showRechargeUpsell = true
                         } else {
-                            errorMessage = err.userMessage
+                            errorMessage = AppLanguageStore.localizedUserFacingAPIError(err.userMessage)
                             showErrorAlert = true
                         }
                     }
@@ -516,7 +517,7 @@ struct HomeGenerationQueuingView: View {
         switch taskService.taskStatus {
         case .pending:
             if let w = taskService.waitTime, !w.isEmpty {
-                return String(format: AppLanguageStore.localized("home.generating.pending_wait"), w)
+                return AppLanguageStore.localizedFormat("home.generating.pending_wait", w)
             }
             return AppLanguageStore.localized("home.generating.pending")
         case .running:

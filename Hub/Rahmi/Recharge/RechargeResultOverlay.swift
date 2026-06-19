@@ -17,6 +17,8 @@ enum RechargePaymentOutcome: Equatable {
 
 struct RechargeResultOverlay: View {
     let outcome: RechargePaymentOutcome
+    /// A 面内购成功标题（App Store 语境）
+    var usesVariantAPresentation: Bool = false
     var onDismiss: () -> Void
     /// 浏览器支付提示页：点「好」时主动查询订单状态（与前台自动查询互补）
     var onOpenedPaymentPageOK: (() async -> Void)? = nil
@@ -69,10 +71,11 @@ struct RechargeResultOverlay: View {
     // MARK: - 成功态（设计稿）
 
     private func successCard(totalCoins: Int, bonusCoins: Int, newBalanceFormatted: String?) -> some View {
-        VStack(spacing: 0) {
+        let titleKey = usesVariantAPresentation ? "recharge.result.variant_a.title" : "recharge.result.title"
+        return VStack(spacing: 0) {
             HStack(alignment: .top, spacing: 6) {
                 Color.clear.frame(width: 28, height: 28)
-                BBBTrackedText.text(AppLanguageStore.localized("recharge.result.title"), size: 13, weight: .heavy, tracking: 1.4, color: headerLavender)
+                BBBTrackedText.text(AppLanguageStore.localized(titleKey), size: 13, weight: .heavy, tracking: 1.4, color: headerLavender)
                     .multilineTextAlignment(.center)
                     .frame(maxWidth: .infinity)
                     .padding(.top, 4)
@@ -190,7 +193,7 @@ struct RechargeResultOverlay: View {
                 .foregroundStyle(.white)
                 .multilineTextAlignment(.center)
 
-            Text(subtitle)
+            Text(AppLanguageStore.localizedUserFacingAPIError(subtitle))
                 .font(.system(size: 13, weight: .medium))
                 .foregroundStyle(AppTheme.onSurfaceVariant)
                 .multilineTextAlignment(.center)

@@ -183,6 +183,7 @@ struct GenerationSuccessView: View {
         } message: {
             Text(alertMessage)
         }
+        .rahmiRefreshOnAppLanguage()
     }
 
     /// B 面（经典布局）
@@ -701,7 +702,7 @@ struct GenerationSuccessView: View {
                 isDownloading = false
                 alertShowsOpenSettingsButton = false
                 alertTitle = AppLanguageStore.localized("generation.success.save.error.title")
-                alertMessage = error.localizedDescription
+                alertMessage = AppLanguageStore.localizedUserFacingSystemError(error)
                 showAlert = true
             }
         }

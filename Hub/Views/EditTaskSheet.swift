@@ -3,6 +3,7 @@ import SwiftUI
 struct EditTaskSheet: View {
     @EnvironmentObject private var store: TaskStore
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.hubLanguage) private var language
 
     let task: HubTask
 
@@ -30,7 +31,7 @@ struct EditTaskSheet: View {
         NavigationStack {
             ScrollView {
                 VStack(alignment: .leading, spacing: 0) {
-                    TextField("任务标题", text: $title, axis: .vertical)
+                    TextField(L10n.tr(.taskTitlePlaceholder, language: language), text: $title, axis: .vertical)
                         .font(.luminaHeadlineLG)
                         .lineLimit(2...4)
                         .padding(.bottom, LuminaSpacing.stackXL)
@@ -44,14 +45,14 @@ struct EditTaskSheet: View {
             }
             .padding(.horizontal, LuminaSpacing.marginPage)
             .padding(.top, LuminaSpacing.stackMD)
-            .navigationTitle("编辑任务")
+            .navigationTitle(L10n.tr(.editTaskTitle, language: language))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("取消") { dismiss() }
+                    Button(L10n.tr(.commonCancel, language: language)) { dismiss() }
                 }
                 ToolbarItem(placement: .confirmationAction) {
-                    Button("保存") { save() }
+                    Button(L10n.tr(.commonSave, language: language)) { save() }
                         .fontWeight(.semibold)
                         .disabled(title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
                 }
@@ -67,9 +68,9 @@ struct EditTaskSheet: View {
         switch activeTool {
         case .date:
             VStack(alignment: .leading, spacing: LuminaSpacing.stackSM) {
-                Toggle("设置日期", isOn: $hasScheduledDate).tint(LuminaColor.primary)
+                Toggle(L10n.tr(.setDate, language: language), isOn: $hasScheduledDate).tint(LuminaColor.primary)
                 if hasScheduledDate {
-                    DatePicker("日期", selection: $scheduledDate, displayedComponents: .date)
+                    DatePicker(L10n.tr(.dateLabel, language: language), selection: $scheduledDate, displayedComponents: .date)
                         .datePickerStyle(.graphical)
                         .tint(LuminaColor.primary)
                 }
@@ -78,23 +79,23 @@ struct EditTaskSheet: View {
             HStack(spacing: LuminaSpacing.gutter) {
                 ForEach(HubTaskPriority.allCases, id: \.self) { level in
                     Button { priority = priority == level ? nil : level } label: {
-                        SelectableChip(title: level.displayName, isSelected: priority == level)
+                        SelectableChip(title: level.displayName(language: language), isSelected: priority == level)
                     }
                     .buttonStyle(.plain)
                 }
             }
         case .reminder:
             VStack(alignment: .leading, spacing: LuminaSpacing.stackSM) {
-                Toggle("设置提醒", isOn: $hasReminder).tint(LuminaColor.primary)
+                Toggle(L10n.tr(.setReminder, language: language), isOn: $hasReminder).tint(LuminaColor.primary)
                 if hasReminder {
-                    DatePicker("提醒时间", selection: $reminderDate).tint(LuminaColor.primary)
+                    DatePicker(L10n.tr(.reminderTimeLabel, language: language), selection: $reminderDate).tint(LuminaColor.primary)
                 }
             }
         case .tag:
             HStack(spacing: LuminaSpacing.gutter) {
                 ForEach(TaskCategory.allCases, id: \.self) { category in
                     Button { selectedCategory = selectedCategory == category ? nil : category } label: {
-                        SelectableChip(title: category.displayName, isSelected: selectedCategory == category)
+                        SelectableChip(title: category.displayName(language: language), isSelected: selectedCategory == category)
                     }
                     .buttonStyle(.plain)
                 }

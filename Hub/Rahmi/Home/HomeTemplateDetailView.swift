@@ -148,6 +148,19 @@ struct HomeTemplateDetailView: View {
 
     private var smallPickSlotHeight: CGFloat { smallPickSlotWidth * 16.0 / 9.0 }
 
+    /// 金币不足弹层副标题所需金币
+    private var upsellRequiredCoins: Int? {
+        let coins: Int
+        switch phase {
+        case .loaded(let detail):
+            coins = feedItemForPreviewUI(from: detail).consumedCoins
+        case .loading, .failed:
+            guard case .coins(let c) = gridItem.bottomLeft else { return nil }
+            coins = c
+        }
+        return coins > 0 ? coins : nil
+    }
+
     /// 与瀑布流 cell 同源：`loading` / `failed` 用列表带入的 `gridItem`；`loaded` 用详情构建的 `HomeFeedItem` 再合并角标。
     private var heroGridCardItem: HomeGridCardItem {
         switch phase {
@@ -280,6 +293,7 @@ struct HomeTemplateDetailView: View {
 
             if showRechargeUpsell {
                 HomeGenerationRechargeUpsellView(
+                    requiredCoins: upsellRequiredCoins,
                     onClose: { showRechargeUpsell = false },
                     onExploreFullRecharge: {
                         showRechargeUpsell = false
@@ -781,7 +795,7 @@ struct HomeTemplateDetailView: View {
             .shadow(color: pickedImage == nil ? Color.clear : Color.black.opacity(0.38), radius: 14, y: 8)
 
             if flashActive, let pct = HomeFlashSalePresentation.discountPercent(feed) {
-                Text(String(format: AppLanguageStore.localized("home.immersive.discount_corner_format"), Int64(pct)))
+                Text(AppLanguageStore.localizedFormat("home.immersive.discount_corner_format", Int64(pct)))
                     .font(.system(size: 11, weight: .black))
                     .italic()
                     .foregroundStyle(Color.black.opacity(0.88))
@@ -861,7 +875,7 @@ struct HomeTemplateDetailView: View {
             .shadow(color: pickedImage == nil ? Color.clear : Color.black.opacity(0.25), radius: 4, y: 2)
 
             if flashActive, let pct = HomeFlashSalePresentation.discountPercent(feed) {
-                Text(String(format: AppLanguageStore.localized("home.immersive.discount_corner_format"), Int64(pct)))
+                Text(AppLanguageStore.localizedFormat("home.immersive.discount_corner_format", Int64(pct)))
                     .font(.system(size: 10, weight: .black))
                     .italic()
                     .foregroundStyle(Color.black)
@@ -919,7 +933,7 @@ struct HomeTemplateDetailView: View {
             }
             .padding(.vertical, 8)
         case .failed(let msg):
-            Text(msg)
+            Text(AppLanguageStore.localizedUserFacingAPIError(msg))
                 .font(.footnote)
                 .foregroundStyle(Color.red.opacity(0.9))
                 .frame(maxWidth: .infinity, alignment: .leading)
@@ -1017,7 +1031,7 @@ struct HomeTemplateDetailView: View {
             case .success(let d):
                 phase = .loaded(d)
             case .failure(let err):
-                phase = .failed(err.userMessage)
+                phase = .failed(AppLanguageStore.localizedUserFacingAPIError(err.userMessage))
             }
         }
     }
@@ -1068,7 +1082,7 @@ extension HomeTemplateDetailView {
         let ends = Int(Date().timeIntervalSince1970) + (90 * 60 + 13)
         return ImageTemplate(
             id: previewSeedTemplateDetailId,
-            title: "Preview",
+            title: AppLanguageStore.localized("home.template.detail.preview_title"),
             beforePics: [previewSeedBeforeURL, previewSeedAfterURL],
             beforePicsType: [0, 0],
             afterPic: previewSeedAfterURL,

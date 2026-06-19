@@ -98,7 +98,7 @@ private struct PushGenerationSuccessDestinationView: View {
             Image(systemName: "exclamationmark.triangle")
                 .font(.system(size: 36, weight: .light))
                 .foregroundStyle(AppTheme.onSurfaceVariant)
-            Text(message)
+            Text(AppLanguageStore.localizedUserFacingAPIError(message))
                 .font(.subheadline)
                 .multilineTextAlignment(.center)
                 .foregroundStyle(AppTheme.onSurfaceVariant)

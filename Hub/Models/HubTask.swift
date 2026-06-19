@@ -39,7 +39,17 @@ enum TaskCategory: String, Codable, CaseIterable {
     case deepFocus = "深度专注"
     case personal = "生活"
 
-    var displayName: String { rawValue }
+    var displayName: String {
+        displayName(language: .zhHans)
+    }
+
+    func displayName(language: AppLanguage) -> String {
+        switch self {
+        case .work: return L10n.tr(.categoryWork, language: language)
+        case .deepFocus: return L10n.tr(.categoryDeepFocus, language: language)
+        case .personal: return L10n.tr(.categoryPersonal, language: language)
+        }
+    }
 }
 
 enum HubTaskPriority: String, Codable, CaseIterable {
@@ -48,10 +58,14 @@ enum HubTaskPriority: String, Codable, CaseIterable {
     case high
 
     var displayName: String {
+        displayName(language: .zhHans)
+    }
+
+    func displayName(language: AppLanguage) -> String {
         switch self {
-        case .low: return "低"
-        case .medium: return "中"
-        case .high: return "高"
+        case .low: return L10n.tr(.priorityLow, language: language)
+        case .medium: return L10n.tr(.priorityMedium, language: language)
+        case .high: return L10n.tr(.priorityHigh, language: language)
         }
     }
 }
@@ -65,20 +79,28 @@ enum AmbientSound: String, Codable, CaseIterable, Identifiable {
     var id: String { rawValue }
 
     var title: String {
-        switch self {
-        case .rain: return "雨声"
-        case .forest: return "森林"
-        case .whiteNoise: return "白噪音"
-        case .cafe: return "咖啡馆"
-        }
+        title(language: .zhHans)
     }
 
     var subtitle: String {
+        subtitle(language: .zhHans)
+    }
+
+    func title(language: AppLanguage) -> String {
         switch self {
-        case .rain: return "窗外的绵绵细雨"
-        case .forest: return "清晨的鸟鸣与微风"
-        case .whiteNoise: return "平稳舒适的基础背景"
-        case .cafe: return "温和的背景感"
+        case .rain: return L10n.tr(.ambientRain, language: language)
+        case .forest: return L10n.tr(.ambientForest, language: language)
+        case .whiteNoise: return L10n.tr(.ambientWhiteNoise, language: language)
+        case .cafe: return L10n.tr(.ambientCafe, language: language)
+        }
+    }
+
+    func subtitle(language: AppLanguage) -> String {
+        switch self {
+        case .rain: return L10n.tr(.ambientRainSubtitle, language: language)
+        case .forest: return L10n.tr(.ambientForestSubtitle, language: language)
+        case .whiteNoise: return L10n.tr(.ambientWhiteNoiseSubtitle, language: language)
+        case .cafe: return L10n.tr(.ambientCafeSubtitle, language: language)
         }
     }
 
@@ -98,18 +120,26 @@ enum HubAppearanceTheme: String, Codable, CaseIterable {
     case system
 
     var displayName: String {
-        switch self {
-        case .light: return "浅色模式"
-        case .dark: return "深色模式"
-        case .system: return "跟随系统"
-        }
+        displayName(language: .zhHans)
     }
 
     var subtitle: String {
+        subtitle(language: .zhHans)
+    }
+
+    func displayName(language: AppLanguage) -> String {
         switch self {
-        case .light: return "始终使用浅色界面"
-        case .dark: return "始终使用深色界面"
-        case .system: return "随系统外观自动切换"
+        case .light: return L10n.tr(.themeLight, language: language)
+        case .dark: return L10n.tr(.themeDark, language: language)
+        case .system: return L10n.tr(.themeSystem, language: language)
+        }
+    }
+
+    func subtitle(language: AppLanguage) -> String {
+        switch self {
+        case .light: return L10n.tr(.themeLightSubtitle, language: language)
+        case .dark: return L10n.tr(.themeDarkSubtitle, language: language)
+        case .system: return L10n.tr(.themeSystemSubtitle, language: language)
         }
     }
 
@@ -125,6 +155,11 @@ enum HubAppearanceTheme: String, Codable, CaseIterable {
 enum AppLanguage: String, Codable, CaseIterable {
     case zhHans = "zh-Hans"
     case en = "en"
+
+    static func defaultFromSystem() -> AppLanguage {
+        let preferred = Locale.preferredLanguages.first ?? "en"
+        return preferred.hasPrefix("zh") ? .zhHans : .en
+    }
 
     var displayName: String {
         switch self {

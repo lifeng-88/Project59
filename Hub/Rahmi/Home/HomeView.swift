@@ -725,7 +725,7 @@ struct HomeView: View {
                 .padding(.bottom, homeFeedBottomPadding)
 
             if let err = templatesError(forPrimaryTab: tab), feedEmpty(forPrimaryTab: tab), !templatesLoading(forPrimaryTab: tab) {
-                Text(err)
+                Text(AppLanguageStore.localizedUserFacingAPIError(err))
                     .font(.footnote)
                     .foregroundStyle(Color.red.opacity(0.9))
                     .multilineTextAlignment(.center)
@@ -753,6 +753,8 @@ struct HomeView: View {
                     tabRouter.select(.recharge)
                 }
             )
+            .environmentObject(appLanguage)
+            .id(appLanguage.preference.storageValue)
             homeVariantAPrimaryCategorySwipeHost
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
         }
@@ -980,7 +982,7 @@ struct HomeView: View {
             }
 
             if let err = templatesError(forPrimaryTab: tab), feedEmpty(forPrimaryTab: tab), !templatesLoading(forPrimaryTab: tab) {
-                Text(err)
+                Text(AppLanguageStore.localizedUserFacingAPIError(err))
                     .font(.footnote)
                     .foregroundStyle(Color.red.opacity(0.9))
                     .multilineTextAlignment(.center)
@@ -1118,8 +1120,17 @@ struct HomeView: View {
                 if selectedTag > list.count {
                     selectedTag = 0
                 }
+                #if DEBUG
+                if showsHomeVariantA, list.isEmpty {
+                    homeCatalogs = RahmiAFaceLocalSimulation.videoCatalogs()
+                }
+                #endif
             case .failure:
-                break
+                #if DEBUG
+                if showsHomeVariantA, homeCatalogs.isEmpty {
+                    homeCatalogs = RahmiAFaceLocalSimulation.videoCatalogs()
+                }
+                #endif
             }
         }
     }
@@ -1213,7 +1224,20 @@ struct HomeView: View {
                 let grid = imageGridItems
                 prefetchHomeImageURLs(feed: feed, grid: grid)
             case .failure(let err):
+                #if DEBUG
+                if showsHomeVariantA, imageTemplatesRaw.isEmpty {
+                    imageTemplatesRaw = RahmiAFaceLocalSimulation.imageTemplates()
+                    imageListHasMore = false
+                    imageTemplatesError = nil
+                    let feed = imageFeedItems
+                    let grid = imageGridItems
+                    prefetchHomeImageURLs(feed: feed, grid: grid)
+                } else {
+                    imageTemplatesError = err.userMessage
+                }
+                #else
                 imageTemplatesError = err.userMessage
+                #endif
             }
         }
     }

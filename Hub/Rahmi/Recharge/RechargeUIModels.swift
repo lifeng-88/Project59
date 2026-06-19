@@ -238,14 +238,14 @@ extension RechargeRecordItem {
         return [
             RechargeRecordItem(
                 createdAt: cal.date(byAdding: .day, value: -1, to: now) ?? now,
-                title: "Coin pack",
+                title: AppLanguageStore.localized("recharge.record.sample_title"),
                 amount: "$14.99",
                 coins: 90,
                 status: .completed
             ),
             RechargeRecordItem(
                 createdAt: cal.date(byAdding: .day, value: -5, to: now) ?? now,
-                title: "Coin pack",
+                title: AppLanguageStore.localized("recharge.record.sample_title"),
                 amount: "$9.99",
                 coins: 55,
                 status: .completed

@@ -62,3 +62,27 @@ struct RechargeVariantAHeader: View {
         )
     }
 }
+
+/// A 面充值 / 内购弹层共用的 String Catalog 键选择（与 `RechargeView`、`HomeGenerationRechargeUpsellView` 对齐）
+enum RechargeVariantALocalization {
+    static func footerKey(isVariantA: Bool) -> String {
+        isVariantA ? "recharge.variant_a.iap_hint" : "recharge.secure_footer"
+    }
+
+    static func processingKey(isVariantA: Bool) -> String {
+        isVariantA ? "recharge.variant_a.processing" : "recharge.processing"
+    }
+
+    static func primaryCTAKey(isVariantA: Bool, isPurchasing: Bool) -> String {
+        if isPurchasing { return processingKey(isVariantA: isVariantA) }
+        return isVariantA ? "recharge.variant_a.primary_cta" : "recharge.now"
+    }
+
+    static func navigationTitleKey(isVariantA: Bool) -> String {
+        isVariantA ? "recharge.variant_a.headline" : "recharge.list_title"
+    }
+
+    static func upsellHeaderTitleKey(isVariantA: Bool) -> String {
+        isVariantA ? "recharge.variant_a.headline" : "recharge.list_title"
+    }
+}

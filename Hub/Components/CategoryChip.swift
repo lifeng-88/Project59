@@ -11,7 +11,7 @@ struct CategoryChip: View {
             .padding(.vertical, 2)
             .background(
                 (isCompleted ? LuminaColor.outline : LuminaColor.primary)
-                    .opacity(isCompleted ? 0.1 : 0.05)
+                    .opacity(isCompleted ? 0.08 : 0.1)
             )
             .foregroundStyle(isCompleted ? LuminaColor.outline.opacity(0.5) : LuminaColor.primary)
             .clipShape(Capsule())

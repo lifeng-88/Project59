@@ -207,6 +207,13 @@ enum AFSDKBridge {
         #endif
     }
 
+    /// 与官方建议一致：每次进入前台调用 `start()`（已 configure 时安全；未 configure 时无效果）
+    static func handleBecomeActive() {
+        #if canImport(AppsFlyerLib)
+        AppsFlyerLib.shared().start()
+        #endif
+    }
+
     /// 首次在本机完成登录（设备登录成功）时上报，供 Meta 等集成映射 **`CompleteRegistration`**。
     /// 控制台请将 **`af_complete_registration`** 映射到伙伴事件，勿用 **`af_app_opened`** 代替（后者为会话打开，语义不符）。
     static func logCompleteRegistration() {

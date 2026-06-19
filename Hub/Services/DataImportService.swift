@@ -7,10 +7,14 @@ enum DataImportService {
         case invalidCSVHeader
 
         var errorDescription: String? {
+            message(language: .zhHans)
+        }
+
+        func message(language: AppLanguage) -> String {
             switch self {
-            case .invalidFormat: return "无法识别的文件格式"
-            case .emptyCSV: return "CSV 文件为空"
-            case .invalidCSVHeader: return "CSV 表头不符合 Hub 导出格式"
+            case .invalidFormat: return L10n.tr(.errorInvalidFormat, language: language)
+            case .emptyCSV: return L10n.tr(.errorEmptyCSV, language: language)
+            case .invalidCSVHeader: return L10n.tr(.errorInvalidCSVHeader, language: language)
             }
         }
     }
@@ -34,7 +38,7 @@ enum DataImportService {
             store.tasks = tasks
             store.persist()
             Task { await store.syncNotifications() }
-            store.alertMessage = "已导入 \(tasks.count) 条任务"
+            store.alertMessage = String(format: L10n.tr(.alertImportedTasks, language: store.appLanguage), tasks.count)
             return
         }
 
@@ -44,7 +48,7 @@ enum DataImportService {
             store.tasks = tasks
             store.persist()
             Task { await store.syncNotifications() }
-            store.alertMessage = "已从 CSV 导入 \(tasks.count) 条任务"
+            store.alertMessage = String(format: L10n.tr(.alertImportedCSV, language: store.appLanguage), tasks.count)
             return
         }
 

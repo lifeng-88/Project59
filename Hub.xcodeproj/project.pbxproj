@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		52EAC0752FE40EAD00C2E4D4 /* AppsFlyerLib-Static in Frameworks */ = {isa = PBXBuildFile; productRef = AF0000020000000000000001 /* AppsFlyerLib-Static */; };
 		A10000000000000000000001 /* HubApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000001 /* HubApp.swift */; };
 		A10000000000000000000002 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000002 /* ContentView.swift */; };
 		A10000000000000000000003 /* LuminaTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000003 /* LuminaTheme.swift */; };
@@ -61,7 +62,7 @@
 		R0FEB64D6FFCEB651C5F6748 /* LocalFavoriteTemplateStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = R6546C103EE17A5FF1CCB134 /* LocalFavoriteTemplateStore.swift */; };
 		R10C5AC76BA5E79FF856F264 /* RmCatalogWorkRepositoryProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = RB1CE390D90831C9DD23800A /* RmCatalogWorkRepositoryProtocol.swift */; };
 		R10DC75DC8BCAF816C247207 /* ImageCacheManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = R9B788C04C44B260716E6684 /* ImageCacheManager.swift */; };
-		R124C7ED65DCA1EFFE585458 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = R85AB41079FB12BE87171B1F /* LaunchScreen.storyboard */; };
+		R124C7ED65DCA1EFFE585458 /* LuminaFocusLaunch.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = R85AB41079FB12BE87171B1F /* LuminaFocusLaunch.storyboard */; };
 		R1307995F5C253EA46972FC1 /* HomeGridFeedView.swift in Sources */ = {isa = PBXBuildFile; fileRef = R863871EC3EDA600505827EE /* HomeGridFeedView.swift */; };
 		R149D0056853B5EA6B59E189 /* HomeTemplateGenerationSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = RF9E84B82AE33869C532D341 /* HomeTemplateGenerationSheet.swift */; };
 		R1517F5C34E0891FB356AC98 /* RmStoreKitPurchaseOrchestrator.swift in Sources */ = {isa = PBXBuildFile; fileRef = RFED0C90F5C28EF36EF2E0FB /* RmStoreKitPurchaseOrchestrator.swift */; };
@@ -126,6 +127,7 @@
 		RAD4D30D3D524C8DE1CBC150 /* ProfileFeatureViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = RB4FA54860A54DBAC4DFCFEC /* ProfileFeatureViews.swift */; };
 		RAD5D1CB1F76044E0C0705CC /* RahmiRootContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = R6D4770047FA2A3835008641 /* RahmiRootContentView.swift */; };
 		RAF5491B19FA2AC874DC8E3E /* RmBinaryObjectWireTransport.swift in Sources */ = {isa = PBXBuildFile; fileRef = RF4D07E70944FE6E60269785 /* RmBinaryObjectWireTransport.swift */; };
+		RAFACELOC0000000000001 /* RahmiAFaceLocalSimulation.swift in Sources */ = {isa = PBXBuildFile; fileRef = RAFACELOC0000000000002 /* RahmiAFaceLocalSimulation.swift */; };
 		RAFEFC2D912E97A4314C63A9 /* RahmiDebugSimulatedPush.swift in Sources */ = {isa = PBXBuildFile; fileRef = RE1F76E3473162486848E25E /* RahmiDebugSimulatedPush.swift */; };
 		RB3F9F7071E83E245A6498D4 /* RechargePaymentSelectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = R43D3CF98CD2AE89511F6570 /* RechargePaymentSelectionView.swift */; };
 		RB6E1782CE91015E447A6FF9 /* RmPurchaseLedgerRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = R737010D381F2DDA381C360E /* RmPurchaseLedgerRepository.swift */; };
@@ -271,7 +273,7 @@
 		R7E1BD565BDBCAAB5BC6CBEE /* ResBaseURL.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResBaseURL.swift; sourceTree = "<group>"; };
 		R7F89E45CBC81B7BAE2E2994 /* AddPaymentCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddPaymentCardView.swift; sourceTree = "<group>"; };
 		R80E82A442B2629C66B2159F /* RahmiBFaceHost.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RahmiBFaceHost.swift; sourceTree = "<group>"; };
-		R85AB41079FB12BE87171B1F /* LaunchScreen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
+		R85AB41079FB12BE87171B1F /* LuminaFocusLaunch.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = LuminaFocusLaunch.storyboard; sourceTree = "<group>"; };
 		R863871EC3EDA600505827EE /* HomeGridFeedView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeGridFeedView.swift; sourceTree = "<group>"; };
 		R884E89F027817D51B2C7E50 /* RechargeRecordListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RechargeRecordListView.swift; sourceTree = "<group>"; };
 		R89239491C1EED3A63884E20 /* HomeCatalogTabLocalization.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeCatalogTabLocalization.swift; sourceTree = "<group>"; };
@@ -310,6 +312,7 @@
 		RD16C3E699F55E9CDF168783 /* RahmiAssets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = RahmiAssets.xcassets; sourceTree = "<group>"; };
 		RD2020F11B77A07A6B1AE7CB /* RmIdentitySessionRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RmIdentitySessionRepository.swift; sourceTree = "<group>"; };
 		RD91FFA15101857CB042A456 /* RechargeVariantAHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RechargeVariantAHeader.swift; sourceTree = "<group>"; };
+		RAFACELOC0000000000002 /* RahmiAFaceLocalSimulation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RahmiAFaceLocalSimulation.swift; sourceTree = "<group>"; };
 		RE1F76E3473162486848E25E /* RahmiDebugSimulatedPush.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RahmiDebugSimulatedPush.swift; sourceTree = "<group>"; };
 		RE223596F6A97A2765CE2CCF /* IPLocationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IPLocationManager.swift; sourceTree = "<group>"; };
 		RE33253EA2C988029EC9DD73 /* HomeModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeModels.swift; sourceTree = "<group>"; };
@@ -331,6 +334,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				52EAC0752FE40EAD00C2E4D4 /* AppsFlyerLib-Static in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -360,7 +364,7 @@
 				A20000000000000000000013 /* Assets.xcassets */,
 				GB08089C5D7C8298BEFBCE43 /* Rahmi */,
 				GAF2253B7017F21CE1F9B072 /* Shell */,
-				R85AB41079FB12BE87171B1F /* LaunchScreen.storyboard */,
+				R85AB41079FB12BE87171B1F /* LuminaFocusLaunch.storyboard */,
 				RD16C3E699F55E9CDF168783 /* RahmiAssets.xcassets */,
 			);
 			path = Hub;
@@ -508,6 +512,7 @@
 				R8DD53C1093A7712CBD05B9E /* LegacyImagePicker.swift */,
 				REAA792D805ADAAFF391F7BA /* LegalAndSupportViews.swift */,
 				R19D7DAB1E3DE5953D51E9F9 /* NotificationPermissionStore.swift */,
+				RAFACELOC0000000000002 /* RahmiAFaceLocalSimulation.swift */,
 				RE1F76E3473162486848E25E /* RahmiDebugSimulatedPush.swift */,
 				RFE12CDEFB7C9EC0630AFD7F /* RechargeAFLogger.swift */,
 				R71062745360D63CBC91084F /* TokenManager.swift */,
@@ -710,6 +715,9 @@
 			dependencies = (
 			);
 			name = Hub;
+			packageProductDependencies = (
+				AF0000020000000000000001 /* AppsFlyerLib-Static */,
+			);
 			productName = Hub;
 			productReference = A30000000000000000000001 /* Hub.app */;
 			productType = "com.apple.product-type.application";
@@ -745,6 +753,9 @@
 				de,
 			);
 			mainGroup = A50000000000000000000001;
+			packageReferences = (
+				AF0000010000000000000001 /* XCRemoteSwiftPackageReference "AppsFlyerFramework-Static" */,
+			);
 			productRefGroup = A50000000000000000000003 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -761,7 +772,7 @@
 			files = (
 				A10000000000000000000013 /* Assets.xcassets in Resources */,
 				R468C551DA2F7ED71BFF866D /* Localizable.xcstrings in Resources */,
-				R124C7ED65DCA1EFFE585458 /* LaunchScreen.storyboard in Resources */,
+				R124C7ED65DCA1EFFE585458 /* LuminaFocusLaunch.storyboard in Resources */,
 				R338696B1BFF0EAACF653F3B /* IAP.storekit in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -913,6 +924,7 @@
 				R3C13EE6C2F54C6707F90BAC /* LegacyImagePicker.swift in Sources */,
 				R2752CCB8FA3C32B550A4C5D /* LegalAndSupportViews.swift in Sources */,
 				R477107456BE81EC97C85F75 /* NotificationPermissionStore.swift in Sources */,
+				RAFACELOC0000000000001 /* RahmiAFaceLocalSimulation.swift in Sources */,
 				RAFEFC2D912E97A4314C63A9 /* RahmiDebugSimulatedPush.swift in Sources */,
 				RCDE9646D2874B22A9727C57 /* RechargeAFLogger.swift in Sources */,
 				RF17DBE3BB2650825AC46630 /* TokenManager.swift in Sources */,
@@ -993,7 +1005,7 @@
 				INFOPLIST_KEY_NSUserNotificationsUsageDescription = "Hub 需要发送通知以提醒您按时完成任务。";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIBackgroundModes = "remote-notification audio";
-				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
+				INFOPLIST_KEY_UILaunchStoryboardName = LuminaFocusLaunch;
 				INFOPLIST_KEY_UIRequiresFullScreen = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
@@ -1001,7 +1013,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.1;
 				OTHER_SWIFT_FLAGS = "$(inherited) -Xfrontend -solver-expression-time-threshold=2000";
 				PRODUCT_BUNDLE_IDENTIFIER = com.Hub.Lumina;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -1034,7 +1046,7 @@
 				INFOPLIST_KEY_NSUserNotificationsUsageDescription = "Hub 需要发送通知以提醒您按时完成任务。";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIBackgroundModes = "remote-notification audio";
-				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
+				INFOPLIST_KEY_UILaunchStoryboardName = LuminaFocusLaunch;
 				INFOPLIST_KEY_UIRequiresFullScreen = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
@@ -1042,7 +1054,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.1;
 				OTHER_SWIFT_FLAGS = "$(inherited) -Xfrontend -solver-expression-time-threshold=2000";
 				PRODUCT_BUNDLE_IDENTIFIER = com.Hub.Lumina;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -1077,6 +1089,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		AF0000010000000000000001 /* XCRemoteSwiftPackageReference "AppsFlyerFramework-Static" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/AppsFlyerSDK/AppsFlyerFramework-Static";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 6.17.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		AF0000020000000000000001 /* AppsFlyerLib-Static */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = AF0000010000000000000001 /* XCRemoteSwiftPackageReference "AppsFlyerFramework-Static" */;
+			productName = "AppsFlyerLib-Static";
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = A90000000000000000000001 /* Project object */;
 }

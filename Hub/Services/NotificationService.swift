@@ -15,13 +15,13 @@ enum NotificationService {
         await UNUserNotificationCenter.current().notificationSettings().authorizationStatus
     }
 
-    static func scheduleReminder(for task: HubTask) {
+    static func scheduleReminder(for task: HubTask, language: AppLanguage) {
         guard let fireDate = task.reminderDate,
               fireDate > Date(),
               !task.isCompleted else { return }
 
         let content = UNMutableNotificationContent()
-        content.title = "Hub 任务提醒"
+        content.title = L10n.tr(.notifyTaskReminderTitle, language: language)
         content.body = task.title
         content.sound = .default
 
@@ -86,13 +86,13 @@ enum NotificationService {
         )
     }
 
-    static func syncAll(tasks: [HubTask], enabled: Bool) async {
+    static func syncAll(tasks: [HubTask], enabled: Bool, language: AppLanguage) async {
         UNUserNotificationCenter.current().removeAllPendingNotificationRequests()
         guard enabled else { return }
         let status = await authorizationStatus()
         guard status == .authorized || status == .provisional else { return }
         for task in tasks where !task.isCompleted {
-            scheduleReminder(for: task)
+            scheduleReminder(for: task, language: language)
         }
     }
 }

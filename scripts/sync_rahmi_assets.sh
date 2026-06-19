@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# 将 Rahmi B 面 UI 位图同步到 Hub/Assets.xcassets（不覆盖 Lumina AppIcon / LaunchScreen）
+# 将 Rahmi B 面 UI 位图同步到 Hub/Assets.xcassets（不覆盖 Lumina AppIcon / LuminaFocusLaunchMark）
 set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 SRC="${1:-$ROOT/../Rahmi/Rahmi/Assets.xcassets}"
@@ -17,4 +17,4 @@ for name in AppCoinGold.imageset UploadTipsGood.imageset UploadTipsBad.imageset;
   fi
 done
 
-echo "Done → $DST (Lumina AppIcon/LaunchScreen 请用 scripts/generate_lumina_brand_assets.py 生成)"
+echo "Done → $DST (Lumina AppIcon/LuminaFocusLaunchMark 请用 scripts/generate_lumina_brand_assets.py 生成)"

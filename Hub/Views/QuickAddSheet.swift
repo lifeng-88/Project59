@@ -3,6 +3,8 @@ import SwiftUI
 struct QuickAddSheet: View {
     @EnvironmentObject private var store: TaskStore
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.hubLanguage) private var language
+    @Environment(\.locale) private var locale
 
     @State private var title = ""
     @State private var selectedCategory: TaskCategory?
@@ -15,7 +17,7 @@ struct QuickAddSheet: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
-            TextField("准备做什么？", text: $title, axis: .vertical)
+            TextField(L10n.tr(.quickAddPlaceholder, language: language), text: $title, axis: .vertical)
                 .font(.luminaHeadlineLG)
                 .foregroundStyle(LuminaColor.onSurface)
                 .lineLimit(2...4)
@@ -55,18 +57,18 @@ struct QuickAddSheet: View {
         switch activeTool {
         case .date:
             VStack(alignment: .leading, spacing: LuminaSpacing.stackSM) {
-                Toggle("设置日期", isOn: $hasScheduledDate)
+                Toggle(L10n.tr(.setDate, language: language), isOn: $hasScheduledDate)
                     .font(.luminaLabelMD)
                     .tint(LuminaColor.primary)
                 if hasScheduledDate {
-                    DatePicker("日期", selection: $scheduledDate, displayedComponents: .date)
+                    DatePicker(L10n.tr(.dateLabel, language: language), selection: $scheduledDate, displayedComponents: .date)
                         .datePickerStyle(.graphical)
                         .tint(LuminaColor.primary)
                 }
             }
         case .priority:
             VStack(alignment: .leading, spacing: LuminaSpacing.stackSM) {
-                Text("优先级")
+                Text(L10n.tr(.prioritySection, language: language))
                     .font(.luminaLabelMD)
                     .foregroundStyle(LuminaColor.onSurfaceVariant)
                 HStack(spacing: LuminaSpacing.gutter) {
@@ -74,7 +76,7 @@ struct QuickAddSheet: View {
                         Button {
                             priority = priority == level ? nil : level
                         } label: {
-                            SelectableChip(title: level.displayName, isSelected: priority == level)
+                            SelectableChip(title: level.displayName(language: language), isSelected: priority == level)
                         }
                         .buttonStyle(.plain)
                     }
@@ -82,11 +84,11 @@ struct QuickAddSheet: View {
             }
         case .reminder:
             VStack(alignment: .leading, spacing: LuminaSpacing.stackSM) {
-                Toggle("设置提醒", isOn: $hasReminder)
+                Toggle(L10n.tr(.setReminder, language: language), isOn: $hasReminder)
                     .font(.luminaLabelMD)
                     .tint(LuminaColor.primary)
                 if hasReminder {
-                    DatePicker("提醒时间", selection: $reminderDate)
+                    DatePicker(L10n.tr(.reminderTimeLabel, language: language), selection: $reminderDate)
                         .datePickerStyle(.compact)
                         .tint(LuminaColor.primary)
                 }
@@ -127,7 +129,7 @@ struct QuickAddSheet: View {
 
     private var categoryPicker: some View {
         VStack(alignment: .leading, spacing: LuminaSpacing.stackSM) {
-            Text("选择分类")
+            Text(L10n.tr(.chooseCategory, language: language))
                 .font(.luminaLabelMD)
                 .foregroundStyle(LuminaColor.onSurfaceVariant)
 
@@ -137,7 +139,7 @@ struct QuickAddSheet: View {
                         selectedCategory = selectedCategory == category ? nil : category
                     } label: {
                         SelectableChip(
-                            title: category.displayName,
+                            title: category.displayName(language: language),
                             isSelected: selectedCategory == category
                         )
                     }
@@ -150,21 +152,25 @@ struct QuickAddSheet: View {
     private var toolMetaLabel: String? {
         switch activeTool {
         case .date:
-            guard hasScheduledDate else { return "无日期" }
-            return scheduledDate.formatted(.dateTime.month().day().locale(Locale(identifier: "zh_CN")))
+            guard hasScheduledDate else { return L10n.tr(.noDate, language: language) }
+            return scheduledDate.formatted(.dateTime.month().day().locale(locale))
         case .priority:
-            return priority.map { "\($0.displayName)优先级" } ?? "无优先级"
+            return priority.map {
+                String(format: L10n.tr(.priorityLevelSuffix, language: language), $0.displayName(language: language))
+            } ?? L10n.tr(.noPriority, language: language)
         case .reminder:
-            guard hasReminder else { return "无提醒" }
+            guard hasReminder else { return L10n.tr(.noReminder, language: language) }
             return reminderDate.formatted(date: .omitted, time: .shortened)
         case .tag:
-            return selectedCategory?.displayName
+            return selectedCategory?.displayName(language: language)
         case nil:
-            if let selectedCategory { return selectedCategory.displayName }
+            if let selectedCategory { return selectedCategory.displayName(language: language) }
             if hasReminder { return reminderDate.formatted(date: .omitted, time: .shortened) }
-            if let priority { return "\(priority.displayName)优先级" }
+            if let priority {
+                return String(format: L10n.tr(.priorityLevelSuffix, language: language), priority.displayName(language: language))
+            }
             if hasScheduledDate {
-                return scheduledDate.formatted(.dateTime.month().day().locale(Locale(identifier: "zh_CN")))
+                return scheduledDate.formatted(.dateTime.month().day().locale(locale))
             }
             return nil
         }
@@ -172,7 +178,7 @@ struct QuickAddSheet: View {
 
     private var footerActions: some View {
         HStack {
-            Button("取消") { dismiss() }
+            Button(L10n.tr(.commonCancel, language: language)) { dismiss() }
                 .font(.luminaLabelMD)
                 .foregroundStyle(LuminaColor.secondary)
                 .padding(.horizontal, 24)
@@ -191,7 +197,7 @@ struct QuickAddSheet: View {
                 dismiss()
             } label: {
                 HStack(spacing: 8) {
-                    Text("保存")
+                    Text(L10n.tr(.commonSave, language: language))
                     Image(systemName: "checkmark")
                         .font(.system(size: 16, weight: .semibold))
                 }

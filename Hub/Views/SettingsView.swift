@@ -1,8 +1,10 @@
 import SwiftUI
 import UniformTypeIdentifiers
+import UIKit
 
 struct SettingsView: View {
     @EnvironmentObject private var store: TaskStore
+    @Environment(\.hubLanguage) private var language
 
     @State private var showFocusGuide = false
     @State private var showFocusSettings = false
@@ -14,12 +16,16 @@ struct SettingsView: View {
     @State private var showResetConfirm = false
     @State private var showFocusGoalSheet = false
     @State private var notificationDenied = false
+    @State private var showDevIdCopiedToast = false
+    /// 连续点击底部版本文案 10 次触发复制 dev_id；2s 内无继续点击则清零
+    @State private var devIdFooterTapCount = 0
+    @State private var devIdFooterTapResetTask: Task<Void, Never>?
 
     var body: some View {
         NavigationStack {
             ScrollView {
                 VStack(alignment: .leading, spacing: 0) {
-                    HubTopBar(title: "设置", showMenu: false, showSearch: false)
+                    HubTopBar(title: L10n.tr(.settingsTitle, language: language), showMenu: false, showSearch: false)
 
                     VStack(alignment: .leading, spacing: LuminaSpacing.stackXL) {
                         overviewCard
@@ -65,14 +71,14 @@ struct SettingsView: View {
                 FocusGoalSheet()
             }
             #if DEBUG
-            .alert("重置所有数据？", isPresented: $showResetConfirm) {
-                Button("取消", role: .cancel) {}
-                Button("重置", role: .destructive) {
+            .alert(L10n.tr(.settingsResetTitle, language: language), isPresented: $showResetConfirm) {
+                Button(L10n.tr(.commonCancel, language: language), role: .cancel) {}
+                Button(L10n.tr(.settingsResetConfirmAction, language: language), role: .destructive) {
                     store.resetAllData()
-                    store.alertMessage = "已恢复为演示数据"
+                    store.alertMessage = L10n.tr(.settingsResetDone, language: language)
                 }
             } message: {
-                Text("将清除当前任务并恢复示例内容，此操作不可撤销。")
+                Text(L10n.tr(.settingsResetMessage, language: language))
             }
             #endif
             .task {
@@ -82,6 +88,19 @@ struct SettingsView: View {
             .onChange(of: showFocusGuide) { _, _ in syncHubTabBarVisibility() }
             .onChange(of: showFocusSettings) { _, _ in syncHubTabBarVisibility() }
             .onChange(of: showProfileEdit) { _, _ in syncHubTabBarVisibility() }
+            .overlay(alignment: .top) {
+                if showDevIdCopiedToast {
+                    Text(devIdCopiedToastText)
+                        .font(.system(size: 13, weight: .semibold))
+                        .foregroundStyle(LuminaColor.onSurface)
+                        .padding(.horizontal, 16)
+                        .padding(.vertical, 10)
+                        .background(LuminaColor.surfaceContainerHigh)
+                        .clipShape(Capsule())
+                        .padding(.top, 8)
+                        .transition(.move(edge: .top).combined(with: .opacity))
+                }
+            }
         }
     }
 
@@ -93,13 +112,13 @@ struct SettingsView: View {
 
     private var overviewCard: some View {
         HStack(spacing: 0) {
-            overviewStat(value: "\(store.tasks.count)", label: "全部任务")
+            overviewStat(value: "\(store.tasks.count)", label: L10n.tr(.settingsAllTasks, language: language))
             overviewDivider
-            overviewStat(value: "\(store.completedCount)", label: "已完成")
+            overviewStat(value: "\(store.completedCount)", label: L10n.tr(.settingsCompleted, language: language))
             overviewDivider
             overviewStat(
                 value: streakValueLabel,
-                label: L10n.tr(.settingsStreakDays, language: store.appLanguage)
+                label: L10n.tr(.settingsStreakDays, language: language)
             )
         }
         .padding(.vertical, LuminaSpacing.stackMD)
@@ -110,10 +129,10 @@ struct SettingsView: View {
 
     private var streakValueLabel: String {
         let days = store.focusStreakDays
-        if store.appLanguage == .en {
+        if language == .en {
             return days == 1 ? "1 day" : "\(days) days"
         }
-        return "\(days)天"
+        return String(format: L10n.tr(.settingsStreakDayUnit, language: language), days)
     }
 
     private var overviewDivider: some View {
@@ -138,7 +157,7 @@ struct SettingsView: View {
 
     private var profileSection: some View {
         VStack(alignment: .leading, spacing: LuminaSpacing.stackSM) {
-            LuminaSectionLabel(title: "个人资料")
+            LuminaSectionLabel(title: L10n.tr(.settingsProfile, language: language))
 
             SettingsGroupCard {
                 Button { showProfileEdit = true } label: {
@@ -160,7 +179,7 @@ struct SettingsView: View {
 
                         Spacer()
 
-                        Text("编辑")
+                        Text(L10n.tr(.settingsEdit, language: language))
                             .font(.luminaLabelMD)
                             .foregroundStyle(LuminaColor.onSurfaceVariant)
 
@@ -180,12 +199,12 @@ struct SettingsView: View {
 
     private var preferencesSection: some View {
         VStack(alignment: .leading, spacing: LuminaSpacing.stackSM) {
-            LuminaSectionLabel(title: "偏好设置")
+            LuminaSectionLabel(title: L10n.tr(.settingsPreferences, language: language))
 
             SettingsGroupCard {
                 SettingsRowButton(
                     icon: "globe",
-                    title: "语言",
+                    title: L10n.tr(.settingsLanguage, language: language),
                     trailing: store.appLanguage.displayName
                 ) {
                     showLanguageSheet = true
@@ -195,8 +214,8 @@ struct SettingsView: View {
 
                 SettingsRowButton(
                     icon: "moon.fill",
-                    title: "主题模式",
-                    trailing: store.appTheme.displayName
+                    title: L10n.tr(.settingsTheme, language: language),
+                    trailing: store.appTheme.displayName(language: language)
                 ) {
                     showThemeSheet = true
                 }
@@ -205,8 +224,11 @@ struct SettingsView: View {
 
                 SettingsRowButton(
                     icon: "target",
-                    title: "专注目标",
-                    trailing: "\(store.focusGoalHours) 小时"
+                    title: L10n.tr(.settingsFocusGoal, language: language),
+                    trailing: String(
+                        format: L10n.tr(.settingsFocusGoalHours, language: language),
+                        store.focusGoalHours
+                    )
                 ) {
                     showFocusGoalSheet = true
                 }
@@ -221,8 +243,10 @@ struct SettingsView: View {
     private var notificationRow: some View {
         SettingsToggleRow(
             icon: "bell.fill",
-            title: "提醒通知",
-            subtitle: notificationDenied ? "通知已关闭，请在系统设置中开启" : "任务提醒将准时推送",
+            title: L10n.tr(.settingsNotifications, language: language),
+            subtitle: notificationDenied
+                ? L10n.tr(.settingsNotificationsDenied, language: language)
+                : L10n.tr(.settingsNotificationsSubtitle, language: language),
             isOn: Binding(
                 get: { store.notificationsEnabled },
                 set: { newValue in
@@ -234,7 +258,7 @@ struct SettingsView: View {
             )
         ) {
             if notificationDenied {
-                Button("前往系统设置") {
+                Button(L10n.tr(.settingsOpenSystemSettings, language: language)) {
                     store.openSystemNotificationSettings()
                 }
                 .font(.luminaLabelMD)
@@ -248,13 +272,13 @@ struct SettingsView: View {
 
     private var focusSection: some View {
         VStack(alignment: .leading, spacing: LuminaSpacing.stackSM) {
-            LuminaSectionLabel(title: "专注模式")
+            LuminaSectionLabel(title: L10n.tr(.settingsFocusSection, language: language))
 
             SettingsGroupCard {
                 SettingsRowButton(
                     icon: "timer",
-                    title: "专注模式设置",
-                    subtitle: store.focusSettingsSummary,
+                    title: L10n.tr(.settingsFocusModeSettings, language: language),
+                    subtitle: store.focusSettingsSummary(language: language),
                     iconColor: LuminaColor.tertiary
                 ) {
                     showFocusSettings = true
@@ -264,8 +288,8 @@ struct SettingsView: View {
 
                 SettingsRowButton(
                     icon: "info.circle",
-                    title: "关于专注模式",
-                    subtitle: "番茄工作法与使用技巧",
+                    title: L10n.tr(.settingsAboutFocus, language: language),
+                    subtitle: L10n.tr(.settingsAboutFocusSubtitle, language: language),
                     iconColor: LuminaColor.tertiary,
                     showChevron: true
                 ) {
@@ -276,7 +300,7 @@ struct SettingsView: View {
 
                 SettingsRowButton(
                     icon: "bolt.fill",
-                    title: "立即开始专注",
+                    title: L10n.tr(.settingsStartFocusNow, language: language),
                     iconColor: LuminaColor.primary,
                     showChevron: false,
                     trailingIcon: "play.circle.fill"
@@ -291,12 +315,12 @@ struct SettingsView: View {
 
     private var dataSection: some View {
         VStack(alignment: .leading, spacing: LuminaSpacing.stackSM) {
-            LuminaSectionLabel(title: "数据与备份")
+            LuminaSectionLabel(title: L10n.tr(.settingsDataSection, language: language))
 
             SettingsGroupCard {
                 SettingsToggleRow(
                     icon: "icloud.fill",
-                    title: "云端同步",
+                    title: L10n.tr(.settingsCloudSync, language: language),
                     subtitle: syncSubtitle,
                     isOn: Binding(
                         get: { store.cloudSyncEnabled },
@@ -309,8 +333,8 @@ struct SettingsView: View {
 
                 SettingsRowButton(
                     icon: "externaldrive.fill",
-                    title: "数据管理",
-                    subtitle: "导出、导入与 iCloud",
+                    title: L10n.tr(.settingsDataManagement, language: language),
+                    subtitle: L10n.tr(.settingsDataManagementSubtitle, language: language),
                     iconColor: LuminaColor.secondary
                 ) {
                     showDataSheet = true
@@ -321,21 +345,26 @@ struct SettingsView: View {
 
     private var syncSubtitle: String {
         if let date = store.lastCloudSyncDate {
-            return "上次同步 \(date.formatted(date: .abbreviated, time: .shortened))"
+            return String(
+                format: L10n.tr(.settingsLastSync, language: language),
+                date.formatted(date: .abbreviated, time: .shortened)
+            )
         }
-        return store.cloudSyncEnabled ? "自动备份到 iCloud" : "未开启"
+        return store.cloudSyncEnabled
+            ? L10n.tr(.settingsAutoBackup, language: language)
+            : L10n.tr(.settingsNotEnabled, language: language)
     }
 
     // MARK: - 关于
 
     private var aboutSection: some View {
         VStack(alignment: .leading, spacing: LuminaSpacing.stackSM) {
-            LuminaSectionLabel(title: "关于应用")
+            LuminaSectionLabel(title: L10n.tr(.settingsAboutSection, language: language))
 
             SettingsGroupCard {
                 SettingsRowLabel(
                     icon: "info.circle",
-                    title: "版本号",
+                    title: L10n.tr(.settingsVersion, language: language),
                     trailing: AppInfo.versionLabel,
                     iconColor: LuminaColor.onSurfaceVariant,
                     showChevron: false
@@ -345,7 +374,7 @@ struct SettingsView: View {
 
                 SettingsRowButton(
                     icon: "hand.raised.fill",
-                    title: "隐私政策",
+                    title: L10n.tr(.settingsPrivacy, language: language),
                     iconColor: LuminaColor.onSurfaceVariant,
                     trailingIcon: "arrow.up.right"
                 ) {
@@ -356,8 +385,8 @@ struct SettingsView: View {
 
                 SettingsRowButton(
                     icon: "star.fill",
-                    title: "评价应用",
-                    subtitle: "您的反馈帮助我们改进",
+                    title: L10n.tr(.settingsRateApp, language: language),
+                    subtitle: L10n.tr(.settingsRateAppSubtitle, language: language),
                     iconColor: LuminaColor.onSurfaceVariant
                 ) {
                     AppReview.request()
@@ -367,7 +396,7 @@ struct SettingsView: View {
 
                 SettingsRowButton(
                     icon: "questionmark.circle",
-                    title: "帮助与支持",
+                    title: L10n.tr(.settingsHelp, language: language),
                     iconColor: LuminaColor.onSurfaceVariant
                 ) {
                     showFocusGuide = true
@@ -386,7 +415,7 @@ struct SettingsView: View {
                 } label: {
                     HStack(spacing: 8) {
                         Image(systemName: "arrow.counterclockwise")
-                        Text("重置演示数据")
+                        Text(L10n.tr(.settingsResetDemo, language: language))
                     }
                     .font(.luminaBodyMD)
                     .foregroundStyle(LuminaColor.error)
@@ -398,12 +427,53 @@ struct SettingsView: View {
                 .buttonStyle(.plain)
             }
 
-            Text("Hub · Lumina Focus \(AppInfo.versionLabel)")
-                .font(.luminaLabelSM)
-                .foregroundStyle(LuminaColor.outline)
-                .frame(maxWidth: .infinity)
+            Button(action: handleDevIdFooterTap) {
+                Text("Hub · Lumina Focus \(AppInfo.versionLabel)")
+                    .font(.luminaLabelSM)
+                    .foregroundStyle(LuminaColor.outline)
+                    .frame(maxWidth: .infinity)
+                    .contentShape(Rectangle())
+            }
+            .buttonStyle(.plain)
         }
         .padding(.top, LuminaSpacing.stackSM)
+    }
+
+    private var devIdCopiedToastText: String {
+        language == .en ? "dev_id copied" : "dev_id 已复制"
+    }
+
+    private func handleDevIdFooterTap() {
+        devIdFooterTapResetTask?.cancel()
+        devIdFooterTapCount += 1
+
+        if devIdFooterTapCount >= 10 {
+            devIdFooterTapResetTask?.cancel()
+            devIdFooterTapCount = 0
+            copyDevIdToClipboard()
+            return
+        }
+
+        devIdFooterTapResetTask = Task { @MainActor in
+            try? await Task.sleep(nanoseconds: 2_000_000_000)
+            guard !Task.isCancelled else { return }
+            devIdFooterTapCount = 0
+        }
+    }
+
+    private func copyDevIdToClipboard() {
+        Task {
+            let devId = await DeviceManager.shared.getDeviceId()
+            await MainActor.run {
+                UIPasteboard.general.string = devId
+                UIImpactFeedbackGenerator(style: .light).impactOccurred()
+                withAnimation { showDevIdCopiedToast = true }
+            }
+            try? await Task.sleep(nanoseconds: 1_600_000_000)
+            await MainActor.run {
+                withAnimation { showDevIdCopiedToast = false }
+            }
+        }
     }
 
     private func checkNotificationStatus() async {

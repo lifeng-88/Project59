@@ -3,6 +3,7 @@ import SwiftUI
 struct FocusModeSettingsView: View {
     @EnvironmentObject private var store: TaskStore
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.hubLanguage) private var language
     @ObservedObject private var ambient = AmbientSoundManager.shared
     @State private var showFocusGuide = false
 
@@ -14,7 +15,7 @@ struct FocusModeSettingsView: View {
         ScrollView {
             VStack(alignment: .leading, spacing: 0) {
                 HubTopBar(
-                    title: "专注模式",
+                    title: L10n.tr(.focusModeTitle, language: language),
                     showMenu: false,
                     showSearch: false,
                     onBack: { dismiss() },
@@ -52,22 +53,22 @@ struct FocusModeSettingsView: View {
 
     private var pomodoroSection: some View {
         VStack(alignment: .leading, spacing: LuminaSpacing.stackMD) {
-            sectionTitle("番茄钟设置")
+            sectionTitle(L10n.tr(.focusPomodoroSettings, language: language))
 
             VStack(alignment: .leading, spacing: LuminaSpacing.stackXL) {
                 VStack(alignment: .leading, spacing: LuminaSpacing.stackSM) {
                     HStack {
-                        Text("专注时长")
+                        Text(L10n.tr(.focusDuration, language: language))
                             .font(.luminaBodyMD.weight(.medium))
                         Spacer()
-                        Text("\(store.pomodoroMinutes) 分钟")
+                        Text(String(format: L10n.tr(.focusMinutesUnit, language: language), store.pomodoroMinutes))
                             .font(.luminaBodyLG.weight(.bold))
                             .foregroundStyle(LuminaColor.primary)
                     }
 
-                    Picker("专注时长", selection: $store.pomodoroMinutes) {
+                    Picker(L10n.tr(.focusDuration, language: language), selection: $store.pomodoroMinutes) {
                         ForEach(focusOptions, id: \.self) { minutes in
-                            Text("\(minutes) 分钟").tag(minutes)
+                            Text(String(format: L10n.tr(.focusMinutesUnit, language: language), minutes)).tag(minutes)
                         }
                     }
                     .pickerStyle(.segmented)
@@ -75,8 +76,16 @@ struct FocusModeSettingsView: View {
                 }
 
                 HStack(spacing: LuminaSpacing.gutter) {
-                    segmentGroup(title: "短暂休息", options: shortBreakOptions, selection: $store.breakMinutes)
-                    segmentGroup(title: "长时休息", options: longBreakOptions, selection: $store.longBreakMinutes)
+                    segmentGroup(
+                        title: L10n.tr(.focusShortBreak, language: language),
+                        options: shortBreakOptions,
+                        selection: $store.breakMinutes
+                    )
+                    segmentGroup(
+                        title: L10n.tr(.focusLongBreak, language: language),
+                        options: longBreakOptions,
+                        selection: $store.longBreakMinutes
+                    )
                 }
             }
             .padding(LuminaSpacing.insetMD)
@@ -125,7 +134,7 @@ struct FocusModeSettingsView: View {
 
     private var deepFocusSection: some View {
         VStack(alignment: .leading, spacing: LuminaSpacing.stackMD) {
-            sectionTitle("专注增强")
+            sectionTitle(L10n.tr(.focusEnhanceSection, language: language))
 
             HStack(spacing: LuminaSpacing.stackMD) {
                 Circle()
@@ -137,9 +146,9 @@ struct FocusModeSettingsView: View {
                     }
 
                 VStack(alignment: .leading, spacing: 2) {
-                    Text("深度专注模式")
+                    Text(L10n.tr(.focusDeepMode, language: language))
                         .font(.luminaBodyMD.weight(.semibold))
-                    Text("开启后将屏蔽所有非紧急通知")
+                    Text(L10n.tr(.focusDeepModeSubtitle, language: language))
                         .font(.luminaLabelSM)
                         .foregroundStyle(LuminaColor.onSurfaceVariant)
                 }
@@ -160,7 +169,7 @@ struct FocusModeSettingsView: View {
 
     private var ambientSection: some View {
         VStack(alignment: .leading, spacing: LuminaSpacing.stackMD) {
-            sectionTitle("专注环境音")
+            sectionTitle(L10n.tr(.focusAmbientSection, language: language))
 
             VStack(spacing: LuminaSpacing.stackSM) {
                 ForEach(AmbientSound.allCases) { sound in
@@ -188,10 +197,10 @@ struct FocusModeSettingsView: View {
                     }
 
                 VStack(alignment: .leading, spacing: 2) {
-                    Text(sound.title)
+                    Text(sound.title(language: language))
                         .font(.luminaBodyMD.weight(.semibold))
                         .foregroundStyle(LuminaColor.onSurface)
-                    Text(sound.subtitle)
+                    Text(sound.subtitle(language: language))
                         .font(.luminaLabelSM)
                         .foregroundStyle(LuminaColor.onSurfaceVariant)
                 }
@@ -221,7 +230,7 @@ struct FocusModeSettingsView: View {
             } label: {
                 HStack(spacing: 8) {
                     Image(systemName: "bolt.fill")
-                    Text("立即开始专注")
+                    Text(L10n.tr(.settingsStartFocusNow, language: language))
                 }
                 .font(.luminaLabelMD.weight(.semibold))
                 .foregroundStyle(LuminaColor.onPrimary)
@@ -233,7 +242,7 @@ struct FocusModeSettingsView: View {
             }
             .buttonStyle(.plain)
 
-            Text("设置将在下次进入专注模式时生效")
+            Text(L10n.tr(.focusSettingsEffectiveHint, language: language))
                 .font(.luminaLabelSM)
                 .foregroundStyle(LuminaColor.onSurfaceVariant)
                 .frame(maxWidth: .infinity)
@@ -247,4 +256,3 @@ struct FocusModeSettingsView: View {
             .padding(.horizontal, 4)
     }
 }
-

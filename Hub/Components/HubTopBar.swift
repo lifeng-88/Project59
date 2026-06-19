@@ -64,6 +64,6 @@ struct HubTopBar<Trailing: View>: View {
         }
         .padding(.horizontal, LuminaSpacing.marginPage)
         .frame(height: 64)
-        .background(LuminaColor.surface)
+        .background(LuminaColor.surface.opacity(0.001))
     }
 }

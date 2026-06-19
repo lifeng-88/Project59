@@ -28,8 +28,8 @@ struct HubBottomBar: View {
         .padding(.top, 12)
         .padding(.bottom, 8)
         .background(
-            LuminaColor.surfaceContainerLowest
-                .shadow(color: LuminaColor.scrim.opacity(0.08), radius: 10, x: 0, y: -4)
+            LuminaColor.surfaceContainerLowest.opacity(0.92)
+                .shadow(color: LuminaColor.primary.opacity(0.06), radius: 10, x: 0, y: -4)
         )
     }
 }

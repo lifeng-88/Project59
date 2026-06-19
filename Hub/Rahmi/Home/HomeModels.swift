@@ -426,6 +426,18 @@ struct HomeFeedItem: Identifiable {
         "\(templateKind.rawValue):\(id)"
     }
 
+    /// 随 `AppLanguageStore` 实时取文案（`actionTitle` 在模型构建时快照，切换语言后会过期）。
+    var localizedActionTitle: String {
+        switch templateKind {
+        case .t1:
+            return AppLanguageStore.localized("home.action.swap_face")
+        case .t2:
+            return AppLanguageStore.localized("home.action.start_dance")
+        case .t3:
+            return AppLanguageStore.localized("home.action.create_video")
+        }
+    }
+
     /// T2/T3：与双列 `HomeGridCardItem` 同源字段，供沉浸式列表复用同一套媒体/角标 UI
     var gridMirrorCardItem: HomeGridCardItem? {
         guard templateKind == .t2 || templateKind == .t3 else { return nil }

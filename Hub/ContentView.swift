@@ -3,11 +3,10 @@ import SwiftUI
 struct ContentView: View {
     @EnvironmentObject private var store: TaskStore
     @EnvironmentObject private var faceController: AppFaceController
+    @Environment(\.hubLanguage) private var language
 
     var body: some View {
         ZStack(alignment: .bottom) {
-            LuminaColor.surface.ignoresSafeArea()
-
             Group {
                 switch store.selectedTab {
                 case .today:
@@ -84,8 +83,8 @@ struct ContentView: View {
         .sheet(item: $store.exportFile) { file in
             ShareSheet(items: [file.url])
         }
-        .alert("提示", isPresented: alertBinding) {
-            Button("好的", role: .cancel) {
+        .alert(L10n.tr(.commonTip, language: language), isPresented: alertBinding) {
+            Button(L10n.tr(.commonOK, language: language), role: .cancel) {
                 store.alertMessage = nil
             }
         } message: {
@@ -101,7 +100,9 @@ struct ContentView: View {
     }
 
     private var showsHubFaceSwitchFAB: Bool {
-        AppFaceController.showsManualFaceSwitchInUI
+        guard AppFaceController.showsManualFaceSwitchInUI else { return false }
+        /// A 面首页不展示进入 Rahmi（B 面）的 Debug 入口；仅在 B 面保留返回 Hub 的按钮。
+        return faceController.isShowingRahmi
     }
 }
 

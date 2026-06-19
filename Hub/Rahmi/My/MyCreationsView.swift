@@ -177,7 +177,7 @@ struct MyCreationsView: View {
             Image(systemName: "exclamationmark.triangle.fill")
                 .font(.system(size: 44))
                 .foregroundStyle(AppTheme.secondary.opacity(0.85))
-            Text(err)
+            Text(AppLanguageStore.localizedUserFacingAPIError(err))
                 .font(.subheadline)
                 .foregroundStyle(AppTheme.onSurfaceVariant)
                 .multilineTextAlignment(.center)
@@ -1181,7 +1181,7 @@ struct CreationDetailView: View {
             Image(systemName: "exclamationmark.triangle")
                 .font(.system(size: 36, weight: .light))
                 .foregroundStyle(AppTheme.onSurfaceVariant)
-            Text(message)
+            Text(AppLanguageStore.localizedUserFacingAPIError(message))
                 .font(.subheadline)
                 .multilineTextAlignment(.center)
                 .foregroundStyle(AppTheme.onSurfaceVariant)
@@ -1344,19 +1344,19 @@ private extension TaskListItem {
 
     var taskTypeDisplayLabel: String {
         switch taskType {
-        case 1: return "Image"
-        case 2: return "Dance"
-        case 3: return "Video"
-        default: return "Task"
+        case 1: return AppLanguageStore.localized("kind.image")
+        case 2: return AppLanguageStore.localized("kind.dance")
+        case 3: return AppLanguageStore.localized("kind.video")
+        default: return AppLanguageStore.localized("kind.media")
         }
     }
 
     var taskStatusDisplay: String {
         switch taskStatus {
-        case .pending: return "Pending"
-        case .running: return "Processing"
-        case .success: return "Done"
-        case .failed: return "Failed"
+        case .pending: return AppLanguageStore.localized("recharge.status.pending")
+        case .running: return AppLanguageStore.localized("my.creations.generating_label")
+        case .success: return AppLanguageStore.localized("recharge.status.success")
+        case .failed: return AppLanguageStore.localized("recharge.status.failed")
         }
     }
 

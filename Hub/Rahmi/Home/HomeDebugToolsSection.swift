@@ -66,12 +66,14 @@ struct HomeDebugToolsSection: View {
                 HStack {
                     Spacer(minLength: 16)
                     VStack(spacing: 0) {
-                        debugRow(title: "正 / 测（type）", trailing: versionConfig.rechargePresentationType == 1 ? "1 · 正" : "2 · 测") {
-                            let next = versionConfig.rechargePresentationType == 1 ? 2 : 1
-                            versionConfig.debugSetPresentationType(next)
-                        }
+                        if !versionConfig.isPresentationVariantAUIEnabled {
+                            debugRow(title: "正 / 测（type）", trailing: versionConfig.rechargePresentationType == 1 ? "1 · 正" : "2 · 测") {
+                                let next = versionConfig.rechargePresentationType == 1 ? 2 : 1
+                                versionConfig.debugSetPresentationType(next)
+                            }
 
-                        Divider().opacity(0.35)
+                            Divider().opacity(0.35)
+                        }
 
                         debugRow(title: "模拟推送", trailing: "›") {
                             simPushPayload = RahmiDebugSimulatedPush.advanceStep(&simPushStep)

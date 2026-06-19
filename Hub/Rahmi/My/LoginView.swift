@@ -45,7 +45,7 @@ struct LoginView: View {
 
                 VStack(spacing: 14) {
                     if let err = auth.lastError, !err.isEmpty {
-                        Text(err)
+                        Text(AppLanguageStore.localizedUserFacingAPIError(err))
                             .font(.footnote)
                             .foregroundStyle(Color.red.opacity(0.9))
                             .multilineTextAlignment(.center)
@@ -84,7 +84,7 @@ struct LoginView: View {
                 .padding(.horizontal, 28)
 
                 Spacer()
-                Text(String(format: AppLanguageStore.localized("login.api_format"), APIBaseURL.effective))
+                Text(String(format: AppLanguageStore.localized("login.api_format"), locale: appLanguage.effectiveLocale, APIBaseURL.effective))
                     .font(.system(size: 9))
                     .foregroundStyle(AppTheme.outlineVariant.opacity(0.6))
                     .padding(.bottom, 24)

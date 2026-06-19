@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
-"""Generate Lumina Focus app icon and launch mark assets."""
+"""Generate Lumina Focus app icon and launch screen assets (rose / lavender feminine palette)."""
 
 from __future__ import annotations
 
-import math
+import json
 from pathlib import Path
 
 from PIL import Image, ImageDraw
@@ -11,24 +11,33 @@ from PIL import Image, ImageDraw
 ROOT = Path(__file__).resolve().parents[1]
 ASSETS = ROOT / "Hub" / "Assets.xcassets"
 
-PRIMARY = (0, 93, 167)       # #005DA7
-PRIMARY_CONTAINER = (41, 118, 199)  # #2976C7
-PRIMARY_LIGHT = (164, 201, 255)     # #A4C9FF
-SURFACE = (248, 249, 250)           # #F8F9FA
-ON_SURFACE = (25, 28, 29)           # #191C1D
+# Matches Hub/Design/LuminaTheme.swift
+PRIMARY = (196, 92, 138)            # #C45C8A
+PRIMARY_DEEP = (168, 72, 120)       # gradient end
+PRIMARY_CONTAINER = (232, 164, 196) # #E8A4C4
+PRIMARY_LIGHT = (245, 213, 232)     # #F5D5E8
+LAVENDER = (184, 152, 216)        # accent glow
+SURFACE = (251, 247, 249)           # #FBF7F9
+SURFACE_TOP = (255, 245, 248)       # gradient top
+ON_SURFACE = (61, 47, 56)          # #3D2F38
+ON_SURFACE_VARIANT = (122, 101, 112)  # #7A6570
+
+# iPhone 15 logical size (pt)
+LAUNCH_WIDTH = 393
+LAUNCH_HEIGHT = 852
 
 
 def lerp_color(c1: tuple[int, int, int], c2: tuple[int, int, int], t: float) -> tuple[int, int, int]:
     return tuple(int(a + (b - a) * t) for a, b in zip(c1, c2))
 
 
-def draw_vertical_gradient(size: int, top: tuple[int, int, int], bottom: tuple[int, int, int]) -> Image.Image:
-    img = Image.new("RGB", (size, size))
+def draw_vertical_gradient(width: int, height: int, top: tuple[int, int, int], bottom: tuple[int, int, int]) -> Image.Image:
+    img = Image.new("RGB", (width, height))
     pixels = img.load()
-    for y in range(size):
-        t = y / max(size - 1, 1)
+    for y in range(height):
+        t = y / max(height - 1, 1)
         color = lerp_color(top, bottom, t)
-        for x in range(size):
+        for x in range(width):
             pixels[x, y] = color
     return img
 
@@ -43,30 +52,10 @@ def draw_diagonal_gradient(size: int, c1: tuple[int, int, int], c2: tuple[int, i
     return img
 
 
-def draw_focus_rings(
-    draw: ImageDraw.ImageDraw,
-    center: tuple[float, float],
-    base_radius: float,
-    ring_color: tuple[int, int, int, int],
-    ring_width: float,
-    ring_count: int = 3,
-    gap: float = 0.22,
-) -> None:
-    for i in range(ring_count):
-        radius = base_radius * (1.0 - i * gap)
-        bbox = (
-            center[0] - radius,
-            center[1] - radius,
-            center[0] + radius,
-            center[1] + radius,
-        )
-        draw.ellipse(bbox, outline=ring_color, width=int(max(1, ring_width * (1.0 - i * 0.08))))
-
-
 def add_soft_glow(base: Image.Image, center: tuple[float, float], radius: float, color: tuple[int, int, int, int]) -> Image.Image:
     glow = Image.new("RGBA", base.size, (0, 0, 0, 0))
     gdraw = ImageDraw.Draw(glow)
-    for scale, alpha in [(1.4, 18), (1.1, 28), (0.85, 40)]:
+    for scale, alpha in [(1.5, 14), (1.2, 24), (0.9, 38)]:
         r = radius * scale
         bbox = (center[0] - r, center[1] - r, center[0] + r, center[1] + r)
         gdraw.ellipse(bbox, fill=(color[0], color[1], color[2], alpha))
@@ -74,96 +63,107 @@ def add_soft_glow(base: Image.Image, center: tuple[float, float], radius: float,
 
 
 def create_app_icon(size: int = 1024) -> Image.Image:
-    img = draw_diagonal_gradient(size, PRIMARY, PRIMARY_CONTAINER).convert("RGBA")
+    img = draw_diagonal_gradient(size, PRIMARY, PRIMARY_DEEP).convert("RGBA")
     center = (size / 2, size / 2 - size * 0.02)
     base_radius = size * 0.30
 
-    img = add_soft_glow(img, center, base_radius * 0.55, (212, 227, 255))
+    img = add_soft_glow(img, center, base_radius * 0.6, PRIMARY_LIGHT)
+    img = add_soft_glow(img, (center[0] + size * 0.08, center[1] - size * 0.06), base_radius * 0.35, LAVENDER)
 
     draw = ImageDraw.Draw(img)
     for i in range(3):
-        opacity = int(255 * (0.92 - i * 0.18))
-        draw_focus_rings(
-            draw,
-            center,
-            base_radius,
-            (255, 255, 255, opacity),
-            ring_width=size * 0.028,
-            ring_count=1,
-            gap=0.24 * (i + 1),
-        )
+        opacity = int(255 * (0.94 - i * 0.16))
         radius = base_radius * (1.0 - i * 0.24)
         bbox = (center[0] - radius, center[1] - radius, center[0] + radius, center[1] + radius)
-        draw.ellipse(bbox, outline=(255, 255, 255, opacity), width=int(size * 0.028))
+        draw.ellipse(bbox, outline=(255, 255, 255, opacity), width=int(size * 0.026))
 
-    dot_r = size * 0.055
+    dot_r = size * 0.052
     dot_bbox = (center[0] - dot_r, center[1] - dot_r, center[0] + dot_r, center[1] + dot_r)
     draw.ellipse(dot_bbox, fill=(255, 255, 255, 255))
 
-    # Subtle top highlight
     highlight = Image.new("RGBA", (size, size), (0, 0, 0, 0))
     hdraw = ImageDraw.Draw(highlight)
     hdraw.ellipse(
         (size * 0.08, size * 0.02, size * 0.92, size * 0.55),
-        fill=(255, 255, 255, 22),
+        fill=(255, 255, 255, 28),
     )
     img = Image.alpha_composite(img, highlight)
     return img
 
 
-def create_app_mark(size: int = 512, for_light_bg: bool = True) -> Image.Image:
-    img = Image.new("RGBA", (size, size), (0, 0, 0, 0))
-    center = (size / 2, size / 2)
-    base_radius = size * 0.34
-
-    if for_light_bg:
-        ring_rgb = PRIMARY
-        dot_rgb = PRIMARY
-        glow_rgb = PRIMARY_LIGHT
-    else:
-        ring_rgb = (255, 255, 255)
-        dot_rgb = (255, 255, 255)
-        glow_rgb = (212, 227, 255)
-
-    img = add_soft_glow(img, center, base_radius * 0.5, glow_rgb)
-
-    draw = ImageDraw.Draw(img)
-    for i in range(3):
-        opacity = int(255 * (0.95 - i * 0.15))
-        radius = base_radius * (1.0 - i * 0.24)
-        bbox = (center[0] - radius, center[1] - radius, center[0] + radius, center[1] + radius)
-        draw.ellipse(
-            bbox,
-            outline=(ring_rgb[0], ring_rgb[1], ring_rgb[2], opacity),
-            width=int(max(2, size * 0.032)),
-        )
-
-    dot_r = size * 0.058
-    dot_bbox = (center[0] - dot_r, center[1] - dot_r, center[0] + dot_r, center[1] + dot_r)
-    draw.ellipse(dot_bbox, fill=(dot_rgb[0], dot_rgb[1], dot_rgb[2], 255))
-    return img
+def apply_icon_mask(img: Image.Image) -> Image.Image:
+    size = img.width
+    radius = int(size * 0.22)
+    mask = Image.new("L", (size, size), 0)
+    ImageDraw.Draw(mask).rounded_rectangle((0, 0, size - 1, size - 1), radius=radius, fill=255)
+    out = Image.new("RGBA", (size, size), (0, 0, 0, 0))
+    out.paste(img.convert("RGBA"), (0, 0), mask)
+    return out
 
 
-def write_imageset(folder: Path, base_name: str, image: Image.Image, scales: list[int]) -> None:
+def create_app_mark(size: int = 512) -> Image.Image:
+    return apply_icon_mask(create_app_icon(size))
+
+
+def write_square_imageset(folder: Path, base_name: str, image: Image.Image, scales: list[int]) -> None:
     folder.mkdir(parents=True, exist_ok=True)
     entries: list[dict] = []
     for scale in scales:
         suffix = "" if scale == 1 else f"@{scale}x"
         filename = f"{base_name}{suffix}.png"
-        scaled = image.resize((image.width * scale, image.height * scale), Image.Resampling.LANCZOS)
-        if scaled.mode == "RGBA":
-            scaled.save(folder / filename, optimize=True)
-        else:
-            scaled.convert("RGB").save(folder / filename, optimize=True)
-        entries.append(
-            {
-                "filename": filename,
-                "idiom": "universal",
-                "scale": f"{scale}x",
-            }
-        )
+        side = image.width * scale
+        scaled = image.resize((side, side), Image.Resampling.LANCZOS)
+        scaled.save(folder / filename, optimize=True)
+        entries.append({"filename": filename, "idiom": "universal", "scale": f"{scale}x"})
 
-    import json
+    contents = {"images": entries, "info": {"author": "xcode", "version": 1}}
+    (folder / "Contents.json").write_text(json.dumps(contents, indent=2) + "\n", encoding="utf-8")
+
+
+def create_launch_bitmap(width: int, height: int) -> Image.Image:
+    """Full launch screen bitmap: warm gradient + app icon + title (baked in for iOS launch screen)."""
+    launch = draw_vertical_gradient(width, height, SURFACE_TOP, SURFACE).convert("RGBA")
+
+    icon_side = int(min(width, height) * 0.32)
+    mark = create_app_mark(icon_side)
+    lx = (width - mark.width) // 2
+    ly = int(height * 0.34)
+    launch.paste(mark, (lx, ly), mark)
+
+    draw = ImageDraw.Draw(launch)
+    try:
+        from PIL import ImageFont
+        title_font = ImageFont.truetype("/System/Library/Fonts/SFNSRounded.ttf", max(22, int(height * 0.028)))
+        subtitle_font = ImageFont.truetype("/System/Library/Fonts/SFNS.ttf", max(15, int(height * 0.018)))
+    except (OSError, ImportError):
+        from PIL import ImageFont
+        title_font = ImageFont.load_default()
+        subtitle_font = title_font
+
+    title = "Lumina Focus"
+    title_bbox = draw.textbbox((0, 0), title, font=title_font)
+    title_w = title_bbox[2] - title_bbox[0]
+    title_y = ly + mark.height + int(height * 0.032)
+    draw.text(((width - title_w) / 2, title_y), title, fill=ON_SURFACE, font=title_font)
+
+    subtitle = "Focus made clear"
+    sub_bbox = draw.textbbox((0, 0), subtitle, font=subtitle_font)
+    sub_w = sub_bbox[2] - sub_bbox[0]
+    draw.text(((width - sub_w) / 2, title_y + int(height * 0.042)), subtitle, fill=ON_SURFACE_VARIANT, font=subtitle_font)
+
+    return launch.convert("RGB")
+
+
+def write_launch_imageset(folder: Path, base_name: str, scales: list[int]) -> None:
+    folder.mkdir(parents=True, exist_ok=True)
+    entries: list[dict] = []
+    for scale in scales:
+        suffix = "" if scale == 1 else f"@{scale}x"
+        filename = f"{base_name}{suffix}.png"
+        w = LAUNCH_WIDTH * scale
+        h = LAUNCH_HEIGHT * scale
+        create_launch_bitmap(w, h).save(folder / filename, optimize=True)
+        entries.append({"filename": filename, "idiom": "universal", "scale": f"{scale}x"})
 
     contents = {"images": entries, "info": {"author": "xcode", "version": 1}}
     (folder / "Contents.json").write_text(json.dumps(contents, indent=2) + "\n", encoding="utf-8")
@@ -174,34 +174,11 @@ def main() -> None:
     icon_path = ASSETS / "AppIcon.appiconset" / "icon.png"
     icon.convert("RGB").save(icon_path, optimize=True)
 
-    mark = create_app_mark(128)
-    write_imageset(ASSETS / "LuminaAppMark.imageset", "LuminaAppMark", mark, scales=[1, 2, 3])
-
-    # Legacy Rahmi launch image — replace with Lumina splash still for any storyboard fallbacks
-    launch = Image.new("RGB", (1170, 2532), SURFACE)
-    mark_large = create_app_mark(220)
-    lx = (launch.width - mark_large.width) // 2
-    ly = int(launch.height * 0.38)
-    launch.paste(mark_large, (lx, ly), mark_large)
-
-    title_draw = ImageDraw.Draw(launch)
-    title = "Lumina Focus"
-    font_size = 42
-    # Pillow default font — approximate centering via textbbox
-    bbox = title_draw.textbbox((0, 0), title)
-    tw = bbox[2] - bbox[0]
-    title_draw.text(
-        ((launch.width - tw) / 2, ly + mark_large.height + 36),
-        title,
-        fill=ON_SURFACE,
-    )
-
-    launch_path = ASSETS / "LaunchScreen.imageset" / "LaunchScreen.png"
-    launch.save(launch_path, optimize=True)
+    mark = create_app_mark(192)
+    write_square_imageset(ASSETS / "LuminaFocusLaunchMark.imageset", "LuminaFocusLaunchMark", mark, scales=[1, 2, 3])
 
     print(f"Wrote {icon_path}")
-    print(f"Wrote {ASSETS / 'LuminaAppMark.imageset'}")
-    print(f"Wrote {launch_path}")
+    print(f"Wrote {ASSETS / 'LuminaFocusLaunchMark.imageset'}")
 
 
 if __name__ == "__main__":

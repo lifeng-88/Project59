@@ -3,11 +3,16 @@ import SwiftUI
 struct FocusModeGuideView: View {
     @EnvironmentObject private var store: TaskStore
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.hubLanguage) private var language
 
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: LuminaSpacing.stackXL) {
-                HubTopBar(title: "关于专注模式", showMenu: false, onBack: { dismiss() })
+                HubTopBar(
+                    title: L10n.tr(.settingsAboutFocus, language: language),
+                    showMenu: false,
+                    onBack: { dismiss() }
+                )
 
                 pomodoroIntroCard
                 stepsSection
@@ -22,7 +27,7 @@ struct FocusModeGuideView: View {
 
     private var startSection: some View {
         VStack(spacing: LuminaSpacing.stackMD) {
-            Text("准备好开始您的第一个番茄钟了吗？")
+            Text(L10n.tr(.focusGuideReady, language: language))
                 .font(.luminaLabelMD)
                 .foregroundStyle(LuminaColor.onSurfaceVariant)
 
@@ -30,7 +35,7 @@ struct FocusModeGuideView: View {
                 dismiss()
                 store.startFocusSession()
             } label: {
-                Text("立即开始专注")
+                Text(L10n.tr(.settingsStartFocusNow, language: language))
                     .font(.luminaLabelMD.weight(.semibold))
                     .foregroundStyle(LuminaColor.onPrimary)
                     .padding(.horizontal, 32)
@@ -49,11 +54,11 @@ struct FocusModeGuideView: View {
     private var pomodoroIntroCard: some View {
         ZStack(alignment: .bottomTrailing) {
             VStack(alignment: .leading, spacing: 8) {
-                Text("什么是番茄工作法？")
+                Text(L10n.tr(.focusGuideWhatIs, language: language))
                     .font(.luminaHeadlineMobile)
                     .foregroundStyle(LuminaColor.onPrimaryContainer)
 
-                Text("番茄工作法（Pomodoro Technique）是一种简单易行的延时管理方法。通过将工作时间切分为 25 分钟的「番茄钟」和 5 分钟的休息，帮助您保持高强度的专注，同时避免过度疲劳。")
+                Text(L10n.tr(.focusGuideIntro, language: language))
                     .font(.luminaBodyMD)
                     .foregroundStyle(LuminaColor.onPrimaryContainer.opacity(0.9))
                     .fixedSize(horizontal: false, vertical: true)
@@ -74,16 +79,32 @@ struct FocusModeGuideView: View {
 
     private var stepsSection: some View {
         VStack(alignment: .leading, spacing: LuminaSpacing.stackMD) {
-            Text("如何使用")
+            Text(L10n.tr(.focusGuideHowTo, language: language))
                 .font(.luminaHeadlineMobile)
                 .foregroundStyle(LuminaColor.onSurface)
                 .padding(.horizontal, LuminaSpacing.marginPage)
 
             VStack(spacing: LuminaSpacing.stackMD) {
-                stepRow(number: 1, title: "选择任务", detail: "从今日列表中挑选一项需要专注完成的任务。")
-                stepRow(number: 2, title: "启动番茄钟", detail: "设置 25 分钟计时，期间避免一切干扰。")
-                stepRow(number: 3, title: "短休息", detail: "计时结束后休息 5 分钟，起身活动、补充水分。")
-                stepRow(number: 4, title: "循环重复", detail: "完成 4 个番茄钟后，进行一次 15–30 分钟的长休息。")
+                stepRow(
+                    number: 1,
+                    title: L10n.tr(.focusGuideStep1Title, language: language),
+                    detail: L10n.tr(.focusGuideStep1Detail, language: language)
+                )
+                stepRow(
+                    number: 2,
+                    title: L10n.tr(.focusGuideStep2Title, language: language),
+                    detail: L10n.tr(.focusGuideStep2Detail, language: language)
+                )
+                stepRow(
+                    number: 3,
+                    title: L10n.tr(.focusGuideStep3Title, language: language),
+                    detail: L10n.tr(.focusGuideStep3Detail, language: language)
+                )
+                stepRow(
+                    number: 4,
+                    title: L10n.tr(.focusGuideStep4Title, language: language),
+                    detail: L10n.tr(.focusGuideStep4Detail, language: language)
+                )
             }
             .padding(.horizontal, LuminaSpacing.marginPage)
         }
@@ -116,13 +137,13 @@ struct FocusModeGuideView: View {
 
     private var tipsSection: some View {
         VStack(alignment: .leading, spacing: LuminaSpacing.stackMD) {
-            Text("专注小贴士")
+            Text(L10n.tr(.focusGuideTips, language: language))
                 .font(.luminaHeadlineMobile)
                 .foregroundStyle(LuminaColor.onSurface)
 
-            tipRow(icon: "iphone.slash", text: "开启勿扰模式，将手机翻面放置。")
-            tipRow(icon: "drop.fill", text: "番茄钟开始前准备好饮用水。")
-            tipRow(icon: "leaf.fill", text: "休息时远离屏幕，做简单的伸展运动。")
+            tipRow(icon: "iphone.slash", text: L10n.tr(.focusGuideTip1, language: language))
+            tipRow(icon: "drop.fill", text: L10n.tr(.focusGuideTip2, language: language))
+            tipRow(icon: "leaf.fill", text: L10n.tr(.focusGuideTip3, language: language))
         }
         .padding(LuminaSpacing.insetMD)
         .background(LuminaColor.surfaceContainerLow)

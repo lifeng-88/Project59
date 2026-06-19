@@ -100,6 +100,55 @@ final class AppLanguageStore: ObservableObject {
         localizedFromStringCatalog(key: key)
     }
 
+    /// 按当前 String Catalog 语言做 `String(format:)`，避免西文 `%lld` 等与系统 `Locale` 不一致。
+    nonisolated static func localizedFormat(_ key: String, _ args: CVarArg...) -> String {
+        let format = localized(key)
+        let code = catalogLanguageCode(
+            for: AppLanguagePreference.from(storage: UserDefaults.standard.string(forKey: userDefaultsKey) ?? "system")
+        )
+        return String(format: format, locale: localeForCatalogLanguageCode(code), arguments: args)
+    }
+
+    /// 西文界面下避免直接展示接口返回的中文等服务端文案；已知场景映射到 String Catalog。
+    nonisolated static func localizedUserFacingAPIError(_ raw: String) -> String {
+        let trimmed = raw.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty else { return localized("common.error.generic") }
+        guard prefersWesternCatalogUI && RahmiTextStyle.containsCJK(in: trimmed) else {
+            return trimmed
+        }
+        let lower = trimmed.lowercased()
+        if trimmed.contains("余额") || trimmed.contains("金币") {
+            if trimmed.contains("不足") || trimmed.contains("不够") {
+                return localized("home.alert.coins.message")
+            }
+        }
+        if lower.contains("insufficient") && (lower.contains("gold") || lower.contains("balance") || lower.contains("coin")) {
+            return localized("home.alert.coins.message")
+        }
+        if trimmed.contains("登录") || trimmed.contains("未登录") || trimmed.contains("请先登录") {
+            return localized("recharge.error.login_first")
+        }
+        if trimmed.contains("网络") || lower.contains("network") || lower.contains("timeout") || lower.contains("timed out") {
+            return localized("common.error.network")
+        }
+        return localized("common.error.generic")
+    }
+
+    nonisolated static func localizedUserFacingSystemError(_ error: Error) -> String {
+        localizedUserFacingAPIError(error.localizedDescription)
+    }
+
+    nonisolated static var prefersWesternCatalogUIForDisplay: Bool {
+        prefersWesternCatalogUI
+    }
+
+    nonisolated private static var prefersWesternCatalogUI: Bool {
+        let code = catalogLanguageCode(
+            for: AppLanguagePreference.from(storage: UserDefaults.standard.string(forKey: userDefaultsKey) ?? "system")
+        )
+        return !code.hasPrefix("zh") && !code.hasPrefix("ja")
+    }
+
     /// 按当前偏好选择 `语言.lproj`，再查 `Localizable` 表；未命中时回退英语。
     nonisolated private static func localizedFromStringCatalog(key: String) -> String {
         let bundle = bundleForLocalizedTable()

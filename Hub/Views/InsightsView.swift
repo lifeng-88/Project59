@@ -2,11 +2,16 @@ import SwiftUI
 
 struct InsightsView: View {
     @EnvironmentObject private var store: TaskStore
+    @Environment(\.hubLanguage) private var language
+
+    private var weekdaySymbols: [String] {
+        L10n.weekdaySymbols(language: language)
+    }
 
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 0) {
-                HubTopBar(title: "统计分析", showSearch: false, onMenu: { store.showSideMenu = true })
+                HubTopBar(title: L10n.tr(.insightsTitle, language: language), showSearch: false, onMenu: { store.showSideMenu = true })
 
                 VStack(alignment: .leading, spacing: LuminaSpacing.stackXL) {
                     productivityHero
@@ -29,7 +34,7 @@ struct InsightsView: View {
         VStack(alignment: .leading, spacing: LuminaSpacing.stackMD) {
             HStack(alignment: .bottom) {
                 VStack(alignment: .leading, spacing: 4) {
-                    Text("生产力评分")
+                    Text(L10n.tr(.insightsProductivityScore, language: language))
                         .font(.luminaLabelSM)
                         .tracking(0.8)
                         .foregroundStyle(LuminaColor.onSurfaceVariant)
@@ -39,7 +44,7 @@ struct InsightsView: View {
                 }
                 Spacer()
                 if store.productivityScore > 0 {
-                    Text("基于 \(store.completedCount)/\(store.tasks.count) 任务")
+                    Text(String(format: L10n.tr(.insightsBasedOnTasks, language: language), store.completedCount, store.tasks.count))
                         .font(.luminaLabelSM)
                         .padding(.horizontal, 12)
                         .padding(.vertical, 4)
@@ -49,11 +54,11 @@ struct InsightsView: View {
                 }
             }
 
-      WeeklyChartView(values: store.weeklyChartNormalizedValues())
-        .frame(height: 160)
+            WeeklyChartView(values: store.weeklyChartNormalizedValues())
+                .frame(height: 160)
 
             HStack {
-                ForEach(["周一", "周二", "周三", "周四", "周五", "周六", "周日"], id: \.self) { day in
+                ForEach(weekdaySymbols, id: \.self) { day in
                     Text(day)
                         .font(.luminaLabelSM)
                         .foregroundStyle(LuminaColor.outline)
@@ -69,7 +74,12 @@ struct InsightsView: View {
 
     private var statsGrid: some View {
         LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: LuminaSpacing.stackMD) {
-            statCard(icon: "checkmark.circle", title: "已完成任务", value: "\(store.completedCount)", trend: store.completedCount > 0 ? "+\(store.completedCount)" : nil)
+            statCard(
+                icon: "checkmark.circle",
+                title: L10n.tr(.insightsCompletedTasks, language: language),
+                value: "\(store.completedCount)",
+                trend: store.completedCount > 0 ? "+\(store.completedCount)" : nil
+            )
             focusDurationCard
             streakCard
         }
@@ -111,7 +121,7 @@ struct InsightsView: View {
             Image(systemName: "timer")
                 .font(.system(size: 24))
                 .foregroundStyle(LuminaColor.primary)
-            Text("专注时长")
+            Text(L10n.tr(.insightsFocusDuration, language: language))
                 .font(.luminaLabelSM)
                 .foregroundStyle(LuminaColor.onSurfaceVariant)
             Text(store.focusHoursFormatted)
@@ -143,10 +153,10 @@ struct InsightsView: View {
                 Image(systemName: "flame.fill")
                     .font(.system(size: 24))
                     .foregroundStyle(LuminaColor.primary)
-                Text("当前连续天数")
+                Text(L10n.tr(.insightsCurrentStreak, language: language))
                     .font(.luminaLabelSM)
                     .foregroundStyle(LuminaColor.onSurfaceVariant)
-                Text("\(store.focusStreakDays) 天")
+                Text(String(format: L10n.tr(.insightsStreakDaysUnit, language: language), store.focusStreakDays))
                     .font(.luminaHeadlineLG)
             }
             Spacer()
@@ -171,10 +181,10 @@ struct InsightsView: View {
 
     private var focusDistribution: some View {
         VStack(alignment: .leading, spacing: LuminaSpacing.stackMD) {
-            LuminaSectionLabel(title: "专注分布")
+            LuminaSectionLabel(title: L10n.tr(.insightsFocusDistribution, language: language))
             VStack(spacing: LuminaSpacing.stackMD) {
                 ForEach(store.categoryDistribution(), id: \.0) { category, percent in
-                    breakdownRow(label: category.displayName, percent: percent, color: categoryColor(category))
+                    breakdownRow(label: category.displayName(language: language), percent: percent, color: categoryColor(category))
                 }
             }
         }
@@ -187,7 +197,7 @@ struct InsightsView: View {
     private var insightCard: some View {
         ZStack(alignment: .bottomTrailing) {
             VStack(alignment: .leading, spacing: 8) {
-                Text("继续保持！")
+                Text(L10n.tr(.insightsKeepGoing, language: language))
                     .font(.luminaHeadlineMobile)
                     .foregroundStyle(LuminaColor.onPrimaryContainer)
                 Text(insightMessage)
@@ -210,9 +220,9 @@ struct InsightsView: View {
 
     private var insightMessage: String {
         if store.focusStreakDays >= 7 {
-            return "你已连续专注 \(store.focusStreakDays) 天。建议在上午安排深度任务，保持节奏。"
+            return String(format: L10n.tr(.insightsStreakMessage, language: language), store.focusStreakDays)
         }
-        return "完成更多任务可提升生产力评分。试试从一个小任务开始。"
+        return L10n.tr(.insightsStartSmall, language: language)
     }
 
     private func breakdownRow(label: String, percent: Double, color: Color) -> some View {

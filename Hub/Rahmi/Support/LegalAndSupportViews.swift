@@ -819,7 +819,7 @@ struct FeedbackCenterView: View {
                 case .failure(let err):
                     dismissAfterConfirm = false
                     alertTitle = AppLanguageStore.localized("feedback.alert.failed_title")
-                    alertMessage = err.userMessage
+                    alertMessage = AppLanguageStore.localizedUserFacingAPIError(err.userMessage)
                     showAlert = true
                 }
             }
@@ -850,7 +850,7 @@ struct FeedbackHistoryView: View {
                 ProgressView()
                     .tint(AppTheme.primary)
             } else if let errorText {
-                Text(errorText)
+                Text(AppLanguageStore.localizedUserFacingAPIError(errorText))
                     .font(.system(size: 14))
                     .foregroundStyle(AppTheme.onSurfaceVariant)
                     .multilineTextAlignment(.center)

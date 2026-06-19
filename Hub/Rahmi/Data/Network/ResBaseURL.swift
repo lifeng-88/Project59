@@ -32,4 +32,14 @@ enum ResBaseURL {
     static var termsAndConditionsURL: URL {
         URL(string: "https://res.silkflow.xin/rahmi/rahmi-user-agreement.html")!
     }
+
+    /// 渠道远程配置：`{ResBaseURL}/config/{channel_id}.json`（AppsFlyer Apple App ID、Dev Key 等）
+    static func channelConfigURL(for channelId: String) -> URL? {
+        let id = channelId.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !id.isEmpty else { return nil }
+        let base = effective.hasSuffix("/") ? String(effective.dropLast()) : effective
+        let path = base.hasPrefix("http") ? "\(base)/config/\(id).json" : "http://\(base)/config/\(id).json"
+        let encoded = path.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? path
+        return URL(string: encoded)
+    }
 }

@@ -97,7 +97,7 @@ struct TodayView: View {
                 .padding(.bottom, LuminaSpacing.stackXL)
             }
         }
-        .background(LuminaColor.surface)
+        .background(LuminaColor.surface.opacity(0.001))
         .refreshable {
             await store.refreshFromCloudAndNotifications()
         }
@@ -116,12 +116,12 @@ struct TodayView: View {
             Button {
                 store.taskToEdit = task
             } label: {
-                Label("编辑", systemImage: "pencil")
+                Label(L10n.tr(.commonEdit, language: language), systemImage: "pencil")
             }
             Button(role: .destructive) {
                 withAnimation { store.deleteTask(task) }
             } label: {
-                Label("删除", systemImage: "trash")
+                Label(L10n.tr(.commonDelete, language: language), systemImage: "trash")
             }
         }
     }
@@ -131,7 +131,9 @@ struct TodayView: View {
             Image(systemName: "checklist")
                 .font(.system(size: 40))
                 .foregroundStyle(LuminaColor.outline)
-            Text(searchText.isEmpty ? "今天还没有任务" : "未找到匹配任务")
+            Text(searchText.isEmpty
+                ? L10n.tr(.todayEmptyNoTasks, language: language)
+                : L10n.tr(.todayEmptyNoResults, language: language))
                 .font(.luminaBodyLG)
                 .foregroundStyle(LuminaColor.outline)
             if searchText.isEmpty {
@@ -148,19 +150,13 @@ struct TodayView: View {
 
     private var inspirationCard: some View {
         ZStack(alignment: .bottomLeading) {
+            LuminaColor.inspirationGradient(colorScheme: colorScheme)
             LinearGradient(
-                colors: colorScheme == .dark
-                    ? [Color(hex: 0x2A4055), Color(hex: 0x1A2838)]
-                    : [Color(hex: 0x8BA4B8), Color(hex: 0xC5D4DE)],
-                startPoint: .topLeading,
-                endPoint: .bottomTrailing
-            )
-            LinearGradient(
-                colors: [.clear, LuminaColor.scrim.opacity(colorScheme == .dark ? 0.6 : 1)],
+                colors: [.clear, LuminaColor.scrim.opacity(colorScheme == .dark ? 0.55 : 0.35)],
                 startPoint: .top,
                 endPoint: .bottom
             )
-            Text("保持专注，深呼吸。")
+            Text(L10n.tr(.todayInspiration, language: language))
                 .font(.luminaLabelMD)
                 .italic()
                 .foregroundStyle(colorScheme == .dark ? LuminaColor.onPrimaryContainer : .white)
@@ -168,7 +164,7 @@ struct TodayView: View {
         }
         .frame(maxWidth: .infinity)
         .frame(height: 120)
-        .clipShape(RoundedRectangle(cornerRadius: LuminaRadius.md))
+        .clipShape(RoundedRectangle(cornerRadius: LuminaRadius.lg))
         .luminaSoftShadow()
     }
 }

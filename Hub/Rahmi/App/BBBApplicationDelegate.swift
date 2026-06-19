@@ -38,6 +38,10 @@ final class BBBApplicationDelegate: NSObject, UIApplicationDelegate {
         return true
     }
 
+    func applicationDidBecomeActive(_ application: UIApplication) {
+        AFSDKBridge.handleBecomeActive()
+    }
+
     func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
         PushManager.shared.setAPNsDeviceToken(deviceToken)
     }

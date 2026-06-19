@@ -74,6 +74,10 @@ struct RahmiRootContentView: View {
             .animation(.spring(response: 0.38, dampingFraction: 0.86), value: showWelcomeBonus)
             .task {
                 Task { await MediaCacheMaintenance.cleanExpiredCachesIfNeeded() }
+                let channel = await AppConfig.shared.getChannel()
+                if await RmThirdPartyAttributionBridge.shared.hasCompletedLoginBefore {
+                    await RmThirdPartyAttributionBridge.shared.initAFAsync(channelId: channel)
+                }
                 await versionConfig.refresh()
                 await auth.performLaunchAuthentication()
                 // 会话恢复后再登记一次，避免 onAppear 早于 `isAuthenticated` 为 true 时漏调。

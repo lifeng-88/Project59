@@ -4,6 +4,7 @@ import SwiftUI
 struct ProfileEditView: View {
     @EnvironmentObject private var store: TaskStore
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.hubLanguage) private var language
 
     @State private var name: String = ""
     @State private var email: String = ""
@@ -35,7 +36,7 @@ struct ProfileEditView: View {
                         .buttonStyle(.plain)
 
                         if displayAvatar != nil {
-                            Button("移除头像", role: .destructive) {
+                            Button(L10n.tr(.profileRemoveAvatar, language: language), role: .destructive) {
                                 avatarImage = nil
                                 removeAvatar = true
                                 photoItem = nil
@@ -48,10 +49,10 @@ struct ProfileEditView: View {
                 .listRowBackground(Color.clear)
             }
 
-            Section("基本信息") {
-                TextField("姓名", text: $name)
+            Section(L10n.tr(.profileBasicInfo, language: language)) {
+                TextField(L10n.tr(.profileName, language: language), text: $name)
                     .textContentType(.name)
-                TextField("邮箱", text: $email)
+                TextField(L10n.tr(.profileEmail, language: language), text: $email)
                     .textContentType(.emailAddress)
                     .keyboardType(.emailAddress)
                     .textInputAutocapitalization(.never)
@@ -59,14 +60,14 @@ struct ProfileEditView: View {
         }
         .scrollContentBackground(.hidden)
         .background(LuminaColor.surface)
-        .navigationTitle("编辑资料")
+        .navigationTitle(L10n.tr(.profileEditTitle, language: language))
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .cancellationAction) {
-                Button("取消") { dismiss() }
+                Button(L10n.tr(.commonCancel, language: language)) { dismiss() }
             }
             ToolbarItem(placement: .confirmationAction) {
-                Button("保存") {
+                Button(L10n.tr(.commonSave, language: language)) {
                     store.updateProfile(
                         name: name,
                         email: email,

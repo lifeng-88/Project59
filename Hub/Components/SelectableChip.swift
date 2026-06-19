@@ -12,13 +12,16 @@ struct SelectableChip: View {
             .padding(.vertical, 8)
             .foregroundStyle(isSelected ? LuminaColor.primary : LuminaColor.onSurfaceVariant)
             .background(
-                Capsule()
-                    .fill(isSelected ? LuminaColor.primary.opacity(0.12) : LuminaColor.surfaceContainer)
+                Capsule().fill(
+                    isSelected
+                        ? LuminaColor.primary.opacity(0.14)
+                        : LuminaColor.secondaryContainer.opacity(0.85)
+                )
             )
             .overlay(
                 Capsule()
                     .strokeBorder(
-                        isSelected ? LuminaColor.primary.opacity(0.4) : LuminaColor.outlineVariant.opacity(0.5),
+                        isSelected ? LuminaColor.primary.opacity(0.35) : LuminaColor.outlineVariant.opacity(0.45),
                         lineWidth: isSelected ? 1.5 : 1
                     )
             )
@@ -41,7 +44,7 @@ struct QuickAddToolButton: View {
                 .frame(width: 44, height: 44)
                 .background(
                     Circle()
-                        .fill(isSelected ? LuminaColor.primary.opacity(0.12) : LuminaColor.surfaceContainer)
+                        .fill(isSelected ? LuminaColor.primary.opacity(0.14) : LuminaColor.secondaryContainer.opacity(0.85))
                 )
                 .overlay(
                     Circle()

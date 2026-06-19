@@ -13,14 +13,28 @@ struct ProfileAvatarView: View {
                     .scaledToFill()
             } else {
                 ZStack {
-                    Circle().fill(LuminaColor.primary.opacity(0.12))
+                    Circle()
+                        .fill(
+                            LinearGradient(
+                                colors: [
+                                    LuminaColor.primaryFixed,
+                                    LuminaColor.primaryFixedDim.opacity(0.6)
+                                ],
+                                startPoint: .topLeading,
+                                endPoint: .bottomTrailing
+                            )
+                        )
                     Text(initials)
-                        .font(.luminaHeadlineMobile)
+                        .font(.system(size: size * 0.32, weight: .semibold, design: .rounded))
                         .foregroundStyle(LuminaColor.primary)
                 }
             }
         }
         .frame(width: size, height: size)
         .clipShape(Circle())
+        .overlay(
+            Circle()
+                .strokeBorder(LuminaColor.primary.opacity(0.18), lineWidth: 2)
+        )
     }
 }

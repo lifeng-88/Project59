@@ -288,6 +288,7 @@ struct RechargeView: View {
             if let outcome = paymentOutcome {
                 RechargeResultOverlay(
                     outcome: outcome,
+                    usesVariantAPresentation: showsRechargeVariantA,
                     onDismiss: { paymentOutcome = nil },
                     onOpenedPaymentPageOK: {
                         await queryBrowserRedirectPaymentIfNeeded(isUserInitiated: true)
@@ -319,7 +320,7 @@ struct RechargeView: View {
             await MainActor.run {
                 isQueryingBrowserPayment = false
                 if isUserInitiated {
-                    paymentOutcome = .failed(message: err.userMessage)
+                    paymentOutcome = .failed(message: AppLanguageStore.localizedUserFacingAPIError(err.userMessage))
                 }
             }
             await RechargeBehaviorEvents.enqueueRedirectPayFail(
@@ -364,7 +365,9 @@ struct RechargeView: View {
                     )
                 }
             } else {
-                let message = resp.message ?? AppLanguageStore.localized("recharge.error.payment_incomplete")
+                let message = AppLanguageStore.localizedUserFacingAPIError(
+                    resp.message ?? AppLanguageStore.localized("recharge.error.payment_incomplete")
+                )
                 await MainActor.run {
                     isQueryingBrowserPayment = false
                     paymentOutcome = .failed(message: message)
@@ -451,11 +454,12 @@ struct RechargeView: View {
                                 .tint(RechargeDesign.ctaTitleDark)
                         }
                         BBBTrackedText.text(
-                            isPurchasing
-                                ? AppLanguageStore.localized("recharge.processing")
-                                : (showsRechargeVariantA
-                                    ? AppLanguageStore.localized("recharge.variant_a.primary_cta")
-                                    : AppLanguageStore.localized("recharge.now")),
+                            AppLanguageStore.localized(
+                                RechargeVariantALocalization.primaryCTAKey(
+                                    isVariantA: showsRechargeVariantA,
+                                    isPurchasing: isPurchasing
+                                )
+                            ),
                             size: 13,
                             weight: .heavy,
                             tracking: 2,
@@ -477,7 +481,15 @@ struct RechargeView: View {
                 Image(systemName: "lock.fill")
                     .font(.system(size: 11))
                     .foregroundColor(Color.white.opacity(0.78))
-                BBBTrackedText.text(AppLanguageStore.localized("recharge.secure_footer"), size: 9, weight: .bold, tracking: 2, color: Color.white.opacity(0.72))
+                BBBTrackedText.text(
+                    AppLanguageStore.localized(
+                        RechargeVariantALocalization.footerKey(isVariantA: showsRechargeVariantA)
+                    ),
+                    size: 9,
+                    weight: .bold,
+                    tracking: 2,
+                    color: Color.white.opacity(0.72)
+                )
             }
             .frame(maxWidth: .infinity)
             .padding(.top, 16)
@@ -494,7 +506,7 @@ struct RechargeView: View {
                 .padding(.vertical, 36)
         } else if let err = packagesError, packages.isEmpty {
             VStack(spacing: 14) {
-                Text(err)
+                Text(AppLanguageStore.localizedUserFacingAPIError(err))
                     .font(.system(size: 12, weight: .medium))
                     .foregroundStyle(AppTheme.onSurface.opacity(0.75))
                     .multilineTextAlignment(.center)
@@ -545,7 +557,20 @@ struct RechargeView: View {
             case .failure(let err):
                 domainPackages = []
                 packages = []
+                #if DEBUG
+                if versionConfig.isPresentationVariantAUIEnabled {
+                    domainPackages = RahmiAFaceLocalSimulation.domainPackages()
+                    packages = domainPackages.map(RechargePackageModel.init(package:)).sorted { $0.packageId < $1.packageId }
+                    if selectedId == nil || packages.first(where: { $0.id == selectedId }) == nil {
+                        selectedId = defaultSelectedPackageId()
+                    }
+                    packagesError = nil
+                } else {
+                    packagesError = err.userMessage
+                }
+                #else
                 packagesError = err.userMessage
+                #endif
             }
         }
     }
@@ -607,7 +632,12 @@ struct RechargeView: View {
                 rechargePackageLeadingCoinOrb(variantA: variantA, featured: showFeaturedChrome)
 
                 VStack(alignment: .leading, spacing: hasBonusLine ? 3 : 0) {
-                    Text("\(hasBonusLine ? pkg.totalCoins : pkg.base) COINS")
+                    Text(
+                        AppLanguageStore.localizedFormat(
+                            "recharge.package.coins_line",
+                            Int64(hasBonusLine ? pkg.totalCoins : pkg.base)
+                        )
+                    )
                         .font(.system(size: 16, weight: .heavy))
                         .foregroundColor(.white)
                         .lineLimit(1)
@@ -947,7 +977,7 @@ struct RechargeView: View {
             case .failure(let err):
                 await MainActor.run {
                     isPurchasing = false
-                    paymentOutcome = .failed(message: err.userMessage)
+                    paymentOutcome = .failed(message: AppLanguageStore.localizedUserFacingAPIError(err.userMessage))
                 }
                 return
             case .success(let resp):
@@ -1005,7 +1035,7 @@ struct RechargeView: View {
 
         switch redirectResult {
         case .failure(let err):
-            await MainActor.run { paymentOutcome = .failed(message: err.userMessage) }
+            await MainActor.run { paymentOutcome = .failed(message: AppLanguageStore.localizedUserFacingAPIError(err.userMessage)) }
         case .success(let resp):
             await RechargeBehaviorEvents.enqueueRedirectPayStart(
                 orderId: resp.orderId,
@@ -1057,7 +1087,7 @@ struct RechargeView: View {
                 amountCents: amountCents,
                 reason: err.userMessage
             )
-            await MainActor.run { paymentOutcome = .failed(message: err.userMessage) }
+            await MainActor.run { paymentOutcome = .failed(message: AppLanguageStore.localizedUserFacingAPIError(err.userMessage)) }
         case .success(let response):
             let dup = !response.success && RechargeOrderVerification.isDuplicateOrderSuccess(response.message)
             if response.success || dup {
@@ -1096,7 +1126,11 @@ struct RechargeView: View {
                     reason: response.message ?? "payment_failed"
                 )
                 await MainActor.run {
-                    paymentOutcome = .failed(message: response.message ?? AppLanguageStore.localized("recharge.error.payment_incomplete"))
+                    paymentOutcome = .failed(
+                        message: AppLanguageStore.localizedUserFacingAPIError(
+                            response.message ?? AppLanguageStore.localized("recharge.error.payment_incomplete")
+                        )
+                    )
                 }
             }
         }
@@ -1105,13 +1139,25 @@ struct RechargeView: View {
 
 // MARK: - 导航栏左上角
 
-/// 充值 Tab 顶栏标题：品牌渐变 + 圆角图标底，替代大字距全大写 `BBBTrackedText`
+/// 充值 Tab 顶栏标题：A 面为 App Store 储值文案 + Apple 图标；B 面为信用卡图标 + RECHARGE
 private struct RechargePageLeadingTitle: View {
+    @EnvironmentObject private var versionConfig: VersionConfigStore
+    @EnvironmentObject private var appLanguage: AppLanguageStore
+
+    private var showsRechargeVariantA: Bool {
+        versionConfig.isPresentationVariantAUIEnabled
+    }
+
+    private var titleKey: String {
+        RechargeVariantALocalization.navigationTitleKey(isVariantA: showsRechargeVariantA)
+    }
+
     private var title: String {
-        RahmiTextStyle.navigationTitleLabel(AppLanguageStore.localized("recharge.list_title"))
+        RahmiTextStyle.navigationTitleLabel(AppLanguageStore.localized(titleKey))
     }
 
     var body: some View {
+        let _ = appLanguage.preference
         HStack(spacing: 10) {
             ZStack {
                 Circle()
@@ -1131,15 +1177,22 @@ private struct RechargePageLeadingTitle: View {
                     )
                     .frame(width: 34, height: 34)
 
-                Image(systemName: "creditcard.fill")
-                    .font(.system(size: 15, weight: .semibold))
-                    .foregroundStyle(
-                        LinearGradient(
-                            colors: [AppTheme.accentCyan, AppTheme.primary],
-                            startPoint: .topLeading,
-                            endPoint: .bottomTrailing
-                        )
+                Group {
+                    if showsRechargeVariantA {
+                        Image(systemName: "apple.logo")
+                            .font(.system(size: 16, weight: .semibold))
+                    } else {
+                        Image(systemName: "creditcard.fill")
+                            .font(.system(size: 15, weight: .semibold))
+                    }
+                }
+                .foregroundStyle(
+                    LinearGradient(
+                        colors: [AppTheme.accentCyan, AppTheme.primary],
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
                     )
+                )
             }
 
             Text(title)
@@ -1155,7 +1208,7 @@ private struct RechargePageLeadingTitle: View {
                 .minimumScaleFactor(0.82)
         }
         .accessibilityElement(children: .combine)
-        .accessibilityLabel(AppLanguageStore.localized("recharge.list_title"))
+        .accessibilityLabel(AppLanguageStore.localized(titleKey))
     }
 }
 

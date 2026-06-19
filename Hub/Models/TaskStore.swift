@@ -18,8 +18,10 @@ final class TaskStore: ObservableObject {
     @Published var lastCloudSyncDate: Date?
     @Published var calendarSelectedDate = Date()
     @Published var quickAddPrefillDate: Date?
-    @Published var userName = HubDemoData.isEnabled ? "张伟" : ""
-    @Published var userEmail = HubDemoData.isEnabled ? "zhangwei@lumina.io" : ""
+    @Published var userName = HubDemoData.isEnabled
+        ? L10n.tr(.demoUserName, language: AppLanguage.defaultFromSystem()) : ""
+    @Published var userEmail = HubDemoData.isEnabled
+        ? TaskStore.demoUserEmail(for: AppLanguage.defaultFromSystem()) : ""
     @Published var profileAvatarImage: UIImage?
     @Published var notificationsEnabled = true
     @Published var pomodoroMinutes = 25
@@ -29,7 +31,7 @@ final class TaskStore: ObservableObject {
     @Published var selectedAmbientSound: AmbientSound? = .rain
     @Published var cloudSyncEnabled = true
     @Published var appTheme: HubAppearanceTheme = .light
-    @Published var appLanguage: AppLanguage = .zhHans
+    @Published var appLanguage: AppLanguage = AppLanguage.defaultFromSystem()
     @Published var focusStreakDays = 0
     @Published var lastFocusActivityDate: Date?
     @Published var totalFocusMinutes = 0
@@ -80,7 +82,15 @@ final class TaskStore: ObservableObject {
                 persist()
             }
         } else {
-            tasks = HubDemoData.isEnabled ? Self.sampleTasks : []
+            appLanguage = AppLanguage.defaultFromSystem()
+            tasks = HubDemoData.isEnabled ? Self.sampleTasks(language: appLanguage) : []
+            if HubDemoData.isEnabled {
+                userName = L10n.tr(.demoUserName, language: appLanguage)
+                userEmail = Self.demoUserEmail(for: appLanguage)
+            }
+            persist()
+        }
+        if syncDemoSampleContentIfNeeded() {
             persist()
         }
         lastCloudSyncDate = UserDefaults.standard.object(forKey: Self.lastSyncKey) as? Date
@@ -103,13 +113,56 @@ final class TaskStore: ObservableObject {
         lastFocusActivityDate = saved.lastFocusActivityDate
         totalFocusMinutes = saved.totalFocusMinutes
         focusGoalMinutes = saved.focusGoalMinutes ?? 1200
-        userName = saved.userName ?? (HubDemoData.isEnabled ? "张伟" : "")
-        userEmail = saved.userEmail ?? (HubDemoData.isEnabled ? "zhangwei@lumina.io" : "")
-        appLanguage = saved.appLanguage ?? .zhHans
+        appLanguage = saved.appLanguage ?? AppLanguage.defaultFromSystem()
+        userName = saved.userName ?? (HubDemoData.isEnabled ? L10n.tr(.demoUserName, language: appLanguage) : "")
+        userEmail = saved.userEmail ?? (HubDemoData.isEnabled ? Self.demoUserEmail(for: appLanguage) : "")
+    }
+
+    /// DEBUG 演示数据：语言与当前 `appLanguage` 不一致时刷新示例任务与演示资料。
+    @discardableResult
+    func syncDemoSampleContentIfNeeded() -> Bool {
+        guard HubDemoData.isEnabled else { return false }
+        var changed = false
+
+        if Self.isSampleTaskSet(tasks) {
+            let localized = Self.sampleTasks(language: appLanguage)
+            let titlesDiffer = zip(tasks, localized).contains { $0.title != $1.title }
+            if titlesDiffer {
+                tasks = zip(tasks, localized).map { old, new in
+                    var task = new
+                    task.isCompleted = old.isCompleted
+                    task.completedAt = old.isCompleted ? old.completedAt : nil
+                    return task
+                }
+                changed = true
+            }
+        }
+
+        let demoName = L10n.tr(.demoUserName, language: appLanguage)
+        if Self.allDemoUserNames().contains(userName), userName != demoName {
+            userName = demoName
+            changed = true
+        }
+
+        let demoEmail = Self.demoUserEmail(for: appLanguage)
+        if Self.demoUserEmails.contains(userEmail), userEmail != demoEmail {
+            userEmail = demoEmail
+            changed = true
+        }
+
+        return changed
+    }
+
+    func focusSettingsSummary(language: AppLanguage) -> String {
+        String(
+            format: L10n.tr(.settingsFocusSummary, language: language),
+            pomodoroMinutes,
+            breakMinutes
+        )
     }
 
     var focusSettingsSummary: String {
-        "\(pomodoroMinutes) 分钟专注 · \(breakMinutes) 分钟休息"
+        focusSettingsSummary(language: appLanguage)
     }
 
     var userInitials: String {
@@ -125,7 +178,7 @@ final class TaskStore: ObservableObject {
 
     func resetAllData() {
         guard HubDemoData.isEnabled else { return }
-        tasks = Self.sampleTasks
+        tasks = Self.sampleTasks(language: appLanguage)
         focusStreakDays = 0
         lastFocusActivityDate = nil
         totalFocusMinutes = 0
@@ -266,7 +319,7 @@ final class TaskStore: ObservableObject {
         }
 
         persist()
-        alertMessage = "资料已更新"
+        alertMessage = L10n.tr(.alertProfileUpdated, language: appLanguage)
     }
 
     var focusGoalHours: Int {
@@ -279,11 +332,7 @@ final class TaskStore: ObservableObject {
     }
 
     var focusGoalSubtitle: String {
-        let hours = focusGoalHours
-        if appLanguage == .en {
-            return String(format: "Goal: %dh", hours)
-        }
-        return "目标：\(hours)小时"
+        String(format: L10n.tr(.focusGoalSubtitleFormatted, language: appLanguage), focusGoalHours)
     }
 
     func setFocusGoalHours(_ hours: Int) {
@@ -324,20 +373,20 @@ final class TaskStore: ObservableObject {
         apply(payload.settings)
         persist()
         Task { await syncNotifications() }
-        alertMessage = "已导入 \(payload.tasks.count) 条任务"
+        alertMessage = String(format: L10n.tr(.alertImportedTasks, language: appLanguage), payload.tasks.count)
     }
 
     func applyImportedState(_ state: PersistedAppState) {
         apply(state)
         persist()
         Task { await syncNotifications() }
-        alertMessage = "已恢复备份数据"
+        alertMessage = L10n.tr(.alertRestoredBackup, language: appLanguage)
     }
 
     func restoreFromCloud() {
         do {
             guard let backup = try CloudSyncService.loadBackup() else {
-                alertMessage = "iCloud 中暂无备份文件"
+                alertMessage = L10n.tr(.alertNoCloudBackup, language: appLanguage)
                 return
             }
             apply(backup)
@@ -345,9 +394,9 @@ final class TaskStore: ObservableObject {
             lastCloudSyncDate = Date()
             UserDefaults.standard.set(lastCloudSyncDate, forKey: Self.lastSyncKey)
             Task { await syncNotifications() }
-            alertMessage = "已从 iCloud 恢复"
+            alertMessage = L10n.tr(.alertRestoredCloud, language: appLanguage)
         } catch {
-            alertMessage = error.localizedDescription
+            alertMessage = L10n.hubErrorMessage(error, language: appLanguage)
         }
     }
 
@@ -358,7 +407,7 @@ final class TaskStore: ObservableObject {
             do {
                 try performCloudSync()
             } catch {
-                alertMessage = error.localizedDescription
+                alertMessage = L10n.hubErrorMessage(error, language: appLanguage)
             }
         }
     }
@@ -379,7 +428,7 @@ final class TaskStore: ObservableObject {
             let granted = await NotificationService.requestAuthorization()
             notificationsEnabled = granted
             if !granted {
-                alertMessage = "请在系统设置中允许 Hub 发送通知"
+                alertMessage = L10n.tr(.alertNotificationDenied, language: appLanguage)
             }
         } else {
             notificationsEnabled = false
@@ -389,13 +438,13 @@ final class TaskStore: ObservableObject {
     }
 
     func syncNotifications() async {
-        await NotificationService.syncAll(tasks: tasks, enabled: notificationsEnabled)
+        await NotificationService.syncAll(tasks: tasks, enabled: notificationsEnabled, language: appLanguage)
     }
 
     private func refreshNotifications(for task: HubTask, isNew: Bool) async {
         NotificationService.cancelReminder(for: task)
         guard notificationsEnabled, !task.isCompleted else { return }
-        NotificationService.scheduleReminder(for: task)
+        NotificationService.scheduleReminder(for: task, language: appLanguage)
     }
 
     func exportData(format: ExportFormat) {
@@ -411,7 +460,7 @@ final class TaskStore: ObservableObject {
             try data.write(to: url, options: .atomic)
             exportFile = ExportFile(url: url)
         } catch {
-            alertMessage = "导出失败：\(error.localizedDescription)"
+            alertMessage = String(format: L10n.tr(.alertExportFailed, language: appLanguage), error.localizedDescription)
         }
     }
 
@@ -427,11 +476,11 @@ final class TaskStore: ObservableObject {
         if enabled {
             do {
                 try performCloudSync()
-                alertMessage = "已同步到 iCloud"
+                alertMessage = L10n.tr(.alertSyncedCloud, language: appLanguage)
             } catch {
                 cloudSyncEnabled = false
                 persist()
-                alertMessage = error.localizedDescription
+                alertMessage = L10n.hubErrorMessage(error, language: appLanguage)
             }
         }
     }
@@ -472,26 +521,38 @@ final class TaskStore: ObservableObject {
         }
     }
 
-    static let sampleTasks: [HubTask] = [
-        HubTask(title: "完成设计提案", category: .work, scheduledDate: Date()),
-        HubTask(title: "深度工作：聚焦逻辑层", category: .deepFocus, scheduledDate: Date()),
-        HubTask(title: "周末采购准备", scheduledDate: Date()),
-        HubTask(title: "晨间冥想", isCompleted: true, scheduledDate: Date()),
-        HubTask(title: "批量处理邮件", category: .work, isCompleted: true, scheduledDate: Date())
-    ]
+    static func sampleTasks(language: AppLanguage) -> [HubTask] {
+        [
+            HubTask(title: L10n.tr(.sampleTaskDesign, language: language), category: .work, scheduledDate: Date()),
+            HubTask(title: L10n.tr(.sampleTaskDeepWork, language: language), category: .deepFocus, scheduledDate: Date()),
+            HubTask(title: L10n.tr(.sampleTaskShopping, language: language), scheduledDate: Date()),
+            HubTask(title: L10n.tr(.sampleTaskMeditation, language: language), isCompleted: true, scheduledDate: Date()),
+            HubTask(title: L10n.tr(.sampleTaskEmail, language: language), category: .work, isCompleted: true, scheduledDate: Date())
+        ]
+    }
+
+    static let sampleTasks: [HubTask] = sampleTasks(language: AppLanguage.defaultFromSystem())
+
+    static func demoUserEmail(for language: AppLanguage) -> String {
+        language == .en ? "alex.chen@lumina.io" : "zhangwei@lumina.io"
+    }
+
+    private static let demoUserEmails: Set<String> = ["zhangwei@lumina.io", "alex.chen@lumina.io"]
+
+    private static func allDemoUserNames() -> Set<String> {
+        Set(AppLanguage.allCases.map { L10n.tr(.demoUserName, language: $0) })
+    }
 
     private static func isSampleTaskSet(_ tasks: [HubTask]) -> Bool {
         guard tasks.count == sampleTasks.count else { return false }
-        return Set(tasks.map(\.title)) == Set(sampleTasks.map(\.title))
+        let allSampleTitles = Set(AppLanguage.allCases.flatMap { sampleTasks(language: $0).map(\.title) })
+        return Set(tasks.map(\.title)).isSubset(of: allSampleTitles)
     }
 
     var focusHoursFormatted: String {
         let hours = totalFocusMinutes / 60
         let mins = totalFocusMinutes % 60
-        if appLanguage == .en {
-            return "\(hours)h \(mins)m"
-        }
-        return "\(hours)小时 \(mins)分"
+        return String(format: L10n.tr(.focusHoursFormatted, language: appLanguage), hours, mins)
     }
 }
 

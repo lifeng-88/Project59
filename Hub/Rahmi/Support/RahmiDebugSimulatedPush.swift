@@ -21,100 +21,103 @@ struct SimPushDebugPayload {
 }
 
 enum RahmiDebugSimulatedPush {
-    static let cases: [SimPushDebugPayload] = [
-        SimPushDebugPayload(
-            title: "Rahmi ✨",
-            body: "你的创作已生成，点击查看",
-            detailText: "push_type: generation_success\ntask_id: 1775043463758460903",
-            userInfo: [
-                "push_type": "generation_success",
-                "task_id": "1775043463758460903"
-            ],
-            route: .generationSuccess(taskId: "1775043463758460903")
-        ),
-        SimPushDebugPayload(
-            title: "Rahmi",
-            body: "创作未能完成，点击查看任务详情",
-            detailText: "push_type: generation_failure\ntask_id: 1775043463758460903",
-            userInfo: [
-                "push_type": "generation_failure",
-                "task_id": "1775043463758460903"
-            ],
-            route: .generationFailure(taskId: "1775043463758460903")
-        ),
-        SimPushDebugPayload(
-            title: "Rahmi",
-            body: "客服回复了你的反馈，点击查看",
-            detailText: "push_type: feedback_reply\nfeedback_id: 10001\ncampaign_id: test_d7",
-            userInfo: [
-                "push_type": "feedback_reply",
-                "feedback_id": "10001",
-                "campaign_id": "test_d7"
-            ],
-            route: .feedbackReply(feedbackId: "10001", campaignId: "test_d7")
-        ),
-        SimPushDebugPayload(
-            title: "Rahmi",
-            body: "送你 500 金币，点击领取",
-            detailText: "push_type: return_user_coins_claim\nclaim_id: claim_001\ncampaign_id: cmp_2\nreward_coins: 500",
-            userInfo: [
-                "push_type": "return_user_coins_claim",
-                "claim_id": "claim_001",
-                "campaign_id": "cmp_2",
-                "reward_coins": 500
-            ],
-            route: .returnUserCoinsClaim(
-                ReturnUserCoinsClaimPayload(claimId: "claim_001", campaignId: "cmp_2", rewardCoins: 500)
-            )
-        ),
-        SimPushDebugPayload(
-            title: "Rahmi",
-            body: "新用户专享充值优惠，点击查看",
-            detailText: """
-            push_type: recharge_incentive_new_user
-            offer_id: offer_001
-            apple_product_id: com.xmglamai.glamai.consumable.coins_20
-            campaign_id: cmp_1
-            amount_cents_usd: 499 / base_coins: 1000 / bonus_coins: 2000
-            """,
-            userInfo: [
-                "push_type": "recharge_incentive_new_user",
-                "offer_id": "offer_001",
-                "apple_product_id": "com.xmglamai.glamai.consumable.coins_20",
-                "campaign_id": "cmp_1",
-                "amount_cents_usd": 499,
-                "base_coins": 1000,
-                "bonus_coins": 2000
-            ],
-            route: .rechargeIncentiveNewUser(
-                RechargeNewUserOfferPayload(
-                    offerId: "offer_001",
-                    appleProductId: "com.xmglamai.glamai.consumable.coins_20",
-                    campaignId: "cmp_1",
-                    amountCentsUsd: 499,
-                    baseCoins: 1000,
-                    bonusCoins: 2000
+    private static func makeCases() -> [SimPushDebugPayload] {
+        [
+            SimPushDebugPayload(
+                title: "Rahmi ✨",
+                body: AppLanguageStore.localized("debug.sim_push.generation_success.body"),
+                detailText: "push_type: generation_success\ntask_id: 1775043463758460903",
+                userInfo: [
+                    "push_type": "generation_success",
+                    "task_id": "1775043463758460903"
+                ],
+                route: .generationSuccess(taskId: "1775043463758460903")
+            ),
+            SimPushDebugPayload(
+                title: "Rahmi",
+                body: AppLanguageStore.localized("debug.sim_push.generation_failure.body"),
+                detailText: "push_type: generation_failure\ntask_id: 1775043463758460903",
+                userInfo: [
+                    "push_type": "generation_failure",
+                    "task_id": "1775043463758460903"
+                ],
+                route: .generationFailure(taskId: "1775043463758460903")
+            ),
+            SimPushDebugPayload(
+                title: "Rahmi",
+                body: AppLanguageStore.localized("debug.sim_push.feedback_reply.body"),
+                detailText: "push_type: feedback_reply\nfeedback_id: 10001\ncampaign_id: test_d7",
+                userInfo: [
+                    "push_type": "feedback_reply",
+                    "feedback_id": "10001",
+                    "campaign_id": "test_d7"
+                ],
+                route: .feedbackReply(feedbackId: "10001", campaignId: "test_d7")
+            ),
+            SimPushDebugPayload(
+                title: "Rahmi",
+                body: AppLanguageStore.localized("debug.sim_push.coins_claim.body"),
+                detailText: "push_type: return_user_coins_claim\nclaim_id: claim_001\ncampaign_id: cmp_2\nreward_coins: 500",
+                userInfo: [
+                    "push_type": "return_user_coins_claim",
+                    "claim_id": "claim_001",
+                    "campaign_id": "cmp_2",
+                    "reward_coins": 500
+                ],
+                route: .returnUserCoinsClaim(
+                    ReturnUserCoinsClaimPayload(claimId: "claim_001", campaignId: "cmp_2", rewardCoins: 500)
+                )
+            ),
+            SimPushDebugPayload(
+                title: "Rahmi",
+                body: AppLanguageStore.localized("debug.sim_push.recharge_incentive.body"),
+                detailText: """
+                push_type: recharge_incentive_new_user
+                offer_id: offer_001
+                apple_product_id: com.xmglamai.glamai.consumable.coins_20
+                campaign_id: cmp_1
+                amount_cents_usd: 499 / base_coins: 1000 / bonus_coins: 2000
+                """,
+                userInfo: [
+                    "push_type": "recharge_incentive_new_user",
+                    "offer_id": "offer_001",
+                    "apple_product_id": "com.xmglamai.glamai.consumable.coins_20",
+                    "campaign_id": "cmp_1",
+                    "amount_cents_usd": 499,
+                    "base_coins": 1000,
+                    "bonus_coins": 2000
+                ],
+                route: .rechargeIncentiveNewUser(
+                    RechargeNewUserOfferPayload(
+                        offerId: "offer_001",
+                        appleProductId: "com.xmglamai.glamai.consumable.coins_20",
+                        campaignId: "cmp_1",
+                        amountCentsUsd: 499,
+                        baseCoins: 1000,
+                        bonusCoins: 2000
+                    )
+                )
+            ),
+            SimPushDebugPayload(
+                title: "Rahmi",
+                body: AppLanguageStore.localized("debug.sim_push.template_category.body"),
+                detailText: "push_type: template_category\ntemplate_tab_id: 3\ncatalog_id: 1\ncampaign_id: test_cat",
+                userInfo: [
+                    "push_type": "template_category",
+                    "template_tab_id": 3,
+                    "catalog_id": 1,
+                    "campaign_id": "test_cat"
+                ],
+                route: .templateCategory(
+                    HomeTemplateCategoryPush(templateTabId: 3, catalogId: 1, campaignId: "test_cat")
                 )
             )
-        ),
-        SimPushDebugPayload(
-            title: "Rahmi",
-            body: "新模板已上线，点击探索",
-            detailText: "push_type: template_category\ntemplate_tab_id: 3\ncatalog_id: 1\ncampaign_id: test_cat",
-            userInfo: [
-                "push_type": "template_category",
-                "template_tab_id": 3,
-                "catalog_id": 1,
-                "campaign_id": "test_cat"
-            ],
-            route: .templateCategory(
-                HomeTemplateCategoryPush(templateTabId: 3, catalogId: 1, campaignId: "test_cat")
-            )
-        )
-    ]
+        ]
+    }
 
     /// 循环下一条模拟推送说明（与旧版「我的」底栏点击一致）。
     static func advanceStep(_ step: inout Int) -> SimPushDebugPayload {
+        let cases = makeCases()
         let idx = step % cases.count
         step += 1
         return cases[idx]

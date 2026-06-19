@@ -96,7 +96,7 @@ struct RechargeRecordListView: View {
             Image(systemName: "exclamationmark.triangle.fill")
                 .font(.system(size: 44))
                 .foregroundStyle(AppTheme.secondary.opacity(0.85))
-            Text(message)
+            Text(AppLanguageStore.localizedUserFacingAPIError(message))
                 .font(.subheadline)
                 .foregroundStyle(AppTheme.onSurfaceVariant)
                 .multilineTextAlignment(.center)

@@ -8,6 +8,7 @@ struct ThemePickerSheet: View {
     @EnvironmentObject private var store: TaskStore
     @Environment(\.dismiss) private var dismiss
     @Environment(\.colorScheme) private var colorScheme
+    @Environment(\.hubLanguage) private var language
 
     var body: some View {
         NavigationStack {
@@ -28,10 +29,10 @@ struct ThemePickerSheet: View {
                                         .frame(width: 36)
 
                                     VStack(alignment: .leading, spacing: 2) {
-                                        Text(theme.displayName)
+                                        Text(theme.displayName(language: language))
                                             .font(.luminaBodyMD)
                                             .foregroundStyle(LuminaColor.onSurface)
-                                        Text(theme.subtitle)
+                                        Text(theme.subtitle(language: language))
                                             .font(.luminaLabelSM)
                                             .foregroundStyle(LuminaColor.onSurfaceVariant)
                                     }
@@ -60,11 +61,11 @@ struct ThemePickerSheet: View {
                 .padding(LuminaSpacing.marginPage)
             }
             .background(LuminaColor.surface)
-            .navigationTitle("主题模式")
+            .navigationTitle(L10n.tr(.settingsTheme, language: language))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("完成") { dismiss() }
+                    Button(L10n.tr(.commonDone, language: language)) { dismiss() }
                 }
             }
         }
@@ -74,13 +75,13 @@ struct ThemePickerSheet: View {
 
   private var themePreview: some View {
     VStack(alignment: .leading, spacing: LuminaSpacing.stackSM) {
-      Text("预览")
+      Text(L10n.tr(.themePreview, language: language))
         .font(.luminaLabelMD)
         .foregroundStyle(LuminaColor.onSurfaceVariant)
 
       HStack(spacing: LuminaSpacing.stackMD) {
-        previewCard(label: "浅色", scheme: .light)
-        previewCard(label: "深色", scheme: .dark)
+        previewCard(label: L10n.tr(.themePreviewLight, language: language), scheme: .light)
+        previewCard(label: L10n.tr(.themePreviewDark, language: language), scheme: .dark)
       }
     }
   }
@@ -117,11 +118,11 @@ struct ThemePickerSheet: View {
   }
 
   private func previewSurface(for scheme: ColorScheme) -> Color {
-    scheme == .dark ? Color(hex: 0x1C1F23) : Color(hex: 0xFFFFFF)
+    scheme == .dark ? Color(hex: 0x1F1A22) : Color(hex: 0xFFFFFF)
   }
 
   private func previewPrimary(for scheme: ColorScheme) -> Color {
-    scheme == .dark ? Color(hex: 0xA4C9FF) : Color(hex: 0x005DA7)
+    scheme == .dark ? Color(hex: 0xF0A8C8) : Color(hex: 0xC45C8A)
   }
 }
 
@@ -130,21 +131,22 @@ struct ThemePickerSheet: View {
 struct FocusGoalSheet: View {
     @EnvironmentObject private var store: TaskStore
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.hubLanguage) private var language
 
     @State private var hours: Int = 20
 
     var body: some View {
         NavigationStack {
             VStack(spacing: LuminaSpacing.stackXL) {
-                Text("设定每周专注时长目标，用于分析页进度展示。")
+                Text(L10n.tr(.focusGoalHint, language: language))
                     .font(.luminaBodyMD)
                     .foregroundStyle(LuminaColor.onSurfaceVariant)
                     .multilineTextAlignment(.center)
                     .padding(.horizontal)
 
-                Picker("小时", selection: $hours) {
+                Picker(L10n.tr(.settingsFocusGoal, language: language), selection: $hours) {
                     ForEach(5...40, id: \.self) { value in
-                        Text("\(value) 小时").tag(value)
+                        Text(String(format: L10n.tr(.focusGoalPickerHours, language: language), value)).tag(value)
                     }
                 }
                 .pickerStyle(.wheel)
@@ -154,14 +156,14 @@ struct FocusGoalSheet: View {
             }
             .padding(.top, LuminaSpacing.stackMD)
             .background(LuminaColor.surface)
-            .navigationTitle("专注目标")
+            .navigationTitle(L10n.tr(.settingsFocusGoal, language: language))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("取消") { dismiss() }
+                    Button(L10n.tr(.commonCancel, language: language)) { dismiss() }
                 }
                 ToolbarItem(placement: .confirmationAction) {
-                    Button("保存") {
+                    Button(L10n.tr(.commonSave, language: language)) {
                         store.setFocusGoalHours(hours)
                         dismiss()
                     }
@@ -182,6 +184,7 @@ struct FocusGoalSheet: View {
 struct LanguagePickerSheet: View {
     @EnvironmentObject private var store: TaskStore
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.hubLanguage) private var language
 
     var body: some View {
         NavigationStack {
@@ -189,7 +192,9 @@ struct LanguagePickerSheet: View {
                 ForEach(AppLanguage.allCases, id: \.self) { language in
                     Button {
                         store.appLanguage = language
+                        store.syncDemoSampleContentIfNeeded()
                         store.persist()
+                        Task { await store.syncNotifications() }
                         dismiss()
                     } label: {
                         HStack {
@@ -205,11 +210,11 @@ struct LanguagePickerSheet: View {
                     }
                 }
             }
-            .navigationTitle("语言")
+            .navigationTitle(L10n.tr(.settingsLanguage, language: language))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("完成") { dismiss() }
+                    Button(L10n.tr(.commonDone, language: language)) { dismiss() }
                 }
             }
         }
@@ -223,6 +228,7 @@ struct LanguagePickerSheet: View {
 struct DataManagementSheet: View {
     @EnvironmentObject private var store: TaskStore
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.hubLanguage) private var language
 
     @State private var showExportPicker = false
     @State private var showImportPicker = false
@@ -231,61 +237,61 @@ struct DataManagementSheet: View {
     var body: some View {
         NavigationStack {
             List {
-                Section("备份与恢复") {
+                Section(L10n.tr(.dataBackupSection, language: language)) {
                     Button {
                         showExportPicker = true
                     } label: {
-                        Label("导出数据", systemImage: "square.and.arrow.up")
+                        Label(L10n.tr(.dataExport, language: language), systemImage: "square.and.arrow.up")
                     }
 
                     Button {
                         showImportPicker = true
                     } label: {
-                        Label("导入备份", systemImage: "square.and.arrow.down")
+                        Label(L10n.tr(.dataImport, language: language), systemImage: "square.and.arrow.down")
                     }
 
                     if store.cloudSyncEnabled {
                         Button {
                             syncToCloud()
                         } label: {
-                            Label("上传到 iCloud", systemImage: "icloud.and.arrow.up")
+                            Label(L10n.tr(.dataUploadCloud, language: language), systemImage: "icloud.and.arrow.up")
                         }
 
                         Button(role: .destructive) {
                             showRestoreConfirm = true
                         } label: {
-                            Label("从 iCloud 恢复", systemImage: "icloud.and.arrow.down")
+                            Label(L10n.tr(.dataRestoreCloud, language: language), systemImage: "icloud.and.arrow.down")
                         }
                     }
                 }
 
                 Section {
-                    Toggle("云端同步", isOn: Binding(
+                    Toggle(L10n.tr(.dataCloudSyncToggle, language: language), isOn: Binding(
                         get: { store.cloudSyncEnabled },
                         set: { store.setCloudSyncEnabled($0) }
                     ))
                     .tint(LuminaColor.primary)
 
                     if let date = store.lastCloudSyncDate {
-                        Text("上次同步：\(date.formatted(date: .abbreviated, time: .shortened))")
+                        Text(String(format: L10n.tr(.dataLastSyncInline, language: language), date.formatted(date: .abbreviated, time: .shortened)))
                             .font(.luminaLabelSM)
                             .foregroundStyle(LuminaColor.onSurfaceVariant)
                     }
                 } footer: {
-                    Text("开启后，任务与设置将自动备份到 iCloud Drive。")
+                    Text(L10n.tr(.dataCloudFooter, language: language))
                 }
             }
-            .navigationTitle("数据与备份")
+            .navigationTitle(L10n.tr(.dataNavTitle, language: language))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("完成") { dismiss() }
+                    Button(L10n.tr(.commonDone, language: language)) { dismiss() }
                 }
             }
-            .confirmationDialog("导出格式", isPresented: $showExportPicker) {
-                Button("JSON（含设置）") { store.exportData(format: .json) }
-                Button("CSV（任务列表）") { store.exportData(format: .csv) }
-                Button("取消", role: .cancel) {}
+            .confirmationDialog(L10n.tr(.dataExportFormat, language: language), isPresented: $showExportPicker) {
+                Button(L10n.tr(.dataExportJSON, language: language)) { store.exportData(format: .json) }
+                Button(L10n.tr(.dataExportCSV, language: language)) { store.exportData(format: .csv) }
+                Button(L10n.tr(.commonCancel, language: language), role: .cancel) {}
             }
             .fileImporter(
                 isPresented: $showImportPicker,
@@ -294,14 +300,14 @@ struct DataManagementSheet: View {
             ) { result in
                 importFile(result)
             }
-            .alert("从 iCloud 恢复？", isPresented: $showRestoreConfirm) {
-                Button("取消", role: .cancel) {}
-                Button("恢复", role: .destructive) {
+            .alert(L10n.tr(.dataRestoreTitle, language: language), isPresented: $showRestoreConfirm) {
+                Button(L10n.tr(.commonCancel, language: language), role: .cancel) {}
+                Button(L10n.tr(.dataRestoreAction, language: language), role: .destructive) {
                     store.restoreFromCloud()
                     dismiss()
                 }
             } message: {
-                Text("将用 iCloud 备份覆盖当前本地数据，此操作不可撤销。")
+                Text(L10n.tr(.dataRestoreMessage, language: language))
             }
         }
         .presentationDetents([.large])
@@ -311,9 +317,9 @@ struct DataManagementSheet: View {
     private func syncToCloud() {
         do {
             try store.performCloudSync()
-            store.alertMessage = "已上传到 iCloud"
+            store.alertMessage = L10n.tr(.alertUploadedCloud, language: language)
         } catch {
-            store.alertMessage = error.localizedDescription
+            store.alertMessage = L10n.hubErrorMessage(error, language: language)
         }
     }
 
@@ -327,10 +333,10 @@ struct DataManagementSheet: View {
                 try DataImportService.importData(data, into: store)
                 dismiss()
             } catch {
-                store.alertMessage = error.localizedDescription
+                store.alertMessage = L10n.hubErrorMessage(error, language: language)
             }
         case .failure(let error):
-            store.alertMessage = error.localizedDescription
+            store.alertMessage = L10n.hubErrorMessage(error, language: language)
         }
     }
 }
@@ -339,6 +345,7 @@ struct DataManagementSheet: View {
 
 struct LuminaPrivacyPolicyView: View {
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.hubLanguage) private var language
 
     var body: some View {
         NavigationStack {
@@ -348,20 +355,29 @@ struct LuminaPrivacyPolicyView: View {
                         .font(.luminaHeadlineMobile)
 
                     Group {
-                        policyBlock(title: "数据收集", body: "Hub 将任务与偏好设置存储在您的设备本地。若开启 iCloud 同步，数据会加密保存在您的 iCloud 账户中。")
-                        policyBlock(title: "通知", body: "仅在您授权后，Hub 才会为任务提醒发送本地通知。")
-                        policyBlock(title: "第三方服务", body: "本应用不使用第三方广告或分析 SDK。")
+                        policyBlock(
+                            title: L10n.tr(.privacyDataCollection, language: language),
+                            body: L10n.tr(.privacyDataCollectionBody, language: language)
+                        )
+                        policyBlock(
+                            title: L10n.tr(.privacyNotificationsSection, language: language),
+                            body: L10n.tr(.privacyNotificationsBody, language: language)
+                        )
+                        policyBlock(
+                            title: L10n.tr(.privacyThirdParty, language: language),
+                            body: L10n.tr(.privacyThirdPartyBody, language: language)
+                        )
                     }
                 }
                 .padding(LuminaSpacing.marginPage)
             }
             .background(LuminaColor.surface)
             .scrollContentBackground(.hidden)
-            .navigationTitle("隐私政策")
+            .navigationTitle(L10n.tr(.settingsPrivacy, language: language))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("关闭") { dismiss() }
+                    Button(L10n.tr(.commonClose, language: language)) { dismiss() }
                 }
             }
         }

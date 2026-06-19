@@ -3,6 +3,7 @@ import SwiftUI
 /// 首页悬浮按钮：在已解锁时于 A/B 面之间切换
 struct HubFaceSwitchFAB: View {
     @EnvironmentObject private var faceController: AppFaceController
+    @Environment(\.hubLanguage) private var language
 
     var style: Style = .lumina
 
@@ -39,14 +40,18 @@ struct HubFaceSwitchFAB: View {
             Image(systemName: targetIcon)
                 .font(.system(size: 18, weight: .semibold))
             Text(targetShortTitle)
-                .font(.system(size: 13, weight: .semibold))
+                .font(.system(size: 13, weight: .semibold, design: .rounded))
         }
-        .foregroundStyle(LuminaColor.onSecondaryContainer)
+        .foregroundStyle(LuminaColor.primary)
         .padding(.horizontal, 14)
         .padding(.vertical, 12)
         .background(LuminaColor.secondaryContainer)
         .clipShape(Capsule())
-        .luminaFABShadow()
+        .overlay(
+            Capsule()
+                .strokeBorder(LuminaColor.primary.opacity(0.2), lineWidth: 1)
+        )
+        .luminaSoftShadow()
     }
 
     private var rahmiLabel: some View {
@@ -75,6 +80,8 @@ struct HubFaceSwitchFAB: View {
     }
 
     private var accessibilityText: String {
-        switchingToRahmi ? "切换到 Rahmi" : "切换到 Hub"
+        switchingToRahmi
+            ? L10n.tr(.faceSwitchToRahmi, language: language)
+            : L10n.tr(.faceSwitchToHub, language: language)
     }
 }

@@ -8,9 +8,13 @@ enum CloudSyncService {
         case encodingFailed
 
         var errorDescription: String? {
+            message(language: .zhHans)
+        }
+
+        func message(language: AppLanguage) -> String {
             switch self {
-            case .iCloudUnavailable: return "未登录 iCloud 或 iCloud Drive 未开启"
-            case .encodingFailed: return "数据编码失败"
+            case .iCloudUnavailable: return L10n.tr(.errorICloudUnavailable, language: language)
+            case .encodingFailed: return L10n.tr(.errorEncodingFailed, language: language)
             }
         }
     }

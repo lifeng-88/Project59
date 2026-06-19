@@ -137,7 +137,7 @@ struct FocusTimerView: View {
     private var subtitle: String {
         switch phase {
         case .work:
-            return store.selectedAmbientSound?.title ?? L10n.tr(.focusFocusing, language: language)
+            return store.selectedAmbientSound?.title(language: language) ?? L10n.tr(.focusFocusing, language: language)
         case .shortBreak:
             return L10n.tr(.focusShortBreak, language: language)
         case .longBreak:

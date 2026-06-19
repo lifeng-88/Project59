@@ -7,6 +7,20 @@
 
 import Combine
 import Foundation
+import CFNetwork
+
+/// `CFNetworkCopySystemProxySettings` / `connectionProxyDictionary` 键名（iOS 上部分 `kCFNetworkProxies*` 常量不可用）
+private enum RmHTTPProxySettingsKey {
+    static let httpEnable = "HTTPEnable"
+    static let httpsEnable = "HTTPSEnable"
+    static let socksEnable = "SOCKSEnable"
+    static let httpProxy = "HTTPProxy"
+    static let httpPort = "HTTPPort"
+    static let httpsProxy = "HTTPSProxy"
+    static let httpsPort = "HTTPSPort"
+    static let socksProxy = "SOCKSProxy"
+    static let socksPort = "SOCKSPort"
+}
 
 /// API 客户端
 actor RmHTTPGatewayActor {
@@ -22,10 +36,54 @@ actor RmHTTPGatewayActor {
     
     private init(baseURL: String? = nil) {
         self.customBaseURL = baseURL
+        let configuration = Self.makeAPIURLSessionConfiguration()
+        self.session = URLSession(configuration: configuration)
+    }
+
+    /// API 专用 `URLSession`：绕过系统 HTTP(S)/SOCKS 代理直连。
+    /// Simulator 继承 Mac 上 Clash/Surge（127.0.0.1:7897 等）时，代理未运行会走 `lo0` 并 TLS -9816/-1200。
+    private static func makeAPIURLSessionConfiguration() -> URLSessionConfiguration {
         let configuration = URLSessionConfiguration.default
         configuration.timeoutIntervalForRequest = 30
         configuration.timeoutIntervalForResource = 60
-        self.session = URLSession(configuration: configuration)
+        configuration.waitsForConnectivity = true
+        configuration.requestCachePolicy = .reloadIgnoringLocalCacheData
+        if #available(iOS 13.0, *) {
+            configuration.tlsMinimumSupportedProtocolVersion = .TLSv12
+        }
+        configuration.connectionProxyDictionary = [
+            RmHTTPProxySettingsKey.httpEnable: 0,
+            RmHTTPProxySettingsKey.httpsEnable: 0,
+            RmHTTPProxySettingsKey.socksEnable: 0
+        ]
+        if let proxyNote = describeActiveSystemProxy() {
+            print("ℹ️ [RmHTTPGatewayActor] 系统代理 \(proxyNote)；API 请求已配置为直连（不经过本地代理）")
+        }
+        return configuration
+    }
+
+    private static func describeActiveSystemProxy() -> String? {
+        guard let settings = CFNetworkCopySystemProxySettings()?.takeRetainedValue() as? [String: Any] else {
+            return nil
+        }
+        var parts: [String] = []
+        if (settings[RmHTTPProxySettingsKey.httpEnable] as? Int) == 1,
+           let host = settings[RmHTTPProxySettingsKey.httpProxy] as? String {
+            let port = settings[RmHTTPProxySettingsKey.httpPort] as? Int ?? 0
+            parts.append("HTTP \(host):\(port)")
+        }
+        if (settings[RmHTTPProxySettingsKey.httpsEnable] as? Int) == 1,
+           let host = settings[RmHTTPProxySettingsKey.httpsProxy] as? String {
+            let port = settings[RmHTTPProxySettingsKey.httpsPort] as? Int ?? 0
+            parts.append("HTTPS \(host):\(port)")
+        }
+        if (settings[RmHTTPProxySettingsKey.socksEnable] as? Int) == 1,
+           let host = settings[RmHTTPProxySettingsKey.socksProxy] as? String {
+            let port = settings[RmHTTPProxySettingsKey.socksPort] as? Int ?? 0
+            parts.append("SOCKS \(host):\(port)")
+        }
+        guard !parts.isEmpty else { return nil }
+        return parts.joined(separator: ", ")
     }
     
     /// 创建测试用的 API 客户端（使用指定的 baseURL）
@@ -198,7 +256,11 @@ actor RmHTTPGatewayActor {
             }
             print("🌐 [RmHTTPGatewayActor] ==============================")
             
-            let (data, response) = try await session.data(for: request)
+            let (data, response) = try await Self.dataWithTransientRetry(
+                session: session,
+                request: request,
+                label: "\(method.rawValue) \(endpoint)"
+            )
             
             guard let httpResponse = response as? HTTPURLResponse else {
                 print("❌ [RmHTTPGatewayActor] Invalid response type")
@@ -307,14 +369,63 @@ actor RmHTTPGatewayActor {
         }
     }
 
-    /// 控制台诊断：区分 DNS(-1003)、断连(-1005)、超时等，便于与系统 `nw_` 日志对照（与 glam `RmHTTPGatewayActor` 一致）
+    /// 控制台诊断：区分 DNS(-1003)、断连(-1005)、超时、TLS(-1200) 等，便于与系统 `nw_` 日志对照（与 glam `RmHTTPGatewayActor` 一致）
     private static func logURLSessionFailure(_ error: Error, label: String) {
         if let urlError = error as? URLError {
             let code = urlError.code.rawValue
             let failing = urlError.failureURLString ?? "(nil)"
             print("❌ [RmHTTPGatewayActor] 传输失败 [\(label)] URLError rawValue=\(code) \(urlError.code) failingURL=\(failing) — \(urlError.localizedDescription)")
+            if let underlying = urlError.userInfo[NSUnderlyingErrorKey] as? NSError {
+                print("   underlying: domain=\(underlying.domain) code=\(underlying.code) — \(underlying.localizedDescription)")
+                let sslCode = underlying.userInfo["_kCFStreamErrorCodeKey"] as? Int
+                    ?? underlying.userInfo["_CFStreamErrorCodeKey"] as? Int
+                if sslCode == -9816 {
+                    print("   ssl: errSSLClosedAbort / 握手被对端或中间代理中断（-9816）")
+                }
+            }
+            let nwPath = urlError.userInfo["_NSURLErrorNWPathKey"] as? String
+            if urlError.code == .secureConnectionFailed {
+                if let nwPath, nwPath.contains("proxy") || nwPath.contains("lo0") {
+                    print("   hint: 请求经本机代理(lo0)转发。Mac 开 Clash/Surge 但客户端未运行时常见 TLS -1200。API 已绕过系统代理直连；若仍失败请关闭系统 HTTP 代理或启动代理软件。")
+                } else {
+                    print("   hint: TLS 失败常见于证书未生效/过期、设备时间不准、VPN/抓包代理、或 Simulator 网络异常。")
+                }
+            }
         } else {
             print("❌ [RmHTTPGatewayActor] 传输失败 [\(label)] \(type(of: error)): \(error.localizedDescription)")
+        }
+    }
+
+    /// 对冷启动/瞬时网络与偶发 TLS 握手失败做一次短延迟重试（不重试 401/解码等业务错误）
+    private static func dataWithTransientRetry(
+        session: URLSession,
+        request: URLRequest,
+        label: String
+    ) async throws -> (Data, URLResponse) {
+        do {
+            return try await session.data(for: request)
+        } catch {
+            guard shouldRetryTransientURLSessionError(error) else { throw error }
+            print("⚠️ [RmHTTPGatewayActor] 瞬时网络错误，1.2s 后重试 [\(label)]")
+            try await Task.sleep(nanoseconds: 1_200_000_000)
+            return try await session.data(for: request)
+        }
+    }
+
+    private static func shouldRetryTransientURLSessionError(_ error: Error) -> Bool {
+        guard let urlError = error as? URLError else { return false }
+        switch urlError.code {
+        case .secureConnectionFailed,
+             .cannotLoadFromNetwork,
+             .networkConnectionLost,
+             .notConnectedToInternet,
+             .timedOut,
+             .dnsLookupFailed,
+             .cannotFindHost,
+             .cannotConnectToHost:
+            return true
+        default:
+            return false
         }
     }
     

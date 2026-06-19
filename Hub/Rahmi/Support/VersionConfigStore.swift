@@ -4,7 +4,7 @@
 //
 //  A/B 面与支付策略由 `GET /v1/app_config` 控制（对齐 ReelMix GetAppConfigReq）。
 //  - 已成功拉取并持久化：冷启动读本地，后台按间隔刷新。
-//  - 首次 / 从未成功：先 AF 归因，再请求 app_config；失败则 type=1（Hub）且不写入本地。
+//  - DEBUG：不请求 `app_config`，使用本地缓存或默认 type=1；可用首页调试条切换 type。
 //  Hub 壳：`type == 2` → Rahmi；`type == 1` → Lumina。Rahmi 内 A 面皮肤由 `suppressPresentationVariantAUI` 关闭。
 //
 
@@ -13,7 +13,8 @@ import SwiftUI
 
 @MainActor
 final class VersionConfigStore: ObservableObject {
-    static let suppressPresentationVariantAUI = true
+    /// Hub 集成下展示 Rahmi A 面皮肤（网格首页、A 充值页、直链 IAP）；设为 `true` 可回退为仅 B 面皮肤。
+    static let suppressPresentationVariantAUI = false
 
     /// 与 `/v1/app_config` 的 `type` 一致：**1** 直链 IAP；**2** 支付 Sheet。
     @Published private(set) var rechargePresentationType: Int
@@ -101,6 +102,9 @@ final class VersionConfigStore: ObservableObject {
     }
 
     func refreshIfNeeded(minInterval: TimeInterval = 300, force: Bool = false) async {
+        #if DEBUG
+        return
+        #else
         if !Self.hasPersistedSuccessfulFetch {
             await bootstrapOnColdStart()
             return
@@ -120,6 +124,7 @@ final class VersionConfigStore: ObservableObject {
         remoteRefreshInFlight = task
         await task.value
         remoteRefreshInFlight = nil
+        #endif
     }
 
     func refresh() async {
@@ -128,11 +133,31 @@ final class VersionConfigStore: ObservableObject {
 
     private func performFirstLaunchBootstrap() async {
         rechargePresentationType = 1
+        #if DEBUG
+        print("ℹ️ [VersionConfigStore] DEBUG：跳过 app_config 首启请求，使用 type=\(rechargePresentationType)")
+        return
+        #else
         print("📱 [VersionConfigStore] app_config 首启：默认 Hub(type=1)，等待 AF 后请求")
+
+        /// 冷启动后略等网络路径就绪，减轻 Simulator 首包 TLS -1200
+        try? await Task.sleep(nanoseconds: 500_000_000)
 
         let channel = await AppConfig.shared.getChannel()
         let (_, rawAttribution) = await RmThirdPartyAttributionBridge.shared.prepareForFirstLaunch(channelId: channel)
-        await applyAppConfigResponse(await requestAppConfig(channel: channel, attribution: rawAttribution))
+
+        var lastResult: Result<AppConfigResponse, AppError>?
+        for attempt in 1 ... 3 {
+            lastResult = await requestAppConfig(channel: channel, attribution: rawAttribution)
+            if case .success = lastResult { break }
+            if attempt < 3 {
+                print("⚠️ [VersionConfigStore] app_config 首启第 \(attempt) 次失败，2s 后重试")
+                try? await Task.sleep(nanoseconds: 2_000_000_000)
+            }
+        }
+        if let lastResult {
+            await applyAppConfigResponse(lastResult)
+        }
+        #endif
     }
 
     private func fetchAppConfigFromNetwork() async {

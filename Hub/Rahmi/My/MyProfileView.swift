@@ -511,7 +511,7 @@ struct MyProfileView: View {
                 briefRefreshTokenToast(AppLanguageStore.localized("my.profile.debug.token_refreshed"))
             case .failure(let err):
                 UINotificationFeedbackGenerator().notificationOccurred(.error)
-                briefRefreshTokenToast(err.userMessage)
+                briefRefreshTokenToast(AppLanguageStore.localizedUserFacingAPIError(err.userMessage))
             }
         }
     }

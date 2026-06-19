@@ -54,6 +54,9 @@ struct HomeGenerationRechargeUpsellView: View {
     @EnvironmentObject private var tabRouter: AppTabRouter
     @Environment(\.scenePhase) private var scenePhase
 
+    /// 触发弹层时模板所需金币（用于副标题「Need N coins to continue」）
+    var requiredCoins: Int? = nil
+
     var onClose: () -> Void
     /// 跳转完整充值 Tab（EXPLORE MORE）；会先关闭弹层
     var onExploreFullRecharge: () -> Void
@@ -70,6 +73,22 @@ struct HomeGenerationRechargeUpsellView: View {
 
     /// 弹层内仅展示排序后的前 N 个套餐，与完整充值页列表解耦
     private static let upsellVisiblePackageCount = 2
+
+    private var showsRechargeVariantA: Bool {
+        versionConfig.isPresentationVariantAUIEnabled
+    }
+
+    private var upsellHeaderTitleKey: String {
+        RechargeVariantALocalization.upsellHeaderTitleKey(isVariantA: showsRechargeVariantA)
+    }
+
+    private var upsellCTAKey: String {
+        RechargeVariantALocalization.primaryCTAKey(isVariantA: showsRechargeVariantA, isPurchasing: isPurchasing)
+    }
+
+    private var upsellFooterKey: String {
+        RechargeVariantALocalization.footerKey(isVariantA: showsRechargeVariantA)
+    }
 
     private var savedCardsBinding: Binding<[SavedPaymentCard]> {
         Binding(
@@ -213,6 +232,7 @@ struct HomeGenerationRechargeUpsellView: View {
             if let outcome = paymentOutcome {
                 RechargeResultOverlay(
                     outcome: outcome,
+                    usesVariantAPresentation: showsRechargeVariantA,
                     onDismiss: {
                         let wasSuccess: Bool = {
                             if case .success = outcome { return true }
@@ -234,6 +254,7 @@ struct HomeGenerationRechargeUpsellView: View {
                 Task { await queryBrowserRedirectPaymentIfNeeded(isUserInitiated: false) }
             }
         }
+        .rahmiRefreshOnAppLanguage()
     }
 
     /// 与 `RechargeView` 一致：浏览器支付返回后查单；图1「好」为手动查。
@@ -251,7 +272,7 @@ struct HomeGenerationRechargeUpsellView: View {
             await MainActor.run {
                 isQueryingBrowserPayment = false
                 if isUserInitiated {
-                    paymentOutcome = .failed(message: err.userMessage)
+                    paymentOutcome = .failed(message: AppLanguageStore.localizedUserFacingAPIError(err.userMessage))
                 }
             }
             await RechargeBehaviorEvents.enqueueRedirectPayFail(
@@ -296,7 +317,9 @@ struct HomeGenerationRechargeUpsellView: View {
                     )
                 }
             } else {
-                let message = resp.message ?? AppLanguageStore.localized("recharge.error.payment_incomplete")
+                let message = AppLanguageStore.localizedUserFacingAPIError(
+                    resp.message ?? AppLanguageStore.localized("recharge.error.payment_incomplete")
+                )
                 await MainActor.run {
                     isQueryingBrowserPayment = false
                     paymentOutcome = .failed(message: message)
@@ -332,13 +355,26 @@ struct HomeGenerationRechargeUpsellView: View {
 
     private var headerRow: some View {
         HStack(alignment: .center) {
-            BBBTrackedText.text(
-                AppLanguageStore.localized("recharge.list_title"),
-                size: 12,
-                weight: .heavy,
-                tracking: 2.8,
-                color: HomeUpsellDesign.purple.opacity(0.92)
-            )
+            VStack(alignment: .leading, spacing: 4) {
+                BBBTrackedText.text(
+                    RahmiTextStyle.latinDisplayLabel(AppLanguageStore.localized(upsellHeaderTitleKey)),
+                    size: showsRechargeVariantA ? 13 : 12,
+                    weight: .heavy,
+                    tracking: showsRechargeVariantA ? 0.4 : 2.8,
+                    color: showsRechargeVariantA ? Color.white.opacity(0.95) : HomeUpsellDesign.purple.opacity(0.92)
+                )
+                if let coins = requiredCoins, coins > 0 {
+                    Text(AppLanguageStore.localizedFormat("recharge.need_coins_to_continue", Int64(coins)))
+                        .font(.system(size: 12, weight: .medium))
+                        .foregroundStyle(Color.white.opacity(0.62))
+                        .fixedSize(horizontal: false, vertical: true)
+                } else if showsRechargeVariantA {
+                    Text(AppLanguageStore.localized("recharge.variant_a.subhead"))
+                        .font(.system(size: 12, weight: .medium))
+                        .foregroundStyle(Color.white.opacity(0.62))
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+            }
             Spacer(minLength: 8)
             Button(action: onClose) {
                 Image(systemName: "xmark")
@@ -353,6 +389,13 @@ struct HomeGenerationRechargeUpsellView: View {
 
     private var benefitsBlock: some View {
         VStack(alignment: .leading, spacing: 12) {
+            BBBTrackedText.text(
+                RahmiTextStyle.latinDisplayLabel(AppLanguageStore.localized("recharge.upsell.headline")),
+                size: 11,
+                weight: .heavy,
+                tracking: 1.6,
+                color: HomeUpsellDesign.purple.opacity(0.88)
+            )
             benefitRow(emoji: "🔒", key: "recharge.upsell.benefit.templates")
             benefitRow(emoji: "🪄", key: "recharge.upsell.benefit.effects")
             benefitRow(emoji: "🚀", key: "recharge.upsell.benefit.priority")
@@ -372,7 +415,7 @@ struct HomeGenerationRechargeUpsellView: View {
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 20)
             } else if let err = packagesError, packages.isEmpty {
-                Text(err)
+                Text(AppLanguageStore.localizedUserFacingAPIError(err))
                     .font(.system(size: 12, weight: .medium))
                     .foregroundStyle(AppTheme.onSurface.opacity(0.8))
                     .multilineTextAlignment(.center)
@@ -552,11 +595,7 @@ struct HomeGenerationRechargeUpsellView: View {
                         .tint(.white)
                 }
                 BBBTrackedText.text(
-                    RahmiTextStyle.latinDisplayLabel(
-                        isPurchasing
-                            ? AppLanguageStore.localized("recharge.processing")
-                            : AppLanguageStore.localized("recharge.now")
-                    ),
+                    RahmiTextStyle.latinDisplayLabel(AppLanguageStore.localized(upsellCTAKey)),
                     size: 14,
                     weight: .heavy,
                     tracking: 2.2,
@@ -599,7 +638,7 @@ struct HomeGenerationRechargeUpsellView: View {
                 .font(.system(size: 10, weight: .semibold))
                 .foregroundStyle(Color.white.opacity(0.4))
             BBBTrackedText.text(
-                AppLanguageStore.localized("recharge.secure_footer"),
+                RahmiTextStyle.latinDisplayLabel(AppLanguageStore.localized(upsellFooterKey)),
                 size: 9,
                 weight: .semibold,
                 tracking: 1.4,
@@ -625,7 +664,18 @@ struct HomeGenerationRechargeUpsellView: View {
             case .failure(let err):
                 domainPackages = []
                 packages = []
+                #if DEBUG
+                if versionConfig.isPresentationVariantAUIEnabled {
+                    domainPackages = RahmiAFaceLocalSimulation.domainPackages()
+                    packages = domainPackages.map(RechargePackageModel.init(package:)).sorted { $0.packageId < $1.packageId }
+                    syncDefaultSelectedIfNeeded()
+                    packagesError = nil
+                } else {
+                    packagesError = err.userMessage
+                }
+                #else
                 packagesError = err.userMessage
+                #endif
             }
         }
     }
@@ -745,7 +795,7 @@ struct HomeGenerationRechargeUpsellView: View {
             case .failure(let err):
                 await MainActor.run {
                     isPurchasing = false
-                    paymentOutcome = .failed(message: err.userMessage)
+                    paymentOutcome = .failed(message: AppLanguageStore.localizedUserFacingAPIError(err.userMessage))
                 }
                 return
             case .success(let resp):
@@ -803,7 +853,7 @@ struct HomeGenerationRechargeUpsellView: View {
 
         switch redirectResult {
         case .failure(let err):
-            await MainActor.run { paymentOutcome = .failed(message: err.userMessage) }
+            await MainActor.run { paymentOutcome = .failed(message: AppLanguageStore.localizedUserFacingAPIError(err.userMessage)) }
         case .success(let resp):
             await RechargeBehaviorEvents.enqueueRedirectPayStart(
                 orderId: resp.orderId,
@@ -855,7 +905,7 @@ struct HomeGenerationRechargeUpsellView: View {
                 amountCents: amountCents,
                 reason: err.userMessage
             )
-            await MainActor.run { paymentOutcome = .failed(message: err.userMessage) }
+            await MainActor.run { paymentOutcome = .failed(message: AppLanguageStore.localizedUserFacingAPIError(err.userMessage)) }
         case .success(let response):
             let dup = !response.success && RechargeOrderVerification.isDuplicateOrderSuccess(response.message)
             if response.success || dup {
@@ -894,7 +944,11 @@ struct HomeGenerationRechargeUpsellView: View {
                     reason: response.message ?? "payment_failed"
                 )
                 await MainActor.run {
-                    paymentOutcome = .failed(message: response.message ?? AppLanguageStore.localized("recharge.error.payment_incomplete"))
+                    paymentOutcome = .failed(
+                        message: AppLanguageStore.localizedUserFacingAPIError(
+                            response.message ?? AppLanguageStore.localized("recharge.error.payment_incomplete")
+                        )
+                    )
                 }
             }
         }

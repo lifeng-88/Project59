@@ -9,6 +9,7 @@ import SwiftUI
 
 /// Home A 面：品牌区 + 一级分类 +（可选）视频二级分类条 + 金币入口
 struct HomeVariantAHeader: View {
+    @EnvironmentObject private var appLanguage: AppLanguageStore
     @Binding var primaryTab: Int
     let primaryTabs: [String]
     let coinBalance: String
@@ -18,6 +19,7 @@ struct HomeVariantAHeader: View {
     let onCoinTap: () -> Void
 
     var body: some View {
+        let _ = appLanguage.preference
         VStack(alignment: .leading, spacing: 0) {
             heroBlock
                 .padding(.horizontal, 20)

@@ -31,8 +31,12 @@ enum ProfileImageStore {
         case encodingFailed
 
         var errorDescription: String? {
+            message(language: .zhHans)
+        }
+
+        func message(language: AppLanguage) -> String {
             switch self {
-            case .encodingFailed: return "无法保存头像图片"
+            case .encodingFailed: return L10n.tr(.errorAvatarSaveFailed, language: language)
             }
         }
     }

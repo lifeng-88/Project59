@@ -232,14 +232,17 @@ class RmAsyncWorkPollCoordinator: ObservableObject {
             print("⚠️ [RmAsyncWorkPollCoordinator] Failed to fetch full task info: \(error)")
             // 如果是网络错误，设置错误消息
             if case .networkError(let message) = error {
-                errorMessage = String(
-                    format: AppLanguageStore.localized("task.error.network_with_reason"),
-                    message
+                errorMessage = AppLanguageStore.localizedFormat(
+                    "task.error.network_with_reason",
+                    AppLanguageStore.localizedUserFacingAPIError(message)
                 )
             } else if case .serverError(_, let message) = error {
-                errorMessage = message.isEmpty ? AppLanguageStore.localized("task.error.server_default") : message
+                let resolved = message.isEmpty
+                    ? AppLanguageStore.localized("task.error.server_default")
+                    : AppLanguageStore.localizedUserFacingAPIError(message)
+                errorMessage = resolved
             } else {
-                errorMessage = error.userMessage
+                errorMessage = AppLanguageStore.localizedUserFacingAPIError(error.userMessage)
             }
             // 将状态改为失败，以便显示错误提示
             self.taskStatus = .failed
