@@ -498,6 +498,10 @@ final class TaskStore: ObservableObject {
         showFocusTimer = true
     }
 
+    func openInsightsFromSettingsOverview() {
+        selectedTab = .insights
+    }
+
     func completeFocusSession() {
         totalFocusMinutes += pomodoroMinutes
         let result = FocusStreakCalculator.updatedStreak(

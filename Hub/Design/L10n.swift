@@ -51,6 +51,7 @@ enum L10n {
         case settingsStreakDays
         // Settings
         case settingsTitle, settingsAllTasks, settingsCompleted, settingsStreakDayUnit
+        case settingsTasksListCount, settingsCompletedEmpty
         case settingsProfile, settingsEdit, settingsPreferences, settingsLanguage
         case settingsTheme, settingsFocusGoal, settingsFocusGoalHours
         case settingsNotifications, settingsNotificationsSubtitle, settingsNotificationsDenied
@@ -180,6 +181,8 @@ enum L10n {
             .settingsTitle: "设置",
             .settingsAllTasks: "全部任务",
             .settingsCompleted: "已完成",
+            .settingsTasksListCount: "共 %d 项",
+            .settingsCompletedEmpty: "暂无已完成任务",
             .settingsStreakDayUnit: "%d天",
             .settingsProfile: "个人资料",
             .settingsEdit: "编辑",
@@ -402,6 +405,8 @@ enum L10n {
             .settingsTitle: "Settings",
             .settingsAllTasks: "All tasks",
             .settingsCompleted: "Completed",
+            .settingsTasksListCount: "%d items",
+            .settingsCompletedEmpty: "No completed tasks yet",
             .settingsStreakDayUnit: "%d days",
             .settingsProfile: "Profile",
             .settingsEdit: "Edit",

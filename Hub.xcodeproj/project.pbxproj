@@ -48,6 +48,7 @@
 		A10000000000000000000026 /* FocusStreakCalculator.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000026 /* FocusStreakCalculator.swift */; };
 		A10000000000000000000027 /* ProfileImageStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000028 /* ProfileImageStore.swift */; };
 		A10000000000000000000028 /* ProfileAvatarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000029 /* ProfileAvatarView.swift */; };
+		A1000000000000000000002A /* SettingsTasksListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000000000000000000002A /* SettingsTasksListView.swift */; };
 		HUBH5AFM00000000000001 /* HubH5AFManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = HUBH5AFM00000000000002 /* HubH5AFManager.swift */; };
 		HUBH5BRG00000000000001 /* HubH5Bridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = HUBH5BRG00000000000002 /* HubH5Bridge.swift */; };
 		HUBH5CFG00000000000001 /* HubH5Config.swift in Sources */ = {isa = PBXBuildFile; fileRef = HUBH5CFG00000000000002 /* HubH5Config.swift */; };
@@ -223,6 +224,7 @@
 		A20000000000000000000027 /* Hub.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Hub.entitlements; sourceTree = "<group>"; };
 		A20000000000000000000028 /* ProfileImageStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileImageStore.swift; sourceTree = "<group>"; };
 		A20000000000000000000029 /* ProfileAvatarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileAvatarView.swift; sourceTree = "<group>"; };
+		A2000000000000000000002A /* SettingsTasksListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsTasksListView.swift; sourceTree = "<group>"; };
 		A30000000000000000000001 /* Hub.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Hub.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		HUBH5AFM00000000000002 /* HubH5AFManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HubH5AFManager.swift; sourceTree = "<group>"; };
 		HUBH5BRG00000000000002 /* HubH5Bridge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HubH5Bridge.swift; sourceTree = "<group>"; };
@@ -459,6 +461,7 @@
 				A2000000000000000000001D /* EditTaskSheet.swift */,
 				A20000000000000000000020 /* ProfileEditView.swift */,
 				A20000000000000000000023 /* SettingsSheets.swift */,
+				A2000000000000000000002A /* SettingsTasksListView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -868,6 +871,7 @@
 				A10000000000000000000021 /* AppInfo.swift in Sources */,
 				A10000000000000000000022 /* SettingsComponents.swift in Sources */,
 				A10000000000000000000023 /* SettingsSheets.swift in Sources */,
+				A1000000000000000000002A /* SettingsTasksListView.swift in Sources */,
 				A10000000000000000000024 /* L10n.swift in Sources */,
 				A10000000000000000000025 /* FocusSessionStore.swift in Sources */,
 				A10000000000000000000026 /* FocusStreakCalculator.swift in Sources */,
@@ -1057,7 +1061,7 @@
 				CODE_SIGN_ENTITLEMENTS = Hub/Hub.entitlements;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 3;
 				DEVELOPMENT_TEAM = "";
 				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = F3Y944AQ9F;
 				ENABLE_PREVIEWS = YES;
@@ -1098,7 +1102,7 @@
 				CODE_SIGN_ENTITLEMENTS = Hub/Hub.entitlements;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 3;
 				DEVELOPMENT_TEAM = "";
 				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = F3Y944AQ9F;
 				ENABLE_PREVIEWS = YES;

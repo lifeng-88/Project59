@@ -15,6 +15,8 @@ struct SettingsView: View {
     @State private var showPrivacy = false
     @State private var showResetConfirm = false
     @State private var showFocusGoalSheet = false
+    @State private var showAllTasksList = false
+    @State private var showCompletedTasksList = false
     @State private var notificationDenied = false
     @State private var showDevIdCopiedToast = false
     /// 连续点击底部版本文案 10 次触发复制 dev_id；2s 内无继续点击则清零
@@ -55,6 +57,12 @@ struct SettingsView: View {
             .navigationDestination(isPresented: $showProfileEdit) {
                 ProfileEditView()
             }
+            .navigationDestination(isPresented: $showAllTasksList) {
+                SettingsTasksListView(scope: .all)
+            }
+            .navigationDestination(isPresented: $showCompletedTasksList) {
+                SettingsTasksListView(scope: .completed)
+            }
             .sheet(isPresented: $showThemeSheet) {
                 ThemePickerSheet()
             }
@@ -88,6 +96,8 @@ struct SettingsView: View {
             .onChange(of: showFocusGuide) { _, _ in syncHubTabBarVisibility() }
             .onChange(of: showFocusSettings) { _, _ in syncHubTabBarVisibility() }
             .onChange(of: showProfileEdit) { _, _ in syncHubTabBarVisibility() }
+            .onChange(of: showAllTasksList) { _, _ in syncHubTabBarVisibility() }
+            .onChange(of: showCompletedTasksList) { _, _ in syncHubTabBarVisibility() }
             .overlay(alignment: .top) {
                 if showDevIdCopiedToast {
                     Text(devIdCopiedToastText)
@@ -105,26 +115,66 @@ struct SettingsView: View {
     }
 
     private func syncHubTabBarVisibility() {
-        store.hubTabBarHidden = showFocusGuide || showFocusSettings || showProfileEdit
+        store.hubTabBarHidden = showFocusGuide
+            || showFocusSettings
+            || showProfileEdit
+            || showAllTasksList
+            || showCompletedTasksList
     }
 
     // MARK: - 概览卡片
 
+    private enum OverviewStatTarget {
+        case allTasks
+        case completed
+        case streak
+    }
+
     private var overviewCard: some View {
         HStack(spacing: 0) {
-            overviewStat(value: "\(store.tasks.count)", label: L10n.tr(.settingsAllTasks, language: language))
+            overviewStatButton(
+                value: "\(store.tasks.count)",
+                label: L10n.tr(.settingsAllTasks, language: language),
+                target: .allTasks
+            )
             overviewDivider
-            overviewStat(value: "\(store.completedCount)", label: L10n.tr(.settingsCompleted, language: language))
+            overviewStatButton(
+                value: "\(store.completedCount)",
+                label: L10n.tr(.settingsCompleted, language: language),
+                target: .completed
+            )
             overviewDivider
-            overviewStat(
+            overviewStatButton(
                 value: streakValueLabel,
-                label: L10n.tr(.settingsStreakDays, language: language)
+                label: L10n.tr(.settingsStreakDays, language: language),
+                target: .streak
             )
         }
         .padding(.vertical, LuminaSpacing.stackMD)
         .background(LuminaColor.surfaceContainerLowest)
         .clipShape(RoundedRectangle(cornerRadius: LuminaRadius.md))
         .luminaSoftShadow()
+    }
+
+    private func overviewStatButton(value: String, label: String, target: OverviewStatTarget) -> some View {
+        Button {
+            handleOverviewStatTap(target)
+        } label: {
+            overviewStat(value: value, label: label)
+                .contentShape(Rectangle())
+        }
+        .buttonStyle(SettingsRowButtonStyle())
+    }
+
+    private func handleOverviewStatTap(_ target: OverviewStatTarget) {
+        switch target {
+        case .allTasks:
+            showAllTasksList = true
+        case .completed:
+            showCompletedTasksList = true
+        case .streak:
+            store.openInsightsFromSettingsOverview()
+        }
     }
 
     private var streakValueLabel: String {

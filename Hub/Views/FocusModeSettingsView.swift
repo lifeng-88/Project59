@@ -41,6 +41,7 @@ struct FocusModeSettingsView: View {
             }
         }
         .background(LuminaColor.surface)
+        .navigationBarHidden(true)
         .navigationDestination(isPresented: $showFocusGuide) {
             FocusModeGuideView()
         }
