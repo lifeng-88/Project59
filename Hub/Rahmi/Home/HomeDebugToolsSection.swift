@@ -66,14 +66,13 @@ struct HomeDebugToolsSection: View {
                 HStack {
                     Spacer(minLength: 16)
                     VStack(spacing: 0) {
-                        if !versionConfig.isPresentationVariantAUIEnabled {
-                            debugRow(title: "正 / 测（type）", trailing: versionConfig.rechargePresentationType == 1 ? "1 · 正" : "2 · 测") {
-                                let next = versionConfig.rechargePresentationType == 1 ? 2 : 1
-                                versionConfig.debugSetPresentationType(next)
-                            }
-
-                            Divider().opacity(0.35)
+                        debugRow(title: "Hub type（1/2/3）", trailing: hubTypeDebugLabel) {
+                            let current = versionConfig.rechargePresentationType
+                            let next = current == 1 ? 2 : (current == 2 ? 3 : 1)
+                            versionConfig.debugSetPresentationType(next)
                         }
+
+                        Divider().opacity(0.35)
 
                         debugRow(title: "模拟推送", trailing: "›") {
                             simPushPayload = RahmiDebugSimulatedPush.advanceStep(&simPushStep)
@@ -184,6 +183,14 @@ struct HomeDebugToolsSection: View {
             .onDisappear {
                 RmAsyncWorkPollCoordinator.shared.reset()
             }
+        }
+    }
+
+    private var hubTypeDebugLabel: String {
+        switch versionConfig.rechargePresentationType {
+        case 2: return "2 · Web"
+        case 3: return "3 · Rahmi"
+        default: return "1 · Hub"
         }
     }
 

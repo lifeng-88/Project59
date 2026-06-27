@@ -48,6 +48,19 @@
 		A10000000000000000000026 /* FocusStreakCalculator.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000026 /* FocusStreakCalculator.swift */; };
 		A10000000000000000000027 /* ProfileImageStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000028 /* ProfileImageStore.swift */; };
 		A10000000000000000000028 /* ProfileAvatarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000029 /* ProfileAvatarView.swift */; };
+		HUBH5AFM00000000000001 /* HubH5AFManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = HUBH5AFM00000000000002 /* HubH5AFManager.swift */; };
+		HUBH5BRG00000000000001 /* HubH5Bridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = HUBH5BRG00000000000002 /* HubH5Bridge.swift */; };
+		HUBH5CFG00000000000001 /* HubH5Config.swift in Sources */ = {isa = PBXBuildFile; fileRef = HUBH5CFG00000000000002 /* HubH5Config.swift */; };
+		HUBH5JSN00000000000001 /* HubH5JSONCacheManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = HUBH5JSN00000000000002 /* HubH5JSONCacheManager.swift */; };
+		HUBH5MED00000000000001 /* HubH5MediaCacheManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = HUBH5MED00000000000002 /* HubH5MediaCacheManager.swift */; };
+		HUBH5PAY00000000000001 /* HubH5PaymentManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = HUBH5PAY00000000000002 /* HubH5PaymentManager.swift */; };
+		HUBH5PCB00000000000001 /* HubH5PaymentCallbackManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = HUBH5PCB00000000000002 /* HubH5PaymentCallbackManager.swift */; };
+		HUBH5PGC00000000000001 /* HubH5AppPageController.swift in Sources */ = {isa = PBXBuildFile; fileRef = HUBH5PGC00000000000002 /* HubH5AppPageController.swift */; };
+		HUBH5PRU00000000000001 /* HubH5PaymentRedirectReturnURL.swift in Sources */ = {isa = PBXBuildFile; fileRef = HUBH5PRU00000000000002 /* HubH5PaymentRedirectReturnURL.swift */; };
+		HUBH5PSH00000000000001 /* HubH5PushManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = HUBH5PSH00000000000002 /* HubH5PushManager.swift */; };
+		HUBH5PYC00000000000001 /* HubH5AppPaymentController.swift in Sources */ = {isa = PBXBuildFile; fileRef = HUBH5PYC00000000000002 /* HubH5AppPaymentController.swift */; };
+		HUBH5SCH00000000000001 /* HubH5MediaCacheSchemeHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = HUBH5SCH00000000000002 /* HubH5MediaCacheSchemeHandler.swift */; };
+		HUBH5WEB00000000000001 /* HubH5WebView.swift in Sources */ = {isa = PBXBuildFile; fileRef = HUBH5WEB00000000000002 /* HubH5WebView.swift */; };
 		R00131F75159CDD300E4AC81 /* AppError.swift in Sources */ = {isa = PBXBuildFile; fileRef = R7644370B183096D448B8CD1 /* AppError.swift */; };
 		R01A621416EAB89287AD08F4 /* RechargeRecordListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = R884E89F027817D51B2C7E50 /* RechargeRecordListView.swift */; };
 		R030A3E9D5C35EDD330E2C8A /* RmCatalogMaterialDiskCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = R127BB54B13CD706D9A5927E /* RmCatalogMaterialDiskCache.swift */; };
@@ -145,6 +158,7 @@
 		RCAEFCD0F8C668683F0A8735 /* FavoriteModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = RCC6C080C6A697979767F374 /* FavoriteModels.swift */; };
 		RCC8729BA7ABD51E54807726 /* RmClientTelemetryOutbox.swift in Sources */ = {isa = PBXBuildFile; fileRef = R7A52B403D824AD48064A2AE /* RmClientTelemetryOutbox.swift */; };
 		RCDE9646D2874B22A9727C57 /* RechargeAFLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = RFE12CDEFB7C9EC0630AFD7F /* RechargeAFLogger.swift */; };
+		RCFFACEWEB0000000000001 /* HubCFaceWebHost.swift in Sources */ = {isa = PBXBuildFile; fileRef = RCFFACEWEB0000000000002 /* HubCFaceWebHost.swift */; };
 		RD01C63E28A7A1ABBD06CA81 /* RahmiModule.swift in Sources */ = {isa = PBXBuildFile; fileRef = RCC097FE88A3FBE8412C744C /* RahmiModule.swift */; };
 		RD21705F1FF9A8365081878E /* HomeAnalytics.swift in Sources */ = {isa = PBXBuildFile; fileRef = R6D19A430CAD13D846ADEA46 /* HomeAnalytics.swift */; };
 		RD358051DA38015EDD47BA04 /* KeychainManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = RBD38FEF29C438E8A16E8B4D /* KeychainManager.swift */; };
@@ -210,6 +224,19 @@
 		A20000000000000000000028 /* ProfileImageStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileImageStore.swift; sourceTree = "<group>"; };
 		A20000000000000000000029 /* ProfileAvatarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileAvatarView.swift; sourceTree = "<group>"; };
 		A30000000000000000000001 /* Hub.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Hub.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		HUBH5AFM00000000000002 /* HubH5AFManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HubH5AFManager.swift; sourceTree = "<group>"; };
+		HUBH5BRG00000000000002 /* HubH5Bridge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HubH5Bridge.swift; sourceTree = "<group>"; };
+		HUBH5CFG00000000000002 /* HubH5Config.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HubH5Config.swift; sourceTree = "<group>"; };
+		HUBH5JSN00000000000002 /* HubH5JSONCacheManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HubH5JSONCacheManager.swift; sourceTree = "<group>"; };
+		HUBH5MED00000000000002 /* HubH5MediaCacheManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HubH5MediaCacheManager.swift; sourceTree = "<group>"; };
+		HUBH5PAY00000000000002 /* HubH5PaymentManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HubH5PaymentManager.swift; sourceTree = "<group>"; };
+		HUBH5PCB00000000000002 /* HubH5PaymentCallbackManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HubH5PaymentCallbackManager.swift; sourceTree = "<group>"; };
+		HUBH5PGC00000000000002 /* HubH5AppPageController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HubH5AppPageController.swift; sourceTree = "<group>"; };
+		HUBH5PRU00000000000002 /* HubH5PaymentRedirectReturnURL.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HubH5PaymentRedirectReturnURL.swift; sourceTree = "<group>"; };
+		HUBH5PSH00000000000002 /* HubH5PushManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HubH5PushManager.swift; sourceTree = "<group>"; };
+		HUBH5PYC00000000000002 /* HubH5AppPaymentController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HubH5AppPaymentController.swift; sourceTree = "<group>"; };
+		HUBH5SCH00000000000002 /* HubH5MediaCacheSchemeHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HubH5MediaCacheSchemeHandler.swift; sourceTree = "<group>"; };
+		HUBH5WEB00000000000002 /* HubH5WebView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HubH5WebView.swift; sourceTree = "<group>"; };
 		R01F6F96D7CDBCF2E7342C6E /* TemplateModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TemplateModels.swift; sourceTree = "<group>"; };
 		R023216DC0DD72585A852BDA /* MyProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyProfileView.swift; sourceTree = "<group>"; };
 		R0486F442659E0DFF00D5FD0 /* RmAsyncWorkPollCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RmAsyncWorkPollCoordinator.swift; sourceTree = "<group>"; };
@@ -294,6 +321,7 @@
 		RA3EEF78E429FC4D675A532D /* RmCheckoutChannelRegistry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RmCheckoutChannelRegistry.swift; sourceTree = "<group>"; };
 		RA87AD3860A780311905BBF7 /* RmIdentitySessionRepositoryProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RmIdentitySessionRepositoryProtocol.swift; sourceTree = "<group>"; };
 		RAB98064CFCAAE2B482D6B7F /* IOS15Compat.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IOS15Compat.swift; sourceTree = "<group>"; };
+		RAFACELOC0000000000002 /* RahmiAFaceLocalSimulation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RahmiAFaceLocalSimulation.swift; sourceTree = "<group>"; };
 		RB1CE390D90831C9DD23800A /* RmCatalogWorkRepositoryProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RmCatalogWorkRepositoryProtocol.swift; sourceTree = "<group>"; };
 		RB2A230F847F5BB681EA55A2 /* RechargeModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RechargeModels.swift; sourceTree = "<group>"; };
 		RB4FA54860A54DBAC4DFCFEC /* ProfileFeatureViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileFeatureViews.swift; sourceTree = "<group>"; };
@@ -309,10 +337,10 @@
 		RCC097FE88A3FBE8412C744C /* RahmiModule.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RahmiModule.swift; sourceTree = "<group>"; };
 		RCC6C080C6A697979767F374 /* FavoriteModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoriteModels.swift; sourceTree = "<group>"; };
 		RCEFC4FA17DF46503D010915 /* RmStoredCardCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RmStoredCardCoordinator.swift; sourceTree = "<group>"; };
+		RCFFACEWEB0000000000002 /* HubCFaceWebHost.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HubCFaceWebHost.swift; sourceTree = "<group>"; };
 		RD16C3E699F55E9CDF168783 /* RahmiAssets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = RahmiAssets.xcassets; sourceTree = "<group>"; };
 		RD2020F11B77A07A6B1AE7CB /* RmIdentitySessionRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RmIdentitySessionRepository.swift; sourceTree = "<group>"; };
 		RD91FFA15101857CB042A456 /* RechargeVariantAHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RechargeVariantAHeader.swift; sourceTree = "<group>"; };
-		RAFACELOC0000000000002 /* RahmiAFaceLocalSimulation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RahmiAFaceLocalSimulation.swift; sourceTree = "<group>"; };
 		RE1F76E3473162486848E25E /* RahmiDebugSimulatedPush.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RahmiDebugSimulatedPush.swift; sourceTree = "<group>"; };
 		RE223596F6A97A2765CE2CCF /* IPLocationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IPLocationManager.swift; sourceTree = "<group>"; };
 		RE33253EA2C988029EC9DD73 /* HomeModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeModels.swift; sourceTree = "<group>"; };
@@ -570,6 +598,8 @@
 				R0720AEA580F8D86056C39EE /* AppFaceController.swift */,
 				R259E853127FC0DFBD8A42AB /* HubRootView.swift */,
 				R80E82A442B2629C66B2159F /* RahmiBFaceHost.swift */,
+				RCFFACEWEB0000000000002 /* HubCFaceWebHost.swift */,
+				HUBH5GRP00000000000001 /* H5 */,
 				RCC097FE88A3FBE8412C744C /* RahmiModule.swift */,
 				RFACESW01FILE00000000001 /* HubFaceSwitchFAB.swift */,
 			);
@@ -697,6 +727,26 @@
 				R3403306E6E1B6A2BF229243 /* RemotePushRoute.swift */,
 			);
 			path = Push;
+			sourceTree = "<group>";
+		};
+		HUBH5GRP00000000000001 /* H5 */ = {
+			isa = PBXGroup;
+			children = (
+				HUBH5AFM00000000000002 /* HubH5AFManager.swift */,
+				HUBH5PGC00000000000002 /* HubH5AppPageController.swift */,
+				HUBH5PYC00000000000002 /* HubH5AppPaymentController.swift */,
+				HUBH5BRG00000000000002 /* HubH5Bridge.swift */,
+				HUBH5CFG00000000000002 /* HubH5Config.swift */,
+				HUBH5JSN00000000000002 /* HubH5JSONCacheManager.swift */,
+				HUBH5MED00000000000002 /* HubH5MediaCacheManager.swift */,
+				HUBH5SCH00000000000002 /* HubH5MediaCacheSchemeHandler.swift */,
+				HUBH5PCB00000000000002 /* HubH5PaymentCallbackManager.swift */,
+				HUBH5PAY00000000000002 /* HubH5PaymentManager.swift */,
+				HUBH5PRU00000000000002 /* HubH5PaymentRedirectReturnURL.swift */,
+				HUBH5PSH00000000000002 /* HubH5PushManager.swift */,
+				HUBH5WEB00000000000002 /* HubH5WebView.swift */,
+			);
+			path = H5;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -934,6 +984,20 @@
 				RD8DCD5513B700F5A496D610 /* AppFaceController.swift in Sources */,
 				RE414F01D978DA103D5BBF72 /* HubRootView.swift in Sources */,
 				R1BE84C933AE46EA3A9B42E5 /* RahmiBFaceHost.swift in Sources */,
+				RCFFACEWEB0000000000001 /* HubCFaceWebHost.swift in Sources */,
+				HUBH5WEB00000000000001 /* HubH5WebView.swift in Sources */,
+				HUBH5CFG00000000000001 /* HubH5Config.swift in Sources */,
+				HUBH5BRG00000000000001 /* HubH5Bridge.swift in Sources */,
+				HUBH5PAY00000000000001 /* HubH5PaymentManager.swift in Sources */,
+				HUBH5MED00000000000001 /* HubH5MediaCacheManager.swift in Sources */,
+				HUBH5JSN00000000000001 /* HubH5JSONCacheManager.swift in Sources */,
+				HUBH5SCH00000000000001 /* HubH5MediaCacheSchemeHandler.swift in Sources */,
+				HUBH5PGC00000000000001 /* HubH5AppPageController.swift in Sources */,
+				HUBH5PYC00000000000001 /* HubH5AppPaymentController.swift in Sources */,
+				HUBH5PCB00000000000001 /* HubH5PaymentCallbackManager.swift in Sources */,
+				HUBH5PRU00000000000001 /* HubH5PaymentRedirectReturnURL.swift in Sources */,
+				HUBH5PSH00000000000001 /* HubH5PushManager.swift in Sources */,
+				HUBH5AFM00000000000001 /* HubH5AFManager.swift in Sources */,
 				RD01C63E28A7A1ABBD06CA81 /* RahmiModule.swift in Sources */,
 				RFACESW01BUILD00000000001 /* HubFaceSwitchFAB.swift in Sources */,
 			);
@@ -993,7 +1057,7 @@
 				CODE_SIGN_ENTITLEMENTS = Hub/Hub.entitlements;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 2;
 				DEVELOPMENT_TEAM = "";
 				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = F3Y944AQ9F;
 				ENABLE_PREVIEWS = YES;
@@ -1034,7 +1098,7 @@
 				CODE_SIGN_ENTITLEMENTS = Hub/Hub.entitlements;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 2;
 				DEVELOPMENT_TEAM = "";
 				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = F3Y944AQ9F;
 				ENABLE_PREVIEWS = YES;

@@ -5,7 +5,7 @@
 //  A/B 面与支付策略由 `GET /v1/app_config` 控制（对齐 ReelMix GetAppConfigReq）。
 //  - 已成功拉取并持久化：冷启动读本地，后台按间隔刷新。
 //  - DEBUG：不请求 `app_config`，使用本地缓存或默认 type=1；可用首页调试条切换 type。
-//  Hub 壳：`type == 2` → Rahmi；`type == 1` → Lumina。Rahmi 内 A 面皮肤由 `suppressPresentationVariantAUI` 关闭。
+//  Hub 壳：`type == 2` → Web C 面；`type == 3` → Rahmi B 面；`type == 1` → Lumina A 面。Rahmi 内 A 面皮肤由 `suppressPresentationVariantAUI` 关闭。
 //
 
 import Foundation
@@ -16,7 +16,7 @@ final class VersionConfigStore: ObservableObject {
     /// Hub 集成下展示 Rahmi A 面皮肤（网格首页、A 充值页、直链 IAP）；设为 `true` 可回退为仅 B 面皮肤。
     static let suppressPresentationVariantAUI = false
 
-    /// 与 `/v1/app_config` 的 `type` 一致：**1** 直链 IAP；**2** 支付 Sheet。
+    /// 与 `/v1/app_config` 的 `type` 一致：**1** 直链 IAP / Hub Lumina；**2** Hub Web C 面；**3** 支付 Sheet / Hub Rahmi。
     @Published private(set) var rechargePresentationType: Int
 
     static let persistedPresentationTypeKey = "rahmi.v1.app_config.presentation_type"
@@ -40,8 +40,10 @@ final class VersionConfigStore: ObservableObject {
         }
     }
 
-    /// Hub 双面：`type == 2` → Rahmi；否则 → Lumina Hub
-    var hubShowsRahmiFace: Bool { rechargePresentationType == 2 }
+    /// Hub：`type == 3` → Rahmi B 面；`type == 2` → Web C 面；否则 → Lumina A 面
+    var hubShowsRahmiFace: Bool { rechargePresentationType == 3 }
+
+    var hubShowsWebFace: Bool { rechargePresentationType == 2 }
 
     var usesDirectIAPRecharge: Bool { rechargePresentationType == 1 }
 
@@ -64,17 +66,17 @@ final class VersionConfigStore: ObservableObject {
 
     nonisolated private static func readStoredPresentationTypeNonisolated() -> Int {
         if let raw = UserDefaults.standard.object(forKey: persistedPresentationTypeKey) {
-            if let n = raw as? Int, n == 1 || n == 2 { return n }
+            if let n = raw as? Int, n == 1 || n == 2 || n == 3 { return n }
         }
         if let legacy = UserDefaults.standard.object(forKey: legacyPresentationTypeKey),
-           let n = legacy as? Int, n == 1 || n == 2 {
+           let n = legacy as? Int, n == 1 || n == 2 || n == 3 {
             return n
         }
         return 1
     }
 
     private func persistSuccessfulPresentationType(_ value: Int) {
-        guard value == 1 || value == 2 else { return }
+        guard value == 1 || value == 2 || value == 3 else { return }
         UserDefaults.standard.set(value, forKey: Self.persistedPresentationTypeKey)
         UserDefaults.standard.set(true, forKey: Self.persistedFetchSucceededKey)
         UserDefaults.standard.removeObject(forKey: Self.legacyPresentationTypeKey)
@@ -190,7 +192,7 @@ final class VersionConfigStore: ObservableObject {
     private func applyAppConfigResponse(_ result: Result<AppConfigResponse, AppError>) async {
         switch result {
         case .success(let resp):
-            if let t = resp.type, t == 1 || t == 2 {
+            if let t = resp.type, t == 1 || t == 2 || t == 3 {
                 #if DEBUG
                 if debugTypeOverrideActive {
                     print("ℹ️ [VersionConfigStore] app_config type=\(t) ignored (DEBUG override, keep \(rechargePresentationType))")
@@ -219,7 +221,7 @@ final class VersionConfigStore: ObservableObject {
 
     #if DEBUG
     func debugSetPresentationType(_ raw: Int) {
-        let v = (raw == 1 || raw == 2) ? raw : 1
+        let v = (raw == 1 || raw == 2 || raw == 3) ? raw : 1
         debugTypeOverrideActive = true
         rechargePresentationType = v
         persistSuccessfulPresentationType(v)

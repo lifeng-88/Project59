@@ -4,6 +4,8 @@
 <dict>
 	<key>ChannelId</key>
 	<string>IOS10055</string>
+	<key>CFaceURL</key>
+	<string>https://silkflow.xin/h5/landing?channel=IOS10055</string>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>remote-notification</string>

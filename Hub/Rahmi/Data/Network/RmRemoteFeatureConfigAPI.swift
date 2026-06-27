@@ -30,7 +30,7 @@ struct AppConfigRequest {
 }
 
 struct AppConfigResponse: Decodable {
-    /// 1：直链 IAP / Hub 壳 Lumina；2：支付 Sheet / Hub 壳 Rahmi
+    /// 1：直链 IAP / Hub Lumina；2：Hub WebView C 面；3：支付 Sheet / Hub Rahmi
     let type: Int?
 
     enum CodingKeys: String, CodingKey {

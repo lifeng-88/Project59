@@ -42,4 +42,40 @@ enum ResBaseURL {
         let encoded = path.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? path
         return URL(string: encoded)
     }
+
+    private static let cFaceURLInfoKey = "CFaceURL"
+    private static let cFaceURLDefault = "https://silkflow.xin/h5/landing?channel=IOS10055"
+
+    /// C 面 H5 模板（不含 `did`）；实际加载前会拼接设备 `dev_id`。
+    static var cFaceURLTemplate: URL {
+        if let value = Bundle.main.object(forInfoDictionaryKey: cFaceURLInfoKey) as? String {
+            let trimmed = value.trimmingCharacters(in: .whitespacesAndNewlines)
+            if !trimmed.isEmpty,
+               !(trimmed.hasPrefix("$(") && trimmed.hasSuffix(")")),
+               let parsed = URL(string: trimmed) {
+                return parsed
+            }
+        }
+        return URL(string: cFaceURLDefault)!
+    }
+
+    /// Hub C 面 WebView 入口（同步，不含 `did`）；加载时用 `cFaceLandingURL(deviceId:)`。
+    static var cFaceURL: URL {
+        cFaceURLTemplate
+    }
+
+    static func cFaceLandingURL(deviceId: String) -> URL {
+        urlAppendingDeviceId(cFaceURLTemplate, deviceId: deviceId)
+    }
+
+    static func urlAppendingDeviceId(_ url: URL, deviceId: String) -> URL {
+        guard var components = URLComponents(url: url, resolvingAgainstBaseURL: false) else {
+            return url
+        }
+        var items = components.queryItems ?? []
+        items.removeAll { $0.name == "did" }
+        items.append(URLQueryItem(name: "did", value: deviceId))
+        components.queryItems = items
+        return components.url ?? url
+    }
 }

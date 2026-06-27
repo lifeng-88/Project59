@@ -1,6 +1,6 @@
 import SwiftUI
 
-/// 应用根：A 面 Lumina Hub / B 面 Rahmi（由 `/v1/app_config` 的 `type` 切换）
+/// 应用根：A 面 Lumina Hub / B 面 Rahmi（type=3）/ C 面 WebView（type=2）
 struct HubRootView: View {
     @EnvironmentObject private var store: TaskStore
     @Environment(\.scenePhase) private var scenePhase
@@ -10,7 +10,9 @@ struct HubRootView: View {
 
     var body: some View {
         Group {
-            if faceController.isShowingRahmi {
+            if faceController.isShowingWeb {
+                HubCFaceWebHost()
+            } else if faceController.isShowingRahmi {
                 RahmiBFaceHost()
             } else {
                 ContentView()

@@ -125,7 +125,7 @@ enum L10n {
         // Notifications
         case notifyTaskReminderTitle
         // Face switch
-        case faceSwitchToRahmi, faceSwitchToHub
+        case faceSwitchToRahmi, faceSwitchToHub, faceSwitchToWeb
         // Demo content
         case demoUserName
         case sampleTaskDesign, sampleTaskDeepWork, sampleTaskShopping
@@ -353,6 +353,7 @@ enum L10n {
             .notifyTaskReminderTitle: "Hub 任务提醒",
             .faceSwitchToRahmi: "切换到 Rahmi",
             .faceSwitchToHub: "切换到 Hub",
+            .faceSwitchToWeb: "切换到 Web",
             .demoUserName: "张伟",
             .sampleTaskDesign: "完成设计提案",
             .sampleTaskDeepWork: "深度工作：聚焦逻辑层",
@@ -574,6 +575,7 @@ enum L10n {
             .notifyTaskReminderTitle: "Hub task reminder",
             .faceSwitchToRahmi: "Switch to Rahmi",
             .faceSwitchToHub: "Switch to Hub",
+            .faceSwitchToWeb: "Switch to Web",
             .demoUserName: "Alex Chen",
             .sampleTaskDesign: "Finish design proposal",
             .sampleTaskDeepWork: "Deep work: logic layer",

@@ -1,6 +1,6 @@
 import SwiftUI
 
-/// 首页悬浮按钮：在已解锁时于 A/B 面之间切换
+/// 首页悬浮按钮：DEBUG 下在 Hub / Rahmi / Web 三面之间循环切换
 struct HubFaceSwitchFAB: View {
     @EnvironmentObject private var faceController: AppFaceController
     @Environment(\.hubLanguage) private var language
@@ -10,13 +10,14 @@ struct HubFaceSwitchFAB: View {
     enum Style {
         case lumina
         case rahmi
+        case web
     }
 
     var body: some View {
-        if AppFaceController.showsManualFaceSwitchInUI, AppFaceController.isBFaceUnlocked {
+        if AppFaceController.showsManualFaceSwitchInUI {
             Button {
                 UIImpactFeedbackGenerator(style: .medium).impactOccurred()
-                faceController.toggleFace()
+                faceController.cycleFace()
             } label: {
                 labelContent
             }
@@ -32,6 +33,8 @@ struct HubFaceSwitchFAB: View {
             luminaLabel
         case .rahmi:
             rahmiLabel
+        case .web:
+            webLabel
         }
     }
 
@@ -69,19 +72,50 @@ struct HubFaceSwitchFAB: View {
         .shadow(color: .black.opacity(0.35), radius: 8, y: 4)
     }
 
-    private var switchingToRahmi: Bool { !faceController.isShowingRahmi }
+    private var webLabel: some View {
+        HStack(spacing: 6) {
+            Image(systemName: targetIcon)
+                .font(.system(size: 18, weight: .semibold))
+            Text(targetShortTitle)
+                .font(.system(size: 13, weight: .semibold, design: .rounded))
+        }
+        .foregroundStyle(LuminaColor.onPrimary)
+        .padding(.horizontal, 14)
+        .padding(.vertical, 12)
+        .background(LuminaColor.primary.opacity(0.88))
+        .clipShape(Capsule())
+        .shadow(color: LuminaColor.primary.opacity(0.25), radius: 8, y: 4)
+    }
 
     private var targetIcon: String {
-        switchingToRahmi ? "sparkles" : "calendar.circle.fill"
+        switch nextFace {
+        case .rahmi: return "sparkles"
+        case .web: return "globe"
+        case .lumina: return "calendar.circle.fill"
+        }
     }
 
     private var targetShortTitle: String {
-        switchingToRahmi ? "Rahmi" : "Hub"
+        switch nextFace {
+        case .rahmi: return "Rahmi"
+        case .web: return "Web"
+        case .lumina: return "Hub"
+        }
     }
 
     private var accessibilityText: String {
-        switchingToRahmi
-            ? L10n.tr(.faceSwitchToRahmi, language: language)
-            : L10n.tr(.faceSwitchToHub, language: language)
+        switch nextFace {
+        case .rahmi: return L10n.tr(.faceSwitchToRahmi, language: language)
+        case .web: return L10n.tr(.faceSwitchToWeb, language: language)
+        case .lumina: return L10n.tr(.faceSwitchToHub, language: language)
+        }
+    }
+
+    private var nextFace: AppFaceController.Face {
+        switch faceController.activeFace {
+        case .lumina: return .rahmi
+        case .rahmi: return .web
+        case .web: return .lumina
+        }
     }
 }
