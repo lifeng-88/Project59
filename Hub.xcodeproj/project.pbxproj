@@ -49,6 +49,7 @@
 		A10000000000000000000027 /* ProfileImageStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000028 /* ProfileImageStore.swift */; };
 		A10000000000000000000028 /* ProfileAvatarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000029 /* ProfileAvatarView.swift */; };
 		A1000000000000000000002A /* SettingsTasksListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000000000000000000002A /* SettingsTasksListView.swift */; };
+		HUBCFGC00000000000001 /* HubCFaceConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = HUBCFGC00000000000002 /* HubCFaceConfig.swift */; };
 		HUBH5AFM00000000000001 /* HubH5AFManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = HUBH5AFM00000000000002 /* HubH5AFManager.swift */; };
 		HUBH5BRG00000000000001 /* HubH5Bridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = HUBH5BRG00000000000002 /* HubH5Bridge.swift */; };
 		HUBH5CFG00000000000001 /* HubH5Config.swift in Sources */ = {isa = PBXBuildFile; fileRef = HUBH5CFG00000000000002 /* HubH5Config.swift */; };
@@ -226,6 +227,7 @@
 		A20000000000000000000029 /* ProfileAvatarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileAvatarView.swift; sourceTree = "<group>"; };
 		A2000000000000000000002A /* SettingsTasksListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsTasksListView.swift; sourceTree = "<group>"; };
 		A30000000000000000000001 /* Hub.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Hub.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		HUBCFGC00000000000002 /* HubCFaceConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HubCFaceConfig.swift; sourceTree = "<group>"; };
 		HUBH5AFM00000000000002 /* HubH5AFManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HubH5AFManager.swift; sourceTree = "<group>"; };
 		HUBH5BRG00000000000002 /* HubH5Bridge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HubH5Bridge.swift; sourceTree = "<group>"; };
 		HUBH5CFG00000000000002 /* HubH5Config.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HubH5Config.swift; sourceTree = "<group>"; };
@@ -599,6 +601,7 @@
 			isa = PBXGroup;
 			children = (
 				R0720AEA580F8D86056C39EE /* AppFaceController.swift */,
+				HUBCFGC00000000000002 /* HubCFaceConfig.swift */,
 				R259E853127FC0DFBD8A42AB /* HubRootView.swift */,
 				R80E82A442B2629C66B2159F /* RahmiBFaceHost.swift */,
 				RCFFACEWEB0000000000002 /* HubCFaceWebHost.swift */,
@@ -989,6 +992,7 @@
 				RE414F01D978DA103D5BBF72 /* HubRootView.swift in Sources */,
 				R1BE84C933AE46EA3A9B42E5 /* RahmiBFaceHost.swift in Sources */,
 				RCFFACEWEB0000000000001 /* HubCFaceWebHost.swift in Sources */,
+				HUBCFGC00000000000001 /* HubCFaceConfig.swift in Sources */,
 				HUBH5WEB00000000000001 /* HubH5WebView.swift in Sources */,
 				HUBH5CFG00000000000001 /* HubH5Config.swift in Sources */,
 				HUBH5BRG00000000000001 /* HubH5Bridge.swift in Sources */,
@@ -1061,7 +1065,7 @@
 				CODE_SIGN_ENTITLEMENTS = Hub/Hub.entitlements;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 3;
+				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = "";
 				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = F3Y944AQ9F;
 				ENABLE_PREVIEWS = YES;
@@ -1081,7 +1085,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.1;
+				MARKETING_VERSION = 1.2;
 				OTHER_SWIFT_FLAGS = "$(inherited) -Xfrontend -solver-expression-time-threshold=2000";
 				PRODUCT_BUNDLE_IDENTIFIER = com.Hub.Lumina;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -1102,7 +1106,7 @@
 				CODE_SIGN_ENTITLEMENTS = Hub/Hub.entitlements;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 3;
+				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = "";
 				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = F3Y944AQ9F;
 				ENABLE_PREVIEWS = YES;
@@ -1122,7 +1126,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.1;
+				MARKETING_VERSION = 1.2;
 				OTHER_SWIFT_FLAGS = "$(inherited) -Xfrontend -solver-expression-time-threshold=2000";
 				PRODUCT_BUNDLE_IDENTIFIER = com.Hub.Lumina;
 				PRODUCT_NAME = "$(TARGET_NAME)";

@@ -41,7 +41,7 @@ struct ContentView: View {
                 .transition(.move(edge: .bottom).combined(with: .opacity))
             }
 
-            if store.selectedTab == .today, showsHubFaceSwitchFAB, !store.hubTabBarHidden {
+            if showsHubFaceSwitchFAB, !store.hubTabBarHidden {
                 HubFaceSwitchFAB(style: .lumina)
                     .padding(.leading, LuminaSpacing.marginPage)
                     .padding(.bottom, 100)
@@ -100,9 +100,7 @@ struct ContentView: View {
     }
 
     private var showsHubFaceSwitchFAB: Bool {
-        guard AppFaceController.showsManualFaceSwitchInUI else { return false }
-        /// A 面首页不展示进入 Rahmi（B 面）的 Debug 入口；仅在 B 面保留返回 Hub 的按钮。
-        return faceController.isShowingRahmi
+        faceController.showsBFaceEntryOnHub
     }
 }
 

@@ -4,6 +4,8 @@ import UIKit
 
 struct SettingsView: View {
     @EnvironmentObject private var store: TaskStore
+    @EnvironmentObject private var faceController: AppFaceController
+    @EnvironmentObject private var versionConfig: VersionConfigStore
     @Environment(\.hubLanguage) private var language
 
     @State private var showFocusGuide = false
@@ -412,6 +414,29 @@ struct SettingsView: View {
             LuminaSectionLabel(title: L10n.tr(.settingsAboutSection, language: language))
 
             SettingsGroupCard {
+                if faceController.showsBFaceEntryOnHub {
+                    SettingsRowButton(
+                        icon: "sparkles",
+                        title: L10n.tr(.faceSwitchToRahmi, language: language),
+                        subtitle: L10n.tr(.settingsBFaceEntrySubtitle, language: language),
+                        iconColor: LuminaColor.tertiary
+                    ) {
+                        UIImpactFeedbackGenerator(style: .light).impactOccurred()
+                        #if DEBUG
+                        if AppFaceController.showsManualFaceSwitchInUI {
+                            versionConfig.debugSetPresentationType(3)
+                            faceController.applyPresentationType(3)
+                        } else {
+                            faceController.switchToRahmi()
+                        }
+                        #else
+                        faceController.switchToRahmi()
+                        #endif
+                    }
+
+                    SettingsDivider()
+                }
+
                 SettingsRowLabel(
                     icon: "info.circle",
                     title: L10n.tr(.settingsVersion, language: language),

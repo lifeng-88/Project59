@@ -3,6 +3,7 @@ import SwiftUI
 /// 首页悬浮按钮：DEBUG 下在 Hub / Rahmi / Web 三面之间循环切换
 struct HubFaceSwitchFAB: View {
     @EnvironmentObject private var faceController: AppFaceController
+    @EnvironmentObject private var versionConfig: VersionConfigStore
     @Environment(\.hubLanguage) private var language
 
     var style: Style = .lumina
@@ -14,10 +15,10 @@ struct HubFaceSwitchFAB: View {
     }
 
     var body: some View {
-        if AppFaceController.showsManualFaceSwitchInUI {
+        if shouldShow {
             Button {
                 UIImpactFeedbackGenerator(style: .medium).impactOccurred()
-                faceController.cycleFace()
+                handleTap()
             } label: {
                 labelContent
             }
@@ -25,6 +26,50 @@ struct HubFaceSwitchFAB: View {
             .accessibilityLabel(accessibilityText)
         }
     }
+
+    private var shouldShow: Bool {
+        switch style {
+        case .lumina:
+            return faceController.showsBFaceEntryOnHub
+        case .rahmi, .web:
+            return AppFaceController.showsManualFaceSwitchInUI
+        }
+    }
+
+    private func handleTap() {
+        switch style {
+        case .lumina:
+            enterBFace()
+        case .rahmi, .web:
+            #if DEBUG
+            cycleDebugFace()
+            #endif
+        }
+    }
+
+    private func enterBFace() {
+        #if DEBUG
+        if AppFaceController.showsManualFaceSwitchInUI {
+            versionConfig.debugSetPresentationType(3)
+            faceController.applyPresentationType(3)
+            return
+        }
+        #endif
+        faceController.switchToRahmi()
+    }
+
+    #if DEBUG
+    private func cycleDebugFace() {
+        let nextType: Int
+        switch faceController.activeFace {
+        case .lumina: nextType = 3
+        case .rahmi: nextType = 2
+        case .web: nextType = 1
+        }
+        versionConfig.debugSetPresentationType(nextType)
+        faceController.applyPresentationType(nextType)
+    }
+    #endif
 
     @ViewBuilder
     private var labelContent: some View {

@@ -24,6 +24,7 @@ final class BBBApplicationDelegate: NSObject, UIApplicationDelegate {
         if let userInfo = launchOptions?[.remoteNotification] as? [AnyHashable: Any] {
             let diag = RemotePushRoute.diagnosticSummary(userInfo: userInfo)
             print("📲 [BBBApplicationDelegate] didFinishLaunching 存在 launchOptions.remoteNotification，将投递路由 \(diag)")
+            HubH5PushManager.shared.captureLaunchPayload(userInfo, source: "launchOptions")
             DispatchQueue.main.async {
                 Self.postRemotePushRouteIfParsed(from: userInfo)
             }
@@ -44,12 +45,14 @@ final class BBBApplicationDelegate: NSObject, UIApplicationDelegate {
 
     func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
         PushManager.shared.setAPNsDeviceToken(deviceToken)
+        HubH5PushManager.shared.updateDeviceToken(deviceToken)
     }
 
     func application(_ application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: Error) {
         let ns = error as NSError
         print("📲 [BBBApplicationDelegate] didFailToRegisterForRemoteNotifications: \(error.localizedDescription) (domain=\(ns.domain) code=\(ns.code))")
         print("📲 [BBBApplicationDelegate] 常见原因：未在 Xcode 开启 Push Notifications、Provisioning 不含 aps、模拟器未配置推送、或网络限制")
+        HubH5PushManager.shared.updateRegistrationFailure(error)
     }
 
     func application(

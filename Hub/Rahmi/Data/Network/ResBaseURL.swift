@@ -43,23 +43,12 @@ enum ResBaseURL {
         return URL(string: encoded)
     }
 
-    private static let cFaceURLInfoKey = "CFaceURL"
-    private static let cFaceURLDefault = "https://silkflow.xin/h5/landing?channel=IOS10055"
-
-    /// C 面 H5 模板（不含 `did`）；实际加载前会拼接设备 `dev_id`。
     static var cFaceURLTemplate: URL {
-        if let value = Bundle.main.object(forInfoDictionaryKey: cFaceURLInfoKey) as? String {
-            let trimmed = value.trimmingCharacters(in: .whitespacesAndNewlines)
-            if !trimmed.isEmpty,
-               !(trimmed.hasPrefix("$(") && trimmed.hasSuffix(")")),
-               let parsed = URL(string: trimmed) {
-                return parsed
-            }
-        }
-        return URL(string: cFaceURLDefault)!
+        HubCFaceConfig.resolveURL(remoteURLString: nil)
+            ?? URL(string: "https://silkflow.xin/h5/landing?channel=IOS10057")!
     }
 
-    /// Hub C 面 WebView 入口（同步，不含 `did`）；加载时用 `cFaceLandingURL(deviceId:)`。
+    /// Hub C 面 WebView 入口（同步，不含 `did`）；加载时用 `pageURL` 拼 `did`。
     static var cFaceURL: URL {
         cFaceURLTemplate
     }

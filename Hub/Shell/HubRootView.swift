@@ -10,18 +10,16 @@ struct HubRootView: View {
 
     var body: some View {
         Group {
-            if faceController.isShowingWeb {
-                HubCFaceWebHost()
-            } else if faceController.isShowingRahmi {
-                RahmiBFaceHost()
+            if versionConfig.isBootstrapComplete {
+                rootContent
             } else {
-                ContentView()
-                    .environmentObject(faceController)
+                HubLaunchLoadingView()
             }
         }
         .environmentObject(faceController)
         .environmentObject(versionConfig)
         .animation(.easeInOut(duration: 0.28), value: faceController.activeFace)
+        .animation(.easeInOut(duration: 0.25), value: versionConfig.isBootstrapComplete)
         .task {
             await versionConfig.bootstrapOnColdStart()
             faceController.applyPresentationType(versionConfig.rechargePresentationType)
@@ -34,6 +32,35 @@ struct HubRootView: View {
             Task {
                 await versionConfig.refreshIfNeeded()
                 faceController.applyPresentationType(versionConfig.rechargePresentationType)
+            }
+        }
+    }
+
+    @ViewBuilder
+    private var rootContent: some View {
+        Group {
+            if faceController.isShowingWeb {
+                HubCFaceWebHost()
+            } else if faceController.isShowingRahmi {
+                RahmiBFaceHost()
+            } else {
+                ContentView()
+                    .environmentObject(faceController)
+            }
+        }
+    }
+}
+
+private struct HubLaunchLoadingView: View {
+    var body: some View {
+        ZStack {
+            LuminaColor.surface.ignoresSafeArea()
+            VStack(spacing: LuminaSpacing.stackXL) {
+                Text("Lumina Focus")
+                    .font(.luminaDisplay)
+                    .foregroundStyle(LuminaColor.primary)
+                ProgressView()
+                    .tint(LuminaColor.primary)
             }
         }
     }

@@ -26,6 +26,7 @@ final class BBBPushNotificationCenterDelegate: NSObject, UNUserNotificationCente
         let diag = RemotePushRoute.diagnosticSummary(userInfo: userInfo)
         let ok = RemotePushRoute.recognizesBusinessPayload(userInfo: userInfo)
         print("📲 [PushNotificationCenter] willPresent 前台已收到远程通知 \(diag) businessPayloadOK=\(ok)")
+        HubH5PushManager.shared.deliverPayload(userInfo, source: "willPresent")
         if #available(iOS 14.0, *) {
             completionHandler([.banner, .list, .sound, .badge])
         } else {
@@ -43,6 +44,7 @@ final class BBBPushNotificationCenterDelegate: NSObject, UNUserNotificationCente
         let diag = RemotePushRoute.diagnosticSummary(userInfo: userInfo)
         let ok = RemotePushRoute.recognizesBusinessPayload(userInfo: userInfo)
         print("📲 [PushNotificationCenter] didReceive 用户点击通知 \(diag) businessPayloadOK=\(ok)")
+        HubH5PushManager.shared.deliverPayload(userInfo, source: "didReceive")
         Task { @MainActor in
             BBBApplicationDelegate.postRemotePushRouteIfParsed(from: userInfo)
         }

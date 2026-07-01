@@ -69,7 +69,7 @@ final class HubH5WebViewModel: ObservableObject {
 
     private func loadResolvedURL() async {
         let deviceId = await DeviceManager.shared.getDeviceId()
-        let url = ResBaseURL.cFaceLandingURL(deviceId: deviceId)
+        let url = ResBaseURL.urlAppendingDeviceId(pageURL, deviceId: deviceId)
         #if DEBUG
         if HubH5Config.debugLogging {
             print("🌐 [HubH5] load \(url.absoluteString)")

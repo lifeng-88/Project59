@@ -47,6 +47,9 @@ final class AppFaceController: ObservableObject {
     /// `type != 3` 时允许手动进入 Rahmi；`type == 3` 由远端固定 Rahmi
     var allowsManualRahmiEntry: Bool { hubPresentationType != 3 }
 
+    /// A 面手动进入 B 面入口（已隐藏；`type=3` 仍由远端固定进 B 面）
+    var showsBFaceEntryOnHub: Bool { false }
+
     /// `type == 2/3` 时由远端固定 C 面 / B 面，不展示返回 Hub 入口
     var allowsManualHubReturn: Bool { hubPresentationType != 2 && hubPresentationType != 3 }
 

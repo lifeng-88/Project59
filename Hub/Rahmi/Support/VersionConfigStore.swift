@@ -18,8 +18,13 @@ final class VersionConfigStore: ObservableObject {
 
     /// 与 `/v1/app_config` 的 `type` 一致：**1** 直链 IAP / Hub Lumina；**2** Hub Web C 面；**3** 支付 Sheet / Hub Rahmi。
     @Published private(set) var rechargePresentationType: Int
+    /// C 面 H5 入口（由 app_config 或本地缓存解析）。
+    @Published private(set) var surfaceWebURL: URL?
+    /// 首启 app_config 完成前不切换根界面，避免闪 A 面。
+    @Published private(set) var isBootstrapComplete = false
 
     static let persistedPresentationTypeKey = "rahmi.v1.app_config.presentation_type"
+    static let persistedSurfaceWebURLKey = "rahmi.v1.app_config.surface_web_url"
     private static let persistedFetchSucceededKey = "rahmi.v1.app_config.fetch_succeeded"
     private static let lastRemoteRefreshKey = "rahmi.v1.app_config.last_remote_refresh"
     /// 旧版 `version_config` 键，仅用于迁移读取
@@ -34,9 +39,13 @@ final class VersionConfigStore: ObservableObject {
 
     init() {
         if Self.hasPersistedSuccessfulFetch {
-            _rechargePresentationType = Published(initialValue: Self.readStoredPresentationTypeNonisolated())
+            let cached = Self.readStoredPresentationTypeNonisolated()
+            _rechargePresentationType = Published(initialValue: cached)
+            _surfaceWebURL = Published(initialValue: Self.resolvedSurfaceWebURL(forPresentationType: cached))
+            _isBootstrapComplete = Published(initialValue: true)
         } else {
             _rechargePresentationType = Published(initialValue: 1)
+            _surfaceWebURL = Published(initialValue: nil)
         }
     }
 
@@ -60,6 +69,12 @@ final class VersionConfigStore: ObservableObject {
         return 1
     }
 
+    nonisolated static func readPersistedSurfaceWebURL() -> String? {
+        let raw = UserDefaults.standard.string(forKey: persistedSurfaceWebURLKey)?
+            .trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+        return raw.isEmpty ? nil : raw
+    }
+
     nonisolated private static var hasPersistedSuccessfulFetch: Bool {
         UserDefaults.standard.bool(forKey: persistedFetchSucceededKey)
     }
@@ -75,20 +90,39 @@ final class VersionConfigStore: ObservableObject {
         return 1
     }
 
-    private func persistSuccessfulPresentationType(_ value: Int) {
+    nonisolated private static func resolvedSurfaceWebURL(forPresentationType type: Int) -> URL? {
+        guard type == 2 else { return nil }
+        return HubCFaceConfig.resolveURL(remoteURLString: readPersistedSurfaceWebURL())
+    }
+
+    private func persistSuccessfulPresentationType(_ value: Int, webURL: String? = nil) {
         guard value == 1 || value == 2 || value == 3 else { return }
         UserDefaults.standard.set(value, forKey: Self.persistedPresentationTypeKey)
         UserDefaults.standard.set(true, forKey: Self.persistedFetchSucceededKey)
         UserDefaults.standard.removeObject(forKey: Self.legacyPresentationTypeKey)
+        if let webURL {
+            let trimmed = webURL.trimmingCharacters(in: .whitespacesAndNewlines)
+            if !trimmed.isEmpty {
+                UserDefaults.standard.set(trimmed, forKey: Self.persistedSurfaceWebURLKey)
+            }
+        }
+    }
+
+    /// Release 隐蔽手势：返回 Hub A 面并持久化 type=1。
+    func manualReturnToHubFace() {
+        rechargePresentationType = 1
+        surfaceWebURL = nil
+        persistSuccessfulPresentationType(1)
     }
 
     func bootstrapOnColdStart() async {
         if Self.hasPersistedSuccessfulFetch {
             let cached = Self.readStoredPresentationTypeNonisolated()
-            if rechargePresentationType != cached {
-                rechargePresentationType = cached
-            }
+            rechargePresentationType = cached
+            surfaceWebURL = Self.resolvedSurfaceWebURL(forPresentationType: cached)
+            isBootstrapComplete = true
             print("✅ [VersionConfigStore] app_config 使用本地缓存 type=\(cached)")
+            Task(priority: .utility) { await self.refreshIfNeeded() }
             return
         }
 
@@ -135,8 +169,10 @@ final class VersionConfigStore: ObservableObject {
 
     private func performFirstLaunchBootstrap() async {
         rechargePresentationType = 1
+        surfaceWebURL = nil
         #if DEBUG
         print("ℹ️ [VersionConfigStore] DEBUG：跳过 app_config 首启请求，使用 type=\(rechargePresentationType)")
+        isBootstrapComplete = true
         return
         #else
         print("📱 [VersionConfigStore] app_config 首启：默认 Hub(type=1)，等待 AF 后请求")
@@ -159,6 +195,7 @@ final class VersionConfigStore: ObservableObject {
         if let lastResult {
             await applyAppConfigResponse(lastResult)
         }
+        isBootstrapComplete = true
         #endif
     }
 
@@ -199,8 +236,7 @@ final class VersionConfigStore: ObservableObject {
                     return
                 }
                 #endif
-                rechargePresentationType = t
-                persistSuccessfulPresentationType(t)
+                applyPresentation(t, webURLString: resp.preferredWebURLString)
                 print("✅ [VersionConfigStore] app_config 成功 type=\(t)，已持久化")
             } else if !Self.hasPersistedSuccessfulFetch {
                 applyFirstLaunchFailure(reason: "invalid_type")
@@ -214,8 +250,20 @@ final class VersionConfigStore: ObservableObject {
         }
     }
 
+    private func applyPresentation(_ type: Int, webURLString: String?) {
+        rechargePresentationType = type
+        if type == 2 {
+            surfaceWebURL = HubCFaceConfig.resolveURL(remoteURLString: webURLString)
+            persistSuccessfulPresentationType(type, webURL: webURLString)
+        } else {
+            surfaceWebURL = nil
+            persistSuccessfulPresentationType(type)
+        }
+    }
+
     private func applyFirstLaunchFailure(reason: String) {
         rechargePresentationType = 1
+        surfaceWebURL = nil
         print("❌ [VersionConfigStore] app_config 首启失败(\(reason))，进 Hub(type=1) 且不保存")
     }
 
@@ -223,8 +271,11 @@ final class VersionConfigStore: ObservableObject {
     func debugSetPresentationType(_ raw: Int) {
         let v = (raw == 1 || raw == 2 || raw == 3) ? raw : 1
         debugTypeOverrideActive = true
-        rechargePresentationType = v
-        persistSuccessfulPresentationType(v)
+        if v == 2 {
+            applyPresentation(v, webURLString: Self.readPersistedSurfaceWebURL())
+        } else {
+            applyPresentation(v, webURLString: nil)
+        }
         objectWillChange.send()
     }
     #endif
